@@ -7,7 +7,7 @@ import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.psi.PsiElement;
 import org.intellij.ibatis.facet.IbatisFacetType;
-import org.intellij.ibatis.insepections.SqlMapIdUniqueProblemsInspection;
+import org.intellij.ibatis.insepections.SqlMapUniqueIdInspection;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +15,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+/**
+ * iBATIS application component, include inspection, IconProvider
+ *
+ * @authtor Jacky
+ */
 public class IbatisApplicationComponent implements ApplicationComponent, InspectionToolProvider, IconProvider {
 
     public IbatisApplicationComponent() {
@@ -33,6 +38,11 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         return "iBATIS Application Component";
     }
 
+    /**
+     * register DTD for iBATIS
+     *
+     * @param dtds DTD URLs
+     */
     private static void registerDTDs(String dtds[]) {
         for (String url : dtds) {
             if (url.startsWith("http://")) {
@@ -43,11 +53,23 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         }
     }
 
+    /**
+     * icon for special psiFile
+     *
+     * @param psiElement PsiFile sub calss
+     * @param i          i
+     * @return icon for special psiFile
+     */
     @Nullable public Icon getIcon(@NotNull PsiElement psiElement, int i) {
         return null;
     }
 
+    /**
+     * get all inspection class
+     *
+     * @return inspection class array
+     */
     public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapIdUniqueProblemsInspection.class};
+        return new Class[]{SqlMapUniqueIdInspection.class};
     }
 }
