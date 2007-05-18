@@ -5,19 +5,21 @@
 
 package org.intellij.ibatis;
 
-import com.intellij.javaee.dataSource.DataSourceManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * iBATIS Plugin project component
+ *
+ * @author Jacky
+ */
 public class IbatisProjectComponent implements ProjectComponent {
-    private Project project;
     private IbatisConfigurationModelFactory configurationModelFactory;
     private IbatisSqlMapModelFactory sqlMapModelFactory;
 
-    public IbatisProjectComponent(Project project, DomManager domManager) {
-        this.project = project;
+    public IbatisProjectComponent(DomManager domManager) {
         configurationModelFactory = new IbatisConfigurationModelFactory(domManager);
         sqlMapModelFactory = new IbatisSqlMapModelFactory(domManager);
     }
