@@ -2,7 +2,6 @@ package org.intellij.ibatis.dom.configuration;
 
 import com.intellij.javaee.model.xml.CommonDomModelRootElement;
 import com.intellij.util.xml.SubTagList;
-import com.intellij.util.xml.SubTagsList;
 
 import java.util.List;
 
@@ -21,4 +20,7 @@ public interface SqlMapConfig extends CommonDomModelRootElement {
 
     @SubTagList("sqlMap")
     public List<SqlMap> getSqlMaps();
+
+    @SubTagList("sqlMap")
+    public SqlMap addSqlMap();
 }
