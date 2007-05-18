@@ -3,11 +3,8 @@ package org.intellij.ibatis;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.containers.ArrayListSet;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
@@ -17,13 +14,17 @@ import org.intellij.ibatis.impl.IbatisConfigurationModelImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * iBATIS configuration model factory
+ *
+ * @author
  */
 public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfig, IbatisConfigurationModel, PsiElement> {
+    private static Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
 
     protected IbatisConfigurationModelFactory(DomManager domManager) {
         super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "spring");
@@ -39,25 +40,10 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
 
     protected List<IbatisConfigurationModel> computeAllModels(@NotNull Module module) {
         List<IbatisConfigurationModel> models = new ArrayList<IbatisConfigurationModel>();
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-        PsiManager psiManager = PsiManager.getInstance(module.getProject());
-        for (VirtualFile root : rootManager.getSourceRoots()) {
-            Set<XmlFile> files = new ArrayListSet<XmlFile>();
-            for (VirtualFile virtualFile : root.getChildren()) {
-                if (virtualFile.getName().endsWith(".xml")) {
-                    final PsiFile psiFile = psiManager.findFile(virtualFile);
-                    if (psiFile instanceof XmlFile) {
-                        final DomFileElement fileElement = DomManager.getDomManager(module.getProject()).getFileElement((XmlFile) psiFile, DomElement.class);
-                        if (fileElement != null && fileElement.getRootElement()  instanceof SqlMapConfig) {
-                            files.add((XmlFile) psiFile);
-                        }
-                    }
-                }
-            }
-            if (files.size() > 0) {    //iBATIS configuration xml file found
-                IbatisConfigurationModel model = new IbatisConfigurationModelImpl(createMergedModel(files), files);
-                models.add(model);
-            }
+        Set<XmlFile> files = getAllSqlMapConfigurationFile(module);
+        if (files.size() > 0) {    //iBATIS configuration xml file found
+            IbatisConfigurationModel model = new IbatisConfigurationModelImpl(createMergedModel(files), files);
+            models.add(model);
         }
         return models;
     }
@@ -65,5 +51,25 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
     protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> configFiles, SqlMapConfig mergedModel, IbatisConfigurationModel firstModel) {
         return new IbatisConfigurationModelImpl(mergedModel, configFiles);
     }
-    
+
+    public static Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
+        if (CONFIGURATION_FILES.size() > 0) return CONFIGURATION_FILES;
+        final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+        PsiManager psiManager = PsiManager.getInstance(module.getProject());
+        for (VirtualFile root : rootManager.getSourceRoots()) {
+            PsiDirectory sourceDir = psiManager.findDirectory(root);
+            if (sourceDir != null) {
+                sourceDir.accept(new PsiRecursiveElementVisitor() {
+                    public void visitXmlFile(XmlFile xmlFile) {
+                        final DomFileElement fileElement = DomManager.getDomManager(module.getProject()).getFileElement(xmlFile, DomElement.class);
+                        if (fileElement != null && fileElement.getRootElement() instanceof SqlMapConfig) {
+                            if (CONFIGURATION_FILES.size() < 1)     //only one file accepted
+                                CONFIGURATION_FILES.add(xmlFile);
+                        }
+                    }
+                });
+            }
+        }
+        return CONFIGURATION_FILES;
+    }
 }
