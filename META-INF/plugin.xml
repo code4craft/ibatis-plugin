@@ -1,0 +1,29 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin version="2">
+    <name>iBATIS Plugin</name>
+    <description>plugin for iBATIS</description>
+    <version>1.0</version>
+    <vendor email="linux_china@hotmail.com">Jacky Chan</vendor>
+    <idea-version since-build="6950"/>
+    <depends>com.intellij.javaee</depends>
+    <extensions xmlns="com.intellij">
+        <applicationService serviceInterface="org.intellij.ibatis.IbatisManager"
+                            serviceImplementation="org.intellij.ibatis.impl.IbatisManagerImpl"/>
+        <dom.fileDescription implementation="org.intellij.ibatis.IbatisConfigurationFileDescription"/>
+        <dom.fileDescription implementation="org.intellij.ibatis.IbatisSqlMapFileDescription"/>
+        <gotoSymbolContributor implementation="org.intellij.ibatis.GoToSqlMapReferenceIdSymbolProvider"/>
+    </extensions>
+    <application-components>
+        <component>
+            <implementation-class>org.intellij.ibatis.IbatisApplicationComponent</implementation-class>
+        </component>
+    </application-components>
+    <project-components>
+        <component>
+            <implementation-class>org.intellij.ibatis.IbatisProjectComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.intellij.ibatis.IbatisReferenceProvider</implementation-class>
+        </component>
+    </project-components>
+</idea-plugin>

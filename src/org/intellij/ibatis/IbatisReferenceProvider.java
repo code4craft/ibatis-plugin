@@ -1,0 +1,106 @@
+package org.intellij.ibatis;
+
+import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.filters.*;
+import com.intellij.psi.filters.position.NamespaceFilter;
+import com.intellij.psi.filters.position.ParentElementFilter;
+import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
+import com.intellij.psi.xml.XmlTag;
+import org.intellij.ibatis.provider.*;
+import org.intellij.ibatis.util.IbatisConstants;
+import org.jetbrains.annotations.NotNull;
+
+public class IbatisReferenceProvider implements ProjectComponent {
+    private Project project;
+    private ReferenceProvidersRegistry registry;
+    private NamespaceFilter ibatisSqlMapConfigNamespaceFilter;
+    private NamespaceFilter ibatisSqlMapNamespaceFilter;
+
+    public IbatisReferenceProvider(Project project) {
+        ibatisSqlMapConfigNamespaceFilter = new NamespaceFilter(IbatisConstants.CONFIGURATION_DTDS);
+        ibatisSqlMapNamespaceFilter = new NamespaceFilter(IbatisConstants.SQLMAP_DTDS);
+        this.project = project;
+        registry = ReferenceProvidersRegistry.getInstance(project);
+    }
+
+    public void initComponent() {
+        //statement id reference
+        registry.registerReferenceProvider(new SqlClientElementFilter(), PsiLiteralExpression.class, new StatementIdReferenceProvider());
+        JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
+        IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
+        JdbcTypeReferenceProvider jdbcTypeReferenceProvider = new JdbcTypeReferenceProvider();
+        FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
+        ResultMapReferenceProvider resultMapReferenceProvider = new ResultMapReferenceProvider();
+        ParameterMapReferenceProvider parameterMapReferenceProvider = new ParameterMapReferenceProvider();
+        SqlReferenceProvider sqlReferenceProvider = new SqlReferenceProvider();
+        TableColumnReferenceProvider tableColumnReferenceProvider = new TableColumnReferenceProvider();
+        //java class
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
+        //ibatis class with shortcuts and type alias
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameterMap", new String[]{"class"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "resultMap", new String[]{"class"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"parameterClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "update", new String[]{"parameterClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "delete", new String[]{"parameterClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
+        //jdbcType
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+        //field access method reference
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isEqual", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isNotEqual", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isGreaterThan", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isGreaterEqual", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isLessThan", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isLessEuqal", new String[]{"property", "compareProperty"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isPropertyAvailable", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isNull", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isNotNull", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isEmpty", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "isNotEmpty", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "iterate", new String[]{"property"}, fieldAccessMethodReferenceProvider);
+        //result map reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"resultMap"}, resultMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"resultMap"}, resultMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"resultMap"}, resultMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"resultMap"}, resultMapReferenceProvider);
+        //parameter map reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "update", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "delete", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"parameterMap"}, parameterMapReferenceProvider);
+        //sql reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "include", new String[]{"refid"}, sqlReferenceProvider);
+        //table column reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"column"}, tableColumnReferenceProvider);
+    }
+
+    public void disposeComponent() {
+    }
+
+    @NotNull public String getComponentName() {
+        return "iBATIS Reference Provider";
+    }
+
+    public void projectOpened() {
+    }
+
+    public void projectClosed() {
+    }
+
+    private void registerXmlAttributeValueReferenceProvider(NamespaceFilter namespaceFilter, String tagName, String attributeNames[], PsiReferenceProvider referenceProvider) {
+        registry.registerXmlAttributeValueReferenceProvider(attributeNames, new ScopeFilter(new ParentElementFilter(new AndFilter(new ClassFilter(XmlTag.class), new AndFilter(new OrFilter(new TextFilter(tagName)), namespaceFilter)), 2)), referenceProvider);
+    }
+
+
+}
