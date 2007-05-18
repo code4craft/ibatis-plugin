@@ -27,7 +27,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
     private static Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
 
     protected IbatisConfigurationModelFactory(DomManager domManager) {
-        super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "spring");
+        super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "iBATIS");
     }
 
     public IbatisConfigurationModel getModel(@NotNull PsiElement context) {
