@@ -25,7 +25,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         final XmlTag xmlTag = (XmlTag) xmlAttributeValue.getParent().getParent();   //result or parameter tag
         final PsiClass psiClass;
         XmlAttributeValuePsiReference psiReference = null;
-        if (xmlTag.getName().equals("result") || xmlTag.getName().equals("parameter")) {
+        if (xmlTag.getName().equals("result") || xmlTag.getName().equals("parameter") || xmlTag.getName().equals("resultMap")) {
             psiClass = getPsiClassForMap(xmlTag, xmlAttributeValue);
             if (psiClass != null)
                 psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
@@ -253,6 +253,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      */
     public PsiClass getPsiClassForMap(XmlTag xmlTag, XmlAttributeValue xmlAttributeValue) {
         XmlTag parentTag = xmlTag.getParentTag();   //resultMap or parameterMap element
+        if (xmlTag.getName().equals("resultMap")) parentTag = xmlTag;  //resultMap's groupBy
         if (parentTag != null && parentTag.getAttribute("class") != null) {
             String className = parentTag.getAttributeValue("class");
             return IbatisClassShortcutsReferenceProvider.getPsiClass(xmlAttributeValue, className);
