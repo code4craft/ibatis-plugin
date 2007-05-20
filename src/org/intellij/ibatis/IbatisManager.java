@@ -143,4 +143,11 @@ public abstract class IbatisManager {
      * @return sql map    id reference
      */
     public abstract Map<String, DomElement> getAllSqlMapReference(Module module);
+
+    /**
+     * get all  cacheModel
+     *
+     * @return sql map    id reference
+     */
+    public abstract Map<String, CacheModel> getAllCacheModel(PsiElement psiElement);
 }

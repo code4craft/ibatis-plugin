@@ -230,5 +230,16 @@ public class IbatisManagerImpl extends IbatisManager {
         return allReference;
     }
 
+    public Map<String, CacheModel> getAllCacheModel(PsiElement psiElement) {
+        Map<String, CacheModel> allCacheModel = new HashMap<String, CacheModel>();
+        List<IbatisSqlMapModel> models = getAllSqlMapModel(psiElement);
+        for (IbatisSqlMapModel model : models) {
+            List<CacheModel> cacheModels = model.getMergedModel().getCacheModels();
+            for (CacheModel cacheModel : cacheModels) {
+                allCacheModel.put(getUniqueName(cacheModel.getRoot(), cacheModel.getId().getValue()), cacheModel);
+            }
+        }
+        return allCacheModel;
+    }
 
 }
