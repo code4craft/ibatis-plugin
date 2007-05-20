@@ -8,4 +8,9 @@ import com.intellij.util.xml.GenericAttributeValue;
  */
 public interface Delete extends CommonDomModelElement {
     public GenericAttributeValue<String> getId();
+
+    public GenericAttributeValue<String> getParameterClass();
+
+    public GenericAttributeValue<String> getParameterMap();
+
 }

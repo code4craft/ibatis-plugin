@@ -8,4 +8,12 @@ import com.intellij.util.xml.GenericAttributeValue;
  */
 public interface Statement extends CommonDomModelElement {
     public GenericAttributeValue<String> getId();
+
+    public GenericAttributeValue<String> getParameterClass();
+
+    public GenericAttributeValue<String> getParameterMap();
+
+    public GenericAttributeValue<String> getResultClass();
+
+    public GenericAttributeValue<String> getResultMap();
 }

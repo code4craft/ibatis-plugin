@@ -1,10 +1,10 @@
 package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelRootElement;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.SubTagList;
 import com.intellij.util.xml.SubTagsList;
-import com.intellij.util.xml.DomElement;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -48,5 +48,8 @@ public interface SqlMap extends CommonDomModelRootElement {
 
     @SubTagsList({"select", "insert", "delete", "update", "statement", "procedure"})
     public List<DomElement> getAllReference();
+
+    @SubTagList("cacheModel")
+    public List<CacheModel> getCacheModels();
 
 }
