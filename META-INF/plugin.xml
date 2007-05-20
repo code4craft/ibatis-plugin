@@ -1,9 +1,9 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin version="2">
     <name>iBATIS Plugin</name>
-    <description>plugin for iBATIS</description>
-    <version>1.0</version>
-    <vendor email="linux_china@hotmail.com">Jacky Chan</vendor>
+    <description>plugin for IntelliJ IDEA to accelerate iBATIS developement</description>
+    <version>0.1</version>
+    <vendor email="libing.chen@gmail.com">Jacky Chan</vendor>
     <idea-version since-build="6950"/>
     <depends>com.intellij.javaee</depends>
     <extensions xmlns="com.intellij">
