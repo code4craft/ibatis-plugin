@@ -3,6 +3,7 @@ package org.intellij.ibatis.provider;
 import com.intellij.openapi.module.impl.scopes.JdkScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttributeValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +100,7 @@ public class ParameterJdbcTypeReferenceProvider extends BaseReferenceProvider {
       private PsiField[] getOraclePsiFields(PsiElement psiElement) {
         Project project = psiElement.getProject();
         PsiManager psiManager = PsiManager.getInstance(project);
-        PsiClass psiClass = psiManager.findClass("oracle.jdbc.OracleTypes", JdkScope.allScope(project));
+        PsiClass psiClass = psiManager.findClass("oracle.jdbc.OracleTypes", GlobalSearchScope.allScope(project));
         if (psiClass != null) {
           return psiClass.getAllFields();
         }

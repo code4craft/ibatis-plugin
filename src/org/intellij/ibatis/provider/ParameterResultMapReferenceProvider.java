@@ -31,6 +31,14 @@ public class ParameterResultMapReferenceProvider extends BaseReferenceProvider {
       public PsiElement resolve() {
         String val = getCanonicalText();
 
+        if (val.indexOf('.') == -1) {
+          XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) getElement();
+          XmlTag element = (XmlTag) xmlAttributeValue.getParent().getParent().getParent();
+          String namespace = ((XmlTag) element.getParent()).getAttributeValue("namespace");
+          if (namespace != null) {
+            val = namespace + "." + val;
+          }
+        }
         Map<String, XmlTag> xmlTags = IbatisManager.getInstance().getAllResultMap2(getElement());
         if (xmlTags != null) {
           if (xmlTags.containsKey(val)) {
