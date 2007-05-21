@@ -30,7 +30,9 @@ public class CacheModelReferenceProvider extends BaseReferenceProvider {
               XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) getElement();
               XmlTag element = (XmlTag) xmlAttributeValue.getParent().getParent();
               String namespace = ((XmlTag) element.getParent()).getAttributeValue("namespace");
-                cacheModelId = namespace + "." + cacheModelId;
+                if (namespace != null) {
+                  cacheModelId = namespace + "." + cacheModelId;
+                }
               }
               Map<String, CacheModel> allResultMap = manager.getAllCacheModel(getElement());
                 CacheModel cacheModel = allResultMap.get(cacheModelId);
