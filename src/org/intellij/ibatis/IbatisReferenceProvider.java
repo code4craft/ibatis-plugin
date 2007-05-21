@@ -36,7 +36,6 @@ public class IbatisReferenceProvider implements ProjectComponent {
         SqlReferenceProvider sqlReferenceProvider = new SqlReferenceProvider();
         TableColumnReferenceProvider tableColumnReferenceProvider = new TableColumnReferenceProvider();
         CacheModelReferenceProvider cacheModelReferenceProvider = new CacheModelReferenceProvider();
-        SelectReferenceProvider selectReferenceProvider = new SelectReferenceProvider();
         //java class
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
@@ -94,8 +93,6 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"cacheModel"}, cacheModelReferenceProvider);
         //table column reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"column"}, tableColumnReferenceProvider);
-        //select sentence reference provider
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"select"}, selectReferenceProvider);
     }
 
     public void disposeComponent() {
