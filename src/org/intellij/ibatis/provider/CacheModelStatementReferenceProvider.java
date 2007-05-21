@@ -3,9 +3,11 @@ package org.intellij.ibatis.provider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.IbatisManager;
-import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.dom.sqlMap.Delete;
+import org.intellij.ibatis.dom.sqlMap.Insert;
+import org.intellij.ibatis.dom.sqlMap.Procedure;
+import org.intellij.ibatis.dom.sqlMap.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,16 +27,8 @@ public class CacheModelStatementReferenceProvider extends BaseReferenceProvider 
             }
 
             @Nullable public PsiElement resolve() {
-               String statementId = getCanonicalText();
- 
-              if(statementId.indexOf('.') == -1) {
-              XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) getElement();
-              XmlTag element = (XmlTag) xmlAttributeValue.getParent().getParent();
-              String namespace = ((XmlTag) element.getParent().getParent()).getAttributeValue("namespace");
-                if (namespace != null) {
-                  statementId = namespace + "." + statementId;
-                }
-              }
+               String statementId = getNameSpaceCanonicalText();
+
               Map<String, Delete> allDelete = IbatisManager.getInstance().getAllDelete(getElement());
               Delete delete = allDelete.get(statementId);
               if(delete != null) {

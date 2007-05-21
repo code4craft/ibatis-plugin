@@ -15,26 +15,29 @@ import java.util.Set;
  * resultMap reference provider
  */
 public class ResultMapReferenceProvider extends BaseReferenceProvider {
-    @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement) {
-        XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
-        XmlAttributeValuePsiReference psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
-            public boolean isSoft() {
-                return false;
-            }
+  @NotNull
+  public PsiReference[] getReferencesByElement(PsiElement psiElement) {
+    XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
+    XmlAttributeValuePsiReference psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
+      public boolean isSoft() {
+        return false;
+      }
 
-            @Nullable public PsiElement resolve() {
-                String resultMapId = getCanonicalText();
-                Map<String, XmlTag> allResultMap = IbatisManager.getInstance().getAllResultMap2(getElement());
-                XmlTag tag = allResultMap.get(resultMapId);
-                return tag==null?null:tag.getAttribute("id");
-            }
+      @Nullable
+      public PsiElement resolve() {
+        String resultMapId = getNameSpaceCanonicalText();
 
-            public Object[] getVariants() {
-                Set<String> resultMapList = IbatisManager.getInstance().getAllResultMap2(getElement()).keySet();
-                return resultMapList.toArray();
-            }
-        };
-        return new PsiReference[]{psiReference};
-    }
+        Map<String, XmlTag> allResultMap = IbatisManager.getInstance().getAllResultMap2(getElement());
+        XmlTag tag = allResultMap.get(resultMapId);
+        return tag == null ? null : tag.getAttribute("id");
+      }
+
+      public Object[] getVariants() {
+        Set<String> resultMapList = IbatisManager.getInstance().getAllResultMap2(getElement()).keySet();
+        return resultMapList.toArray();
+      }
+    };
+    return new PsiReference[]{psiReference};
+  }
 
 }
