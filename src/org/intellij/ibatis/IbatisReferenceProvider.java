@@ -18,11 +18,13 @@ public class IbatisReferenceProvider implements ProjectComponent {
     private ReferenceProvidersRegistry registry;
     private NamespaceFilter ibatisSqlMapConfigNamespaceFilter;
     private NamespaceFilter ibatisSqlMapNamespaceFilter;
+    private Project project;
 
     public IbatisReferenceProvider(Project project) {
         ibatisSqlMapConfigNamespaceFilter = new NamespaceFilter(IbatisConstants.CONFIGURATION_DTDS);
         ibatisSqlMapNamespaceFilter = new NamespaceFilter(IbatisConstants.SQLMAP_DTDS);
         registry = ReferenceProvidersRegistry.getInstance(project);
+      this.project = project;
     }
 
     public void initComponent() {
@@ -41,8 +43,11 @@ public class IbatisReferenceProvider implements ProjectComponent {
       CacheModelPropertyReferenceProvider modelPropertyReferenceProvider = new CacheModelPropertyReferenceProvider();
       CacheModelMemoryTypeReferenceProvider cacheModelMemoryTypeReferenceProvider = new CacheModelMemoryTypeReferenceProvider();
 
-        //java class
+      ParameterJdbcTypeReferenceProvider jdbcTypeReferenceProvider = new ParameterJdbcTypeReferenceProvider(project);
+      ParameterResultMapReferenceProvider parameterResultMapReferenceProvider = new ParameterResultMapReferenceProvider();
+      //java class
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "parameter", new String[]{"javaType"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"typeHandler"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"typeHandler"}, classReferenceProvider);
@@ -106,6 +111,13 @@ public class IbatisReferenceProvider implements ProjectComponent {
       registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "property", new String[]{"value"}, cacheModelMemoryTypeReferenceProvider);
         //table column reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"column"}, tableColumnReferenceProvider);
+      //parameter jdbctype reference provider
+      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+      //parameter resultmap reference provider
+      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"resultMap"}, parameterResultMapReferenceProvider);
+
+      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+
     }
 
     public void disposeComponent() {
