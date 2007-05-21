@@ -10,6 +10,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.intellij.ibatis.IbatisManager;
+import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -62,10 +63,10 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
                 List<Object> variants = new ArrayList<Object>();
                 variants.addAll(classNames);
                 for (String shortcut : shortcuts) {
-                    variants.add(LookupValueFactory.createLookupValue(shortcut, IconLoader.findIcon("/icons/internal_class.png")));
+                    variants.add(LookupValueFactory.createLookupValue(shortcut, IbatisConstants.INTERNAL_CLASS));
                 }
                 for (String alias : typeAlias) {
-                    variants.add(LookupValueFactory.createLookupValue(alias, IconLoader.findIcon("/icons/typealias.png")));
+                    variants.add(LookupValueFactory.createLookupValue(alias, IbatisConstants.TYPE_ALIAS));
                 }
                 return variants.toArray();
             }
