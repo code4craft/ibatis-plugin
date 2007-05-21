@@ -3,6 +3,7 @@ package org.intellij.ibatis.provider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.sqlMap.CacheModel;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,14 @@ public class CacheModelReferenceProvider extends BaseReferenceProvider {
 
             @Nullable public PsiElement resolve() {
                 String cacheModelId = getCanonicalText();
-                Map<String, CacheModel> allResultMap = IbatisManager.getInstance().getAllCacheModel(getElement());
+              IbatisManager manager = IbatisManager.getInstance();
+              if(cacheModelId.indexOf('.') == -1) {
+              XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) getElement();
+              XmlTag element = (XmlTag) xmlAttributeValue.getParent().getParent();
+              String namespace = ((XmlTag) element.getParent()).getAttributeValue("namespace");
+                cacheModelId = namespace + "." + cacheModelId;
+              }
+              Map<String, CacheModel> allResultMap = manager.getAllCacheModel(getElement());
                 CacheModel cacheModel = allResultMap.get(cacheModelId);
                 return cacheModel == null ? null : cacheModel.getId().getXmlAttribute();
             }
