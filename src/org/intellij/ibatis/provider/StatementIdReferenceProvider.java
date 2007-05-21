@@ -1,13 +1,16 @@
 package org.intellij.ibatis.provider;
 
+import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.psi.*;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * statement id reference
@@ -60,18 +63,36 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
         }
 
         public Object[] getVariants() {
-            List<String> variants = new ArrayList<String>();
+            List<Object> variants = new ArrayList<Object>();
             IbatisManager manager = IbatisManager.getInstance();
             if ("insert".equals(methodPrefix)) {      //insert
-                variants.addAll(manager.getAllInsert(getElement()).keySet());
+                Set<String> allInsert = manager.getAllInsert(getElement()).keySet();
+                for (String insert : allInsert) {
+                    variants.add(LookupValueFactory.createLookupValue(insert, IbatisConstants.SQLMAP_INSERT));
+                }
             } else if ("update".equals(methodPrefix)) {   //update
-                variants.addAll(manager.getAllUpdate(getElement()).keySet());
+                Set<String> allUpate = manager.getAllUpdate(getElement()).keySet();
+                for (String update : allUpate) {
+                    variants.add(LookupValueFactory.createLookupValue(update, IbatisConstants.SQLMAP_UPDATE));
+                }
             } else if ("delete".equals(methodPrefix)) {    //delete
-                variants.addAll(manager.getAllDelete(getElement()).keySet());
+                Set<String> allDelete = manager.getAllDelete(getElement()).keySet();
+                for (String delete : allDelete) {
+                    variants.add(LookupValueFactory.createLookupValue(delete, IbatisConstants.SQLMAP_DELETE));
+                }
             } else {  //select and statement
-                variants.addAll(manager.getAllSelect(getElement()).keySet());
-                variants.addAll(manager.getAllStatement(getElement()).keySet());
-                variants.addAll(manager.getAllProcedure(getElement()).keySet());
+                Set<String> allSelect = manager.getAllSelect(getElement()).keySet();
+                for (String select : allSelect) {
+                    variants.add(LookupValueFactory.createLookupValue(select, IbatisConstants.SQLMAP_SELECT));
+                }
+                Set<String> allStatement = manager.getAllStatement(getElement()).keySet();
+                for (String statement : allStatement) {
+                    variants.add(LookupValueFactory.createLookupValue(statement, IbatisConstants.SQLMAP_STATEMENT));
+                }
+                Set<String> allProcedure = manager.getAllProcedure(getElement()).keySet();
+                for (String procedure : allProcedure) {
+                    variants.add(LookupValueFactory.createLookupValue(procedure, IbatisConstants.SQLMAP_PROCEDURE));
+                }
             }
             return variants.toArray();
         }
