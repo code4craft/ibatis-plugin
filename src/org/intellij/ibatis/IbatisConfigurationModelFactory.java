@@ -24,7 +24,7 @@ import java.util.Set;
  * @author
  */
 public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfig, IbatisConfigurationModel, PsiElement> {
-    private static Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
+    private  Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
 
     protected IbatisConfigurationModelFactory(DomManager domManager) {
         super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "iBATIS");
@@ -52,7 +52,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         return new IbatisConfigurationModelImpl(mergedModel, configFiles);
     }
 
-    public static Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
+    public  Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
         if (CONFIGURATION_FILES.size() > 0) return CONFIGURATION_FILES;
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
         PsiManager psiManager = PsiManager.getInstance(module.getProject());
