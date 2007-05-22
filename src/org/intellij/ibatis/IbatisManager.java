@@ -150,4 +150,6 @@ public abstract class IbatisManager {
      * @return sql map    id reference
      */
     public abstract Map<String, CacheModel> getAllCacheModel(PsiElement psiElement);
+
+    public abstract Map<String, XmlTag> getAllTypeAlias2(PsiElement psiElement) ;
 }

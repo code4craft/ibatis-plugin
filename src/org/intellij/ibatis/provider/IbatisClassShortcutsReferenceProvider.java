@@ -7,6 +7,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.intellij.ibatis.IbatisManager;
@@ -51,7 +52,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
             public PsiElement resolve() {
                 String className = getCanonicalText();
                 if (classShortcuts.containsKey(className) || getTypeAlias(getElement()).containsKey(className)) {
-                    return getPsiClass(getElement(), className);
+                    return getPsiElement(getElement(), className);
                 }
                 return super.resolve();
             }
@@ -77,6 +78,33 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         }};
     }
 
+    /**
+     * find PsiClass according to class full name
+     *
+     * @param project   project object
+     * @param className any name of shortcut, type alias or java class
+     * @return PsiClass object
+     */
+    public static PsiElement getPsiElement(PsiElement psiElement, String className) {
+        Project project = psiElement.getProject();
+        PsiManager psiManager = PsiManager.getInstance(project);
+        //short cut
+        if (classShortcuts.containsKey(className)) {
+            return psiManager.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
+        }
+        //type alias
+            Map<String, XmlTag> typeAlias2 = IbatisManager.getInstance().getAllTypeAlias2(psiElement);
+      if (typeAlias2.containsKey(className)) {
+          return typeAlias2.get(className);
+      }
+/*
+        Map<String, PsiClass> typeAlias = getTypeAlias(psiElement);
+        if (typeAlias.containsKey(className)) {
+            return typeAlias.get(className);
+        }
+*/
+        return psiManager.findClass(className, GlobalSearchScope.allScope(project));
+    }
     /**
      * find PsiClass according to class full name
      *

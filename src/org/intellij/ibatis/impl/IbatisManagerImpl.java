@@ -47,6 +47,7 @@ public class IbatisManagerImpl extends IbatisManager {
         }
     }
 
+
     public IbatisSqlMapModel getSqlMapModel(@Nullable PsiElement psiElement) {
         if (psiElement == null) return null;
         IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(psiElement.getProject());
@@ -68,7 +69,21 @@ public class IbatisManagerImpl extends IbatisManager {
         return allAliasMap;
     }
 
-    public Map<String, PsiClass> getAllResultMap(PsiElement psiElement) {
+  public  Map<String, XmlTag> getAllTypeAlias2(PsiElement psiElement) {
+     Map<String, XmlTag> typeAlias = new HashMap<String, XmlTag>();
+      List<IbatisSqlMapModel> models = getAllSqlMapModel(psiElement);
+      for (IbatisSqlMapModel model : models) {
+          List<TypeAlias> typeAliases = model.getMergedModel().getTypeAlias();
+          for (TypeAlias alias : typeAliases) {
+              XmlTag xmlTag = alias.getXmlTag();
+              if (xmlTag != null) {
+                  typeAlias.put(alias.getAlias().getValue(), xmlTag);
+              }
+          }
+      }
+      return typeAlias;
+  }
+  public Map<String, PsiClass> getAllResultMap(PsiElement psiElement) {
         Map<String, PsiClass> resultMap = new HashMap<String, PsiClass>();
         List<IbatisSqlMapModel> models = getAllSqlMapModel(psiElement);
         for (IbatisSqlMapModel model : models) {
