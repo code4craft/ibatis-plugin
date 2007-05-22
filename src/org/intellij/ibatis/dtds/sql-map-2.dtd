@@ -76,7 +76,7 @@ resultMap CDATA #REQUIRED
 <!ELEMENT cacheModel (flushInterval?, flushOnExecute*, property*)+>
 <!ATTLIST cacheModel
 id CDATA #REQUIRED
-type  (LRU | OSCACHE |MEMORY) #REQUIRED
+type  (LRU | OSCACHE | MEMORY | FIFO) #REQUIRED
 readOnly (true | false) #IMPLIED
 serialize (true | false) #IMPLIED
 >
