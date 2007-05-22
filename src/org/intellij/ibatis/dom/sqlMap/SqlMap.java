@@ -43,7 +43,7 @@ public interface SqlMap extends CommonDomModelRootElement {
     @SubTagList("statement")
     public List<Statement> getStatements();
 
-    @SubTagList("procedue")
+    @SubTagList("procedure")
     public List<Procedure> getProcedures();
 
     @SubTagsList({"select", "insert", "delete", "update", "statement", "procedure"})

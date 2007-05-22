@@ -2,14 +2,13 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +80,6 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     /**
      * find PsiClass according to class full name
      *
-     * @param project   project object
      * @param className any name of shortcut, type alias or java class
      * @return PsiClass object
      */
@@ -108,7 +106,6 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     /**
      * find PsiClass according to class full name
      *
-     * @param project   project object
      * @param className any name of shortcut, type alias or java class
      * @return PsiClass object
      */
