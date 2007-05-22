@@ -24,7 +24,8 @@ public class SqlReferenceProvider extends BaseReferenceProvider {
             }
 
             @Nullable public PsiElement resolve() {
-                String sqlId = getCanonicalText();
+//                String sqlId = getCanonicalText();
+                String sqlId = getReferenceId(getElement());
                 Map<String, Sql> sqlList = IbatisManager.getInstance().getAllSql(getElement());
                 Sql sql = sqlList.get(sqlId);
                 return sql == null ? null : sql.getXmlTag().getAttribute("id");

@@ -27,7 +27,7 @@ public class CacheModelStatementReferenceProvider extends BaseReferenceProvider 
             }
 
             @Nullable public PsiElement resolve() {
-               String statementId = getNameSpaceCanonicalText();
+            String statementId = getReferenceId(getElement());
 
               Map<String, Delete> allDelete = IbatisManager.getInstance().getAllDelete(getElement());
               Delete delete = allDelete.get(statementId);

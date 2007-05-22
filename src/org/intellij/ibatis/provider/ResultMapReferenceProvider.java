@@ -25,8 +25,8 @@ public class ResultMapReferenceProvider extends BaseReferenceProvider {
 
       @Nullable
       public PsiElement resolve() {
-        String resultMapId = getNameSpaceCanonicalText();
-
+//        String resultMapId = getCanonicalText();
+        String resultMapId = getReferenceId(getElement());
         Map<String, XmlTag> allResultMap = IbatisManager.getInstance().getAllResultMap2(getElement());
         XmlTag tag = allResultMap.get(resultMapId);
         return tag == null ? null : tag.getAttribute("id");

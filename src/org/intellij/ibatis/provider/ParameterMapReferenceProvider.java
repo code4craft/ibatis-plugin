@@ -23,7 +23,8 @@ public class ParameterMapReferenceProvider extends BaseReferenceProvider {
             }
 
             @Nullable public PsiElement resolve() {
-                String resultMapId = getCanonicalText();
+//                String resultMapId = getCanonicalText()
+                String resultMapId = getReferenceId(getElement());
                 Map<String, XmlTag> allResultMap = IbatisManager.getInstance().getAllParameterMap2(getElement());
                 XmlTag tag = allResultMap.get(resultMapId);
                 return tag==null?null:tag.getAttribute("id");

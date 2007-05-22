@@ -1,5 +1,7 @@
 package org.intellij.ibatis.provider;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -8,6 +10,9 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
+import org.intellij.ibatis.IbatisConfigurationModel;
+import org.intellij.ibatis.IbatisManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -37,7 +42,52 @@ public class XmlAttributeValuePsiReference implements PsiReference {
     return xmlAttributeValue.getValue();
   }
 
-  public String getNameSpaceCanonicalText() {
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    return null;
+  }
+
+  public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException {
+    return null;
+  }
+
+  public boolean isReferenceTo(PsiElement element) {
+    return element == resolve();
+  }
+
+  public Object[] getVariants() {
+    return new Object[0];
+  }
+
+  public boolean isSoft() {
+    return true;
+  }
+
+  /**
+   * 取得带有名字空间的引用ID号。
+   *
+   * @param psiElement 当前节点
+   * @return 引用ID
+   */
+  @NotNull
+  public String getReferenceId(PsiElement psiElement) {
+    Module module = ModuleUtil.findModuleForPsiElement(psiElement.getContainingFile());
+    if (module != null) {
+      IbatisConfigurationModel model = IbatisManager.getInstance().getConfigurationModel(module);
+      if (model != null) {
+        if (model.isUseStatementNamespaces()) {
+          return getCanonicalTextWithNameSpace();
+        }
+      }
+    }
+    return getCanonicalText();
+  }
+
+  /**
+   * 取得带有名称空间的引用ID。如果id已经有名称空间，则直接返回该ID，否则，就会加上名称空间
+   * @return 引用ID
+   */
+  @NotNull
+  public String getCanonicalTextWithNameSpace() {
     String id = getCanonicalText();
     if (id.indexOf('.') == -1) {
       XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) getElement();
@@ -58,23 +108,4 @@ public class XmlAttributeValuePsiReference implements PsiReference {
     return id;
   }
 
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    return null;
-  }
-
-  public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException {
-    return null;
-  }
-
-  public boolean isReferenceTo(PsiElement element) {
-    return element == resolve();
-  }
-
-  public Object[] getVariants() {
-    return new Object[0];
-  }
-
-  public boolean isSoft() {
-    return true;
-  }
 }

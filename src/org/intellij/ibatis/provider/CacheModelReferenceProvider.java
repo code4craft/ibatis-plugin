@@ -25,7 +25,7 @@ public class CacheModelReferenceProvider extends BaseReferenceProvider {
 
       @Nullable
       public PsiElement resolve() {
-        String cacheModelId = getNameSpaceCanonicalText();
+        String cacheModelId = getReferenceId(getElement());
 
         IbatisManager manager = IbatisManager.getInstance();
         Map<String, CacheModel> allResultMap = manager.getAllCacheModel(getElement());
@@ -40,5 +40,6 @@ public class CacheModelReferenceProvider extends BaseReferenceProvider {
     };
     return new PsiReference[]{psiReference};
   }
+
 
 }
