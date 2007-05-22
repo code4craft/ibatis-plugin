@@ -98,7 +98,7 @@ public class XmlAttributeValuePsiReference implements PsiReference {
           XmlTag rootTag = document.getRootTag();
           if (rootTag != null) {
             String namespace = rootTag.getAttributeValue("namespace");
-            if (namespace != null) {
+            if (namespace != null && namespace.length() > 0) {
               return namespace + "." + id;
             }
           }

@@ -36,7 +36,12 @@ public class IbatisManagerImpl extends IbatisManager {
     private String getUniqueName(DomFileElement fileElement, String id) {
         IbatisConfigurationModel configurationModel = getConfigurationModel(ModuleUtil.findModuleForPsiElement(fileElement.getRootTag()));
         if (configurationModel.isUseStatementNamespaces()) {
-            return fileElement.getRootTag().getAttributeValue("namespace") + "." + id;
+          String namespace = fileElement.getRootTag().getAttributeValue("namespace");
+          if (namespace != null && namespace.length() > 0) {
+            return namespace + "." + id;
+          } else {
+            return id;
+          }
         } else {
             return id;
         }
