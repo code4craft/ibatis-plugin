@@ -53,6 +53,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "discriminator", new String[]{"typeHandler"}, classReferenceProvider);
         //ibatis class with shortcuts and type alias
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameterMap", new String[]{"class"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"javaType"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "resultMap", new String[]{"class"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"parameterClass"}, classShortcutsReferenceProvider);
@@ -88,6 +89,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"resultMap"}, resultMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"resultMap"}, resultMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"resultMap"}, resultMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "resultMap", new String[]{"extends"}, resultMapReferenceProvider);
         //parameter map reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"parameterMap"}, parameterMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"parameterMap"}, parameterMapReferenceProvider);
