@@ -25,7 +25,8 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
         return "iBATIS Sql Map Model";
     }
 
-    @SuppressWarnings({"ConstantConditions"}) public void checkFileElement(DomFileElement<SqlMap> fileElement, DomElementAnnotationHolder holder) {
+    @SuppressWarnings({"ConstantConditions"})
+    public void checkFileElement(DomFileElement<SqlMap> fileElement, DomElementAnnotationHolder holder) {
         Module module = ModuleUtil.findModuleForPsiElement(fileElement.getXmlElement());
         IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(module.getProject());
         List<IbatisSqlMapModel> models = projectComponent.getSqlMapModelFactory().getAllModels(module);
@@ -50,6 +51,20 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
         for (Statement statement : sqlMap.getStatements()) {
             checkStatement(model, sqlMap, statement, holder);
         }
+        for (ResultMap resultMap : sqlMap.getResultMaps()) {
+            checkResultMap(model, sqlMap, resultMap, holder);
+        }
+    }
+
+    /**
+     * check select bean
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param select      current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkResultMap(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, ResultMap resultMap, final DomElementAnnotationHolder holder) {
     }
 
     /**
