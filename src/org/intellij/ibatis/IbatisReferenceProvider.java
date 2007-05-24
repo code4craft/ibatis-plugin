@@ -18,13 +18,11 @@ public class IbatisReferenceProvider implements ProjectComponent {
     private ReferenceProvidersRegistry registry;
     private NamespaceFilter ibatisSqlMapConfigNamespaceFilter;
     private NamespaceFilter ibatisSqlMapNamespaceFilter;
-    private Project project;
 
     public IbatisReferenceProvider(Project project) {
         ibatisSqlMapConfigNamespaceFilter = new NamespaceFilter(IbatisConstants.CONFIGURATION_DTDS);
         ibatisSqlMapNamespaceFilter = new NamespaceFilter(IbatisConstants.SQLMAP_DTDS);
         registry = ReferenceProvidersRegistry.getInstance(project);
-      this.project = project;
     }
 
     public void initComponent() {
@@ -38,13 +36,13 @@ public class IbatisReferenceProvider implements ProjectComponent {
         SqlReferenceProvider sqlReferenceProvider = new SqlReferenceProvider();
         TableColumnReferenceProvider tableColumnReferenceProvider = new TableColumnReferenceProvider();
         CacheModelReferenceProvider cacheModelReferenceProvider = new CacheModelReferenceProvider();
-      CacheModelTypeReferenceProvider cacheModelTypeReferenceProvider = new CacheModelTypeReferenceProvider();
-      CacheModelStatementReferenceProvider modelStatementReferenceProvider = new CacheModelStatementReferenceProvider();
-      CacheModelPropertyReferenceProvider modelPropertyReferenceProvider = new CacheModelPropertyReferenceProvider();
-      CacheModelMemoryTypeReferenceProvider cacheModelMemoryTypeReferenceProvider = new CacheModelMemoryTypeReferenceProvider();
+        CacheModelTypeReferenceProvider cacheModelTypeReferenceProvider = new CacheModelTypeReferenceProvider();
+        CacheModelStatementReferenceProvider modelStatementReferenceProvider = new CacheModelStatementReferenceProvider();
+        CacheModelPropertyReferenceProvider modelPropertyReferenceProvider = new CacheModelPropertyReferenceProvider();
+        CacheModelMemoryTypeReferenceProvider cacheModelMemoryTypeReferenceProvider = new CacheModelMemoryTypeReferenceProvider();
 
-      ParameterJdbcTypeReferenceProvider jdbcTypeReferenceProvider = new ParameterJdbcTypeReferenceProvider();
-      //java class
+        ParameterJdbcTypeReferenceProvider jdbcTypeReferenceProvider = new ParameterJdbcTypeReferenceProvider();
+        //java class
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "parameter", new String[]{"javaType"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
@@ -103,22 +101,20 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"cacheModel"}, cacheModelReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"cacheModel"}, cacheModelReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"cacheModel"}, cacheModelReferenceProvider);
-      //cache model type reference provider
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "cacheModel", new String[]{"type"}, cacheModelTypeReferenceProvider);
-      //cache model statement reference provider
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "flushOnExecute", new String[]{"statement"}, modelStatementReferenceProvider);
-      //cache model property reference provider
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "property", new String[]{"name"}, modelPropertyReferenceProvider);
-      //cache model memory type reference provider
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "property", new String[]{"value"}, cacheModelMemoryTypeReferenceProvider);
+        //cache model type reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "cacheModel", new String[]{"type"}, cacheModelTypeReferenceProvider);
+        //cache model statement reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "flushOnExecute", new String[]{"statement"}, modelStatementReferenceProvider);
+        //cache model property reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "property", new String[]{"name"}, modelPropertyReferenceProvider);
+        //cache model memory type reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "property", new String[]{"value"}, cacheModelMemoryTypeReferenceProvider);
         //table column reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"column"}, tableColumnReferenceProvider);
-      //parameter jdbctype reference provider
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
-      //parameter resultmap reference provider
-//      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"resultMap"}, parameterResultMapReferenceProvider);
-
-      registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+        //parameter jdbctype reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+        // jdbcType reference provider
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
 
     }
 
