@@ -89,10 +89,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public boolean isSoft() {
-                       if("Map".equals(psiClass.getName())) {
-                        return true;
-                      }
-                        return false;
+                        return "Map".equals(psiClass.getName());
                     }
                 };
         } else {
@@ -159,10 +156,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public boolean isSoft() {
-                      if("Map".equals(psiClass.getName())) {
-                        return true;
-                      }
-                        return false;
+                        return "Map".equals(psiClass.getName());
                     }
                 };
         }
