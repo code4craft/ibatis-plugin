@@ -30,6 +30,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             if (psiClass != null)
                 psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
                     @Nullable public PsiElement resolve() {
+                        if("Map".equals(psiClass.getName())) {
+                        return null;
+                      }
                         PsiClass referencedClass = psiClass;
                         String referencePath = getCanonicalText();
                         String methodName = "set" + StringUtil.capitalize(referencePath);
@@ -74,6 +77,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public Object[] getVariants() {
+                      if("Map".equals(psiClass.getName())) {
+                        return null;
+                      }
                         List<String> setterMethods = getAllSetterMethods(psiClass, getCanonicalText());
                         List<Object> variants = new ArrayList<Object>();
                         for (String setterMethod : setterMethods) {
@@ -83,6 +89,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public boolean isSoft() {
+                       if("Map".equals(psiClass.getName())) {
+                        return true;
+                      }
                         return false;
                     }
                 };
@@ -91,6 +100,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             if (psiClass != null)
                 psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
                     @Nullable public PsiElement resolve() {
+                        if("Map".equals(psiClass.getName())) {
+                        return null;
+                      }
                         PsiClass referencedClass = psiClass;
                         String referencePath = getCanonicalText().replace("IntellijIdeaRulezzz ", "");
                         String methodName = "get" + StringUtil.capitalize(referencePath);
@@ -135,6 +147,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public Object[] getVariants() {
+                      if("Map".equals(psiClass.getName())) {
+                        return null;
+                      }
                         List<String> setterMethods = getAllGetterMethods(psiClass, getCanonicalText().replace("IntellijIdeaRulezzz ", ""));
                         List<Object> variants = new ArrayList<Object>();
                         for (String setterMethod : setterMethods) {
@@ -144,6 +159,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                     }
 
                     public boolean isSoft() {
+                      if("Map".equals(psiClass.getName())) {
+                        return true;
+                      }
                         return false;
                     }
                 };
