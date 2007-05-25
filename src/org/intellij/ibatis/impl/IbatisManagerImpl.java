@@ -71,6 +71,13 @@ public class IbatisManagerImpl extends IbatisManager {
 
   public  Map<String, XmlTag> getAllTypeAlias2(PsiElement psiElement) {
      Map<String, XmlTag> typeAlias = new HashMap<String, XmlTag>();
+       Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+        IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(module.getProject());
+        List<IbatisConfigurationModel> configurationModels = projectComponent.getConfigurationModelFactory().getAllModels(module);
+        for (IbatisConfigurationModel configurationModel : configurationModels) {
+            typeAlias.putAll(configurationModel.getTypeAlias2());
+        }
+
       List<IbatisSqlMapModel> models = getAllSqlMapModel(psiElement);
       for (IbatisSqlMapModel model : models) {
           List<TypeAlias> typeAliases = model.getMergedModel().getTypeAlias();
@@ -83,6 +90,7 @@ public class IbatisManagerImpl extends IbatisManager {
       }
       return typeAlias;
   }
+
   public Map<String, PsiClass> getAllResultMap(PsiElement psiElement) {
         Map<String, PsiClass> resultMap = new HashMap<String, PsiClass>();
         List<IbatisSqlMapModel> models = getAllSqlMapModel(psiElement);

@@ -2,6 +2,7 @@ package org.intellij.ibatis.impl;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.model.DomModelImpl;
 import org.intellij.ibatis.IbatisConfigurationModel;
@@ -46,6 +47,18 @@ public class IbatisConfigurationModelImpl extends DomModelImpl<SqlMapConfig> imp
         if (globalTypeAlias != null && globalTypeAlias.size() > 0) {
             for (TypeAlias typeAlias : globalTypeAlias) {
                 aliasMap.put(typeAlias.getAlias().getValue(), typeAlias.getType().getValue());
+            }
+        }
+        return aliasMap;
+    }
+
+    @NotNull
+    public Map<String, XmlTag> getTypeAlias2() {
+        Map<String, XmlTag> aliasMap = new HashMap<String, XmlTag>();
+        List<TypeAlias> globalTypeAlias = getMergedModel().getTypeAlias();
+        if (globalTypeAlias != null && globalTypeAlias.size() > 0) {
+            for (TypeAlias typeAlias : globalTypeAlias) {
+                aliasMap.put(typeAlias.getAlias().getValue(), typeAlias.getType().getXmlTag());
             }
         }
         return aliasMap;

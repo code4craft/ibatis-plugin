@@ -3,7 +3,9 @@ package org.intellij.ibatis.provider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.codeInsight.lookup.LookupValueFactory;
 import org.intellij.ibatis.IbatisManager;
+import org.intellij.ibatis.util.IbatisConstants;
 import org.intellij.ibatis.dom.sqlMap.Delete;
 import org.intellij.ibatis.dom.sqlMap.Insert;
 import org.intellij.ibatis.dom.sqlMap.Procedure;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * cache model reference provider
@@ -58,18 +61,29 @@ public class CacheModelStatementReferenceProvider extends BaseReferenceProvider 
             }
 
             public Object[] getVariants() {
-              List<String> values = new ArrayList<String>();
+              List variants = new ArrayList();
 
-              Map<String, Delete> allDelete = IbatisManager.getInstance().getAllDelete(getElement());
-              values.addAll(allDelete.keySet());
-              Map<String, Insert> allInsert = IbatisManager.getInstance().getAllInsert(getElement());
-              values.addAll(allInsert.keySet());
-              Map<String, Update> allUpdate = IbatisManager.getInstance().getAllUpdate(getElement());
-              values.addAll(allUpdate.keySet());
-              Map<String, Procedure> allProcedure = IbatisManager.getInstance().getAllProcedure(getElement());
-              values.addAll(allProcedure.keySet());
+              Set<String> deletes = IbatisManager.getInstance().getAllDelete(getElement()).keySet();
+              for (String key : deletes) {
+                 variants.add(LookupValueFactory.createLookupValue(key, IbatisConstants.SQLMAP_DELETE));
+              }
 
-              return values.toArray();
+              Set<String> inserts = IbatisManager.getInstance().getAllInsert(getElement()).keySet();
+              for (String key : inserts) {
+                 variants.add(LookupValueFactory.createLookupValue(key, IbatisConstants.SQLMAP_INSERT));
+              }
+
+              Set<String> updates = IbatisManager.getInstance().getAllUpdate(getElement()).keySet();
+              for (String key : updates) {
+                 variants.add(LookupValueFactory.createLookupValue(key, IbatisConstants.SQLMAP_UPDATE));
+              }
+
+              Set<String> procedures = IbatisManager.getInstance().getAllProcedure(getElement()).keySet();
+              for (String key : procedures) {
+                 variants.add(LookupValueFactory.createLookupValue(key, IbatisConstants.SQLMAP_PROCEDURE));
+              }
+
+              return variants.toArray();
             }
         };
         return new PsiReference[]{psiReference};
