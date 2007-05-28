@@ -171,7 +171,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      * @param methodName getter method name
      * @return PsiClass
      */
-    private PsiClass findGetterMethodReturnType(PsiClass psiClass, String methodName) {
+    public static PsiClass findGetterMethodReturnType(PsiClass psiClass, String methodName) {
         PsiMethod[] methods = psiClass.findMethodsByName(methodName, true);
         //getter method find for current
         if (methods.length > 0) {
