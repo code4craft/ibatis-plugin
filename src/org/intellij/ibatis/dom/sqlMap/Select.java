@@ -1,6 +1,7 @@
 package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
+import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.TagValue;
@@ -11,7 +12,7 @@ import com.intellij.util.xml.TagValue;
 public interface Select extends CommonDomModelElement {
 
     @TagValue
-    public String getvalue();
+    public String getValue();
 
     public GenericAttributeValue<String> getId();
 
@@ -27,5 +28,11 @@ public interface Select extends CommonDomModelElement {
     @Attribute("resultMap")
     public GenericAttributeValue<String> getResultMap();
 
+    public Include getInclude();
+
     public ResultMap getReferencedResultMap();
+
+    public PsiClass getResultClazz();
+
+    public String getSQL();
 }
