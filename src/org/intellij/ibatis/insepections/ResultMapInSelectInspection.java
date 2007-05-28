@@ -35,7 +35,9 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
     protected void checkSelect(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Select select, DomElementAnnotationHolder holder) {
         ResultMap resultMap = select.getReferencedResultMap();
         if (resultMap != null) {
-            String sql = select.getvalue() + ";";
+            String sql = select.getValue() + ";";
+            sql = sql.replaceAll("\\#[\\w\\.]*\\#", "''");
+            sql = sql.replaceAll("\\$[\\w\\.]*\\$", "temp1");
             try {
                 Map<String, String> allSelectItems = new HashMap<String, String>();
                 ZqlParser parser = new ZqlParser(new ByteArrayInputStream(sql.getBytes()));
