@@ -7,6 +7,7 @@ import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.psi.PsiElement;
 import org.intellij.ibatis.facet.IbatisFacetType;
+import org.intellij.ibatis.insepections.NullSettedToPrimaryTypeInspection;
 import org.intellij.ibatis.insepections.SqlMapFileInConfigurationInspection;
 import org.intellij.ibatis.insepections.SqlMapUniqueIdInspection;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -71,6 +72,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @return inspection class array
      */
     public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapUniqueIdInspection.class, SqlMapFileInConfigurationInspection.class};
+        return new Class[]{SqlMapUniqueIdInspection.class, SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class};
     }
 }
