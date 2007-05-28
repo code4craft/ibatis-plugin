@@ -18,6 +18,8 @@ public interface Result extends CommonDomModelElement {
 
     public GenericAttributeValue<String> getResultMap();
 
+    public GenericAttributeValue<String> getNullValue();
+
     @Convert(SelectConverter.class)
     @NameValue(referencable = false)
     public GenericAttributeValue<Select> getSelect();
