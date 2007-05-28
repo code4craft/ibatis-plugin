@@ -15,7 +15,7 @@ public abstract class SelectImpl extends BaseImpl implements Select {
     public ResultMap getReferencedResultMap() {
         String resultMapName = getResultMap().getValue();
         if (StringUtil.isNotEmpty(resultMapName)) {
-            XmlTag tag = IbatisManager.getInstance().getAllParameterMap2(getXmlElement()).get(resultMapName);
+            XmlTag tag = IbatisManager.getInstance().getAllResultMap2(getXmlElement()).get(resultMapName);
             DomElement element = getManager().getDomElement(tag);
             if (element instanceof ResultMap) {
                 return (ResultMap) element;
