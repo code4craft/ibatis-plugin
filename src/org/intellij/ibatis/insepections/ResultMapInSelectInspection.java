@@ -55,7 +55,7 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
                         }
                     }
                 }
-                for (Result result : resultMap.getResults()) {
+                for (Result result : resultMap.getAllResults()) {
                     String columnName = result.getColumn().getValue();
                     if (columnName == null) columnName = result.getProperty().getValue();
                     if (columnName != null) {
