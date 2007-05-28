@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
@@ -60,10 +61,13 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
                     }
                 }
                 if (setMethod != null) {
-                    PsiType[] superTypes = setMethod.getReturnType().getSuperTypes();
-                    if (superTypes.length < 1)  // primary type
-                    {
-                        holder.createProblem(result, HighlightSeverity.WARNING, "Null value may be setted to primary type variable.", new AddNullValueForResultElementQuickFix(result));
+                    PsiParameter[] psiParameters = setMethod.getParameterList().getParameters();
+                    if (psiParameters.length == 1) {
+                        PsiType[] superTypes = psiParameters[0].getType().getSuperTypes();
+                        if (superTypes.length < 1)  // primary type
+                        {
+                            holder.createProblem(result, HighlightSeverity.WARNING, "Null value may be setted to primary type variable.", new AddNullValueForResultElementQuickFix(result));
+                        }
                     }
                 }
             }
