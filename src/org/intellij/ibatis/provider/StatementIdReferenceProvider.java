@@ -62,6 +62,11 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
         if (procedure != null) {
           return procedure.getXmlTag();
         }
+          Insert insert = manager.getAllInsert(getElement()).get(statementId);
+          if(insert!=null)
+          {
+              return insert.getXmlTag();
+          }
         return null;
 //                return update == null ? null : update.getXmlTag();
       } else if ("delete".equals(methodPrefix)) {
