@@ -8,6 +8,7 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import org.intellij.ibatis.IbatisProjectComponent;
 import org.intellij.ibatis.IbatisSqlMapModel;
 import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
     }
 
     @Nls @NotNull public String getGroupDisplayName() {
-        return "iBATIS Sql Map Model";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.group");
     }
 
     @SuppressWarnings({"ConstantConditions"})

@@ -16,6 +16,7 @@ import org.intellij.ibatis.dom.sqlMap.Result;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.provider.FieldAccessMethodReferenceProvider;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +28,11 @@ import java.util.List;
  */
 public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
     @Nls @NotNull public String getDisplayName() {
-        return "set null to primary type variable";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.name");
     }
 
     @NonNls @NotNull public String getShortName() {
-        return "NullToPrimaryTypeVariable";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.id");
     }
 
     @SuppressWarnings({"ConstantConditions"})
@@ -66,7 +67,7 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
                         PsiType[] superTypes = psiParameters[0].getType().getSuperTypes();
                         if (superTypes.length < 1)  // primary type
                         {
-                            holder.createProblem(result, HighlightSeverity.WARNING, "Null value may be setted to primary type variable.", new AddNullValueForResultElementQuickFix(result));
+                            holder.createProblem(result, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.error"), new AddNullValueForResultElementQuickFix(result));
                         }
                     }
                 }

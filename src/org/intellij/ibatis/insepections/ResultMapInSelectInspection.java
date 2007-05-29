@@ -11,6 +11,7 @@ import org.intellij.ibatis.dom.sqlMap.Result;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.dom.sqlMap.Select;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +26,11 @@ import java.util.Vector;
  */
 public class ResultMapInSelectInspection extends SqlMapInspection {
     @Nls @NotNull public String getDisplayName() {
-        return "resultmap in select";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.resulmapinselect.name");
     }
 
     @NonNls @NotNull public String getShortName() {
-        return "resultmap in select";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.resulmapinselect.id");
     }
 
     protected void checkSelect(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Select select, DomElementAnnotationHolder holder) {
@@ -60,7 +61,7 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
                     if (columnName == null) columnName = result.getProperty().getValue();
                     if (columnName != null) {
                         if (allSelectItems.get(columnName.toUpperCase()) == null) {
-                            holder.createProblem(select, HighlightSeverity.WARNING, columnName + " column absent in SQL sentence for result map");
+                            holder.createProblem(select, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.resulmapinselect.error", columnName));
                             break;
                         }
                     }

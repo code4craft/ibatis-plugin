@@ -15,6 +15,7 @@ import org.intellij.ibatis.IbatisConfigurationModel;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.configuration.SqlMapConfig;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -23,15 +24,16 @@ import java.util.Set;
 
 /**
  * inspection the sql map file in configuration, if not in configuration file, use quick fix
+ *
  * @author Jacky
  */
 public class SqlMapFileInConfigurationInspection extends SqlMapInspection {
     @Nls @NotNull public String getDisplayName() {
-        return "sql map file not in configuration inspection";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.notinconfiguration.name");
     }
 
     @NonNls @NotNull public String getShortName() {
-        return "sqlmap_not_in_configuration_inspection";
+        return IbatisBundle.message("ibatis.sqlmap.inspection.notinconfiguration.id");
     }
 
     @SuppressWarnings({"ConstantConditions", "SuspiciousMethodCalls"})
@@ -42,7 +44,7 @@ public class SqlMapFileInConfigurationInspection extends SqlMapInspection {
         Set<XmlFile> sqlMapFiles = configurationModel.getSqlMapFiles();
         if (!sqlMapFiles.contains(sqlMap.getContainingFile())) {
             SqlMapConfig sqlMapConfig = configurationModel.getMergedModel();
-            holder.createProblem(sqlMap, HighlightSeverity.WARNING, "Current sql map file not in iBATIS configuration", new InsertSqlMapIntoConfigurationQuickFix(sqlMapConfig, sqlMap));
+            holder.createProblem(sqlMap, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.notinconfiguration.error"), new InsertSqlMapIntoConfigurationQuickFix(sqlMapConfig, sqlMap));
         }
     }
 
