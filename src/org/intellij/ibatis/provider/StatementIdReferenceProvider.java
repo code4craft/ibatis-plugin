@@ -95,11 +95,14 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
         for (String delete : allDelete) {
           variants.add(LookupValueFactory.createLookupValue(delete, IbatisConstants.SQLMAP_DELETE));
         }
-        Set<String> allprocedures = manager.getAllProcedure(getElement()).keySet();
-        for (String procedure : allprocedures) {
+        Set<String> allProcedure = manager.getAllProcedure(getElement()).keySet();
+        for (String procedure : allProcedure) {
           variants.add(LookupValueFactory.createLookupValue(procedure, IbatisConstants.SQLMAP_PROCEDURE));
         }
-
+       Set<String> allInsert=manager.getAllInsert(getElement()).keySet();
+          for (String insert : allInsert) {
+              variants.add(LookupValueFactory.createLookupValue(insert, IbatisConstants.SQLMAP_INSERT));
+          }
       } else if ("delete".equals(methodPrefix)) {    //delete
         Set<String> allDelete = manager.getAllDelete(getElement()).keySet();
         for (String delete : allDelete) {
