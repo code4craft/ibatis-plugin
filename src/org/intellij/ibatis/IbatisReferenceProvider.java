@@ -12,6 +12,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassRe
 import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisConstants;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class IbatisReferenceProvider implements ProjectComponent {
@@ -122,7 +123,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
     }
 
     @NotNull public String getComponentName() {
-        return "iBATIS Reference Provider";
+        return IbatisBundle.message("ibatis.referenceprovider.project.component.name");
     }
 
     public void projectOpened() {
