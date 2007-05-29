@@ -11,6 +11,7 @@ import org.intellij.ibatis.insepections.NullSettedToPrimaryTypeInspection;
 import org.intellij.ibatis.insepections.ResultMapInSelectInspection;
 import org.intellij.ibatis.insepections.SqlMapFileInConfigurationInspection;
 import org.intellij.ibatis.insepections.SqlMapUniqueIdInspection;
+import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     }
 
     @NotNull public String getComponentName() {
-        return "iBATIS Application Component";
+        return IbatisBundle.message("ibatis.application.component.name");
     }
 
     /**
