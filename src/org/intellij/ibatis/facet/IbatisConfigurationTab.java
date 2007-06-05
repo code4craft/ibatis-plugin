@@ -16,6 +16,9 @@ import java.util.List;
 public class IbatisConfigurationTab extends FacetEditorTab {
     private JPanel mainPanel;
     private JComboBox dataSourceComboBox;
+    private JTextField sqlmapSuffixTextField;
+    private JTextField tableNamePatternTextField;
+    private JTextField domainNamePatternTextField;
     private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 
