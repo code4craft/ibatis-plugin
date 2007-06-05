@@ -13,6 +13,8 @@ public interface IbatisConstants {
             "http://ibatis.apache.org/dtd/sql-map-2.dtd", "http://www.ibatis.com/dtd/sql-map-2.dtd"
     };
 
+    public static final String ABATOR_DTDS[] = {"http://ibatis.apache.org/dtd/abator-config_1_0.dtd"};
+
     public Icon IBATIS_LOGO = IconLoader.findIcon("/icons/logo.png");
     
     //class related
