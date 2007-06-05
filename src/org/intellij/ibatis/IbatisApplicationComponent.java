@@ -32,6 +32,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     public void initComponent() {
         registerDTDs(IbatisConstants.CONFIGURATION_DTDS);
         registerDTDs(IbatisConstants.SQLMAP_DTDS);
+        registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
     }
 
