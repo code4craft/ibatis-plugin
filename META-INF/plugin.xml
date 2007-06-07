@@ -4,7 +4,7 @@
     <description>plugin for IntelliJ IDEA to accelerate iBATIS developement</description>
     <version>0.1</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
-    <idea-version since-build="6950"/>
+    <idea-version since-build="7000"/>
     <depends>com.intellij.javaee</depends>
     <extensions xmlns="com.intellij">
         <applicationService serviceInterface="org.intellij.ibatis.IbatisManager"
