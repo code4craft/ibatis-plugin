@@ -48,10 +48,6 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         return models;
     }
 
-    protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> configFiles, SqlMapConfig mergedModel, IbatisConfigurationModel firstModel) {
-        return new IbatisConfigurationModelImpl(mergedModel, configFiles);
-    }
-
     public  Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
         if (CONFIGURATION_FILES.size() > 0) return CONFIGURATION_FILES;
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -71,5 +67,9 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
             }
         }
         return CONFIGURATION_FILES;
+    }
+
+    protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> xmlFiles, SqlMapConfig sqlMapConfig, IbatisConfigurationModel ibatisConfigurationModel, Module module) {
+       return new IbatisConfigurationModelImpl(sqlMapConfig, xmlFiles);
     }
 }

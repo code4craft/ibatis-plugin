@@ -11,8 +11,8 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.provider.*;
-import org.intellij.ibatis.util.IbatisConstants;
 import org.intellij.ibatis.util.IbatisBundle;
+import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 
 public class IbatisReferenceProvider implements ProjectComponent {
@@ -29,6 +29,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
     public void initComponent() {
         //statement id reference
         registry.registerReferenceProvider(new SqlClientElementFilter(), PsiLiteralExpression.class, new StatementIdReferenceProvider());
+        registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTableTagFilter(), true, new DatabaseTableReferenceProvider());
         JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
         IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
         FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
