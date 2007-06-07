@@ -45,8 +45,7 @@ public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlM
         return models;
     }
 
-    protected IbatisSqlMapModel createCombinedModel(Set<XmlFile> xmlFiles, SqlMap sqlMap, IbatisSqlMapModel ibatisSqlMapModel) {
+    protected IbatisSqlMapModel createCombinedModel(Set<XmlFile> xmlFiles, SqlMap sqlMap, IbatisSqlMapModel ibatisSqlMapModel, Module module) {
         return new IbatisSqlMapModelImpl(sqlMap, xmlFiles);
     }
-
 }
