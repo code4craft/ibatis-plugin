@@ -16,13 +16,14 @@ public interface IbatisConstants {
     public static final String ABATOR_DTDS[] = {"http://ibatis.apache.org/dtd/abator-config_1_0.dtd"};
 
     public Icon IBATIS_LOGO = IconLoader.findIcon("/icons/logo.png");
-    
+
     //class related
     public Icon CLASS_FIELD = IconLoader.findIcon("/icons/class_field.png");
     public Icon INTERNAL_CLASS = IconLoader.findIcon("/icons/internal_class.png");
     public Icon TYPE_ALIAS = IconLoader.findIcon("/icons/typealias.png");
-    
+
     //database related field
+    public Icon DATABASE_TABLE = IconLoader.findIcon("/icons/dbTable.png");
     public Icon DATABASE_PK_FIELD = IconLoader.findIcon("/icons/dataPkColumn.png");
     public Icon DATABASE_COMMON_FIELD = IconLoader.findIcon("/icons/dataColumn.png");
 
