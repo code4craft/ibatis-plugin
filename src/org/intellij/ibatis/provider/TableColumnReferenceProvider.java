@@ -2,12 +2,8 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.javaee.dataSource.DataSource;
-import com.intellij.javaee.dataSource.DataSourceManager;
 import com.intellij.javaee.dataSource.DatabaseTableData;
 import com.intellij.javaee.dataSource.DatabaseTableFieldData;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -16,7 +12,6 @@ import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
-import org.intellij.ibatis.facet.IbatisFacet;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,13 +23,6 @@ import java.util.List;
  */
 public class TableColumnReferenceProvider extends BaseReferenceProvider {
     @NotNull public PsiReference[] getReferencesByElement(final PsiElement psiElement) {
-        Module module = ModuleUtil.findModuleForPsiElement(psiElement);
-        IbatisFacet ibatisFacet = IbatisFacet.getInstance(module);
-        if (ibatisFacet == null) return PsiReference.EMPTY_ARRAY;
-        if (StringUtil.isEmpty(ibatisFacet.getConfiguration().dataSourceName)) {
-            return PsiReference.EMPTY_ARRAY;
-        }
-        String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
         final XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
         final XmlTag xmlTag = (XmlTag) xmlAttributeValue.getParent().getParent().getParent();   //result or parameter tag
         if (xmlTag.getAttributeValue("class") != null) {
@@ -46,14 +34,12 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
                     if (tableTag != null) {
                         String tableName = tableTag.getValueElement().getText().trim();
                         if (StringUtil.isNotEmpty(tableName)) {
-                            DataSourceManager dataSourceManager = DataSourceManager.getInstance(psiElement.getProject());
-                            if (dataSourceManager == null) return PsiReference.EMPTY_ARRAY;
-                            DataSource dataSource = dataSourceManager.getDataSourceByName(selectedDataSourceName);
+                            DataSource dataSource = DatabaseTableReferenceProvider.getDataSourceForIbatis(psiElement);
                             if (dataSource != null) {
                                 DatabaseTableData tableData = null;
                                 List<DatabaseTableData> tables = dataSource.getTables();
                                 for (DatabaseTableData table : tables) {
-                                    if (table.getName().equals(tableName)) {
+                                    if (table.getName().equals(tableName)) {                                        
                                         tableData = table;
                                         break;
                                     }
