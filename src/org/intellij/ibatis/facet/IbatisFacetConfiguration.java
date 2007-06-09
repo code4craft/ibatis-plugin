@@ -20,6 +20,10 @@ import org.jdom.Element;
 public class IbatisFacetConfiguration implements FacetConfiguration, ModificationTracker {
     private long myModificationCount;
     public String dataSourceName;
+    public String sqlMapSuffix;
+    public String tableNamePattern;
+    public String domainNamePattern;
+    public String abatorOverWrite;
 
     public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
         return new FacetEditorTab[]{
@@ -29,10 +33,19 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 
     public void readExternal(Element element) throws InvalidDataException {
         dataSourceName = JDOMExternalizer.readString(element, "datasourceName");
+        sqlMapSuffix = JDOMExternalizer.readString(element, "sqlMapSuffix");
+        tableNamePattern = JDOMExternalizer.readString(element, "tableNamePattern");
+        domainNamePattern = JDOMExternalizer.readString(element, "domainNamePattern");
+        abatorOverWrite = JDOMExternalizer.readString(element, "abatorOverWrite");
     }
 
     public void writeExternal(Element element) throws WriteExternalException {
         JDOMExternalizer.write(element, "datasourceName", dataSourceName);
+        JDOMExternalizer.write(element, "sqlMapSuffix", sqlMapSuffix);
+        JDOMExternalizer.write(element, "tableNamePattern", tableNamePattern);
+        JDOMExternalizer.write(element, "domainNamePattern", domainNamePattern);
+        JDOMExternalizer.write(element, "abatorOverWrite", abatorOverWrite);
+
     }
 
     public long getModificationCount() {
