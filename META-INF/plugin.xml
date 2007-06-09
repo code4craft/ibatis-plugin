@@ -1,8 +1,8 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin version="2">
     <name>iBATIS Plugin</name>
-    <description>plugin for IntelliJ IDEA to accelerate iBATIS developement</description>
-    <version>0.1</version>
+    <description>The plugin for IntelliJ IDEA to accelerate iBATIS developement. Please visit http://code.google.com/p/ibatis-plugin for detail.</description>
+    <version>0.2</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
     <idea-version since-build="7000"/>
     <depends>com.intellij.javaee</depends>
