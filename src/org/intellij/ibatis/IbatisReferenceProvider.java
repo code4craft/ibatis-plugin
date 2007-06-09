@@ -19,10 +19,12 @@ public class IbatisReferenceProvider implements ProjectComponent {
     private ReferenceProvidersRegistry registry;
     private NamespaceFilter ibatisSqlMapConfigNamespaceFilter;
     private NamespaceFilter ibatisSqlMapNamespaceFilter;
+    private NamespaceFilter ibatisAbatorNamespaceFilter;
 
     public IbatisReferenceProvider(Project project) {
         ibatisSqlMapConfigNamespaceFilter = new NamespaceFilter(IbatisConstants.CONFIGURATION_DTDS);
         ibatisSqlMapNamespaceFilter = new NamespaceFilter(IbatisConstants.SQLMAP_DTDS);
+        ibatisAbatorNamespaceFilter = new NamespaceFilter(IbatisConstants.ABATOR_DTDS);
         registry = ReferenceProvidersRegistry.getInstance(project);
     }
 
@@ -30,6 +32,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
         //statement id reference
         registry.registerReferenceProvider(new SqlClientElementFilter(), PsiLiteralExpression.class, new StatementIdReferenceProvider());
         registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTableTagFilter(), true, new DatabaseTableReferenceProvider());
+//        registry.registerXmlTagReferenceProvider(new String[]{"insert"},ibatisSqlMapNamespaceFilter,true,new FieldInXmlTagReferenceProvider());
         JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
         IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
         FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
@@ -117,6 +120,11 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
         // jdbcType reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+
+        //abator
+        registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter,"columnOverride", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter,"columnOverride", new String[]{"typeHandler"}, jdbcTypeReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter,"columnOverride", new String[]{"javaType"}, classShortcutsReferenceProvider);
 
     }
 
