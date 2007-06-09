@@ -37,37 +37,39 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
         ResultMap resultMap = select.getReferencedResultMap();
         if (resultMap != null) {
             String sql = select.getValue() + ";";
-            sql = sql.replaceAll("\\#[\\w\\.]*\\#", "''");
-            sql = sql.replaceAll("\\$[\\w\\.]*\\$", "temp1");
-            try {
-                Map<String, String> allSelectItems = new HashMap<String, String>();
-                ZqlParser parser = new ZqlParser(new ByteArrayInputStream(sql.getBytes()));
-                ZStatement statement = parser.readStatement();
-                if (statement != null && statement instanceof ZQuery) {
-                    ZQuery query = (ZQuery) statement;
-                    Vector selectedItems = query.getSelect();
-                    for (Object selectedItem : selectedItems) {
-                        if (selectedItem instanceof ZSelectItem) {
-                            ZSelectItem zSelectItem = (ZSelectItem) selectedItem;
-                            String alias = zSelectItem.getAlias();
-                            if (alias == null) alias = zSelectItem.getColumn();
-                            if (alias.equals("*")) return;
-                            allSelectItems.put(alias.toUpperCase(), zSelectItem.getColumn());
+            if (sql.toUpperCase().contains(" FROM ")) {
+                sql = sql.replaceAll("\\#[\\w\\.]*\\#", "''");
+                sql = sql.replaceAll("\\$[\\w\\.]*\\$", "temp1");
+                try {
+                    Map<String, String> allSelectItems = new HashMap<String, String>();
+                    ZqlParser parser = new ZqlParser(new ByteArrayInputStream(sql.getBytes()));
+                    ZStatement statement = parser.readStatement();
+                    if (statement != null && statement instanceof ZQuery) {
+                        ZQuery query = (ZQuery) statement;
+                        Vector selectedItems = query.getSelect();
+                        for (Object selectedItem : selectedItems) {
+                            if (selectedItem instanceof ZSelectItem) {
+                                ZSelectItem zSelectItem = (ZSelectItem) selectedItem;
+                                String alias = zSelectItem.getAlias();
+                                if (alias == null) alias = zSelectItem.getColumn();
+                                if (alias.equals("*")) return;
+                                allSelectItems.put(alias.toUpperCase(), zSelectItem.getColumn());
+                            }
                         }
                     }
-                }
-                for (Result result : resultMap.getAllResults()) {
-                    String columnName = result.getColumn().getValue();
-                    if (columnName == null) columnName = result.getProperty().getValue();
-                    if (columnName != null) {
-                        if (allSelectItems.get(columnName.toUpperCase()) == null) {
-                            holder.createProblem(select, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.resulmapinselect.error", columnName));
-                            break;
+                    for (Result result : resultMap.getAllResults()) {
+                        String columnName = result.getColumn().getValue();
+                        if (columnName == null) columnName = result.getProperty().getValue();
+                        if (columnName != null) {
+                            if (allSelectItems.get(columnName.toUpperCase()) == null) {
+                                holder.createProblem(select, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.resulmapinselect.error", columnName));
+                                break;
+                            }
                         }
                     }
-                }
-            } catch (Exception e) {
+                } catch (Exception e) {
 
+                }
             }
         }
     }
