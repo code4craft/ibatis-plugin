@@ -11,6 +11,7 @@
                             serviceImplementation="org.intellij.ibatis.impl.IbatisManagerImpl"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisConfigurationFileDescription"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisSqlMapFileDescription"/>
+        <dom.fileDescription implementation="org.intellij.ibatis.IbatisAbatorFileDescription"/>
         <gotoSymbolContributor implementation="org.intellij.ibatis.GoToSqlMapReferenceIdSymbolProvider"/>
     </extensions>
     <application-components>
