@@ -53,8 +53,8 @@
 <!ELEMENT abatorContext (property*, jdbcConnection, javaTypeResolver?, javaModelGenerator,
                         sqlMapGenerator, daoGenerator?, table+)>
 <!ATTLIST abatorContext id CDATA #IMPLIED
-  defaultModelType CDATA #IMPLIED
-  generatorSet CDATA #IMPLIED>
+  defaultModelType (conditional | flat | hierarchical)  #IMPLIED
+  generatorSet (Legacy | Java2 | Java5) #IMPLIED>
 
 <!--
   The jdbcConnection element is used to describe the JDBC connection that Abator
@@ -125,7 +125,7 @@
 -->
 <!ELEMENT daoGenerator (property*)>
 <!ATTLIST daoGenerator
-  type CDATA #REQUIRED
+  type (IBATIS | GENERIC-CI | GENERIC-SI | SPRING) #REQUIRED
   targetPackage CDATA #REQUIRED
   targetProject CDATA #REQUIRED>
 
