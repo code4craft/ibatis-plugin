@@ -17,9 +17,6 @@ public class IbatisConfigurationTab extends FacetEditorTab {
     private JPanel mainPanel;
     private JComboBox dataSourceComboBox;
     private JTextField sqlmapSuffixTextField;
-    private JTextField tableNamePatternTextField;
-    private JTextField domainNamePatternTextField;
-    private JCheckBox overWriteCheckBox;
     private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 
@@ -38,11 +35,6 @@ public class IbatisConfigurationTab extends FacetEditorTab {
         if (configuration.dataSourceName != null)
             dataSourceComboBox.setSelectedItem(configuration.dataSourceName);
         sqlmapSuffixTextField.setText(configuration.sqlMapSuffix);
-        tableNamePatternTextField.setText(configuration.tableNamePattern);
-        domainNamePatternTextField.setText(configuration.domainNamePattern);
-        if ("true".equals(configuration.abatorOverWrite)) {
-            overWriteCheckBox.setSelected(true);
-        }
     }
 
     @Nls public String getDisplayName() {
@@ -62,11 +54,6 @@ public class IbatisConfigurationTab extends FacetEditorTab {
         if (selectedItem != null)
             configuration.dataSourceName = selectedItem.toString();
         configuration.sqlMapSuffix = sqlmapSuffixTextField.getText();
-        configuration.tableNamePattern = tableNamePatternTextField.getText();
-        configuration.domainNamePattern = domainNamePatternTextField.getText();
-        if (overWriteCheckBox.isSelected()) {
-            configuration.abatorOverWrite = "true";
-        }
     }
 
     public void reset() {
