@@ -44,7 +44,7 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
             if (result.getXmlTag().getAttribute("nullValue") == null) {    //null value setted
                 String propertyName = result.getProperty().getValue();
                 PsiMethod setMethod = null;
-                if (!propertyName.contains(".")) {
+                if (propertyName!=null && !propertyName.contains(".")) {
                     PsiMethod[] methods = psiClass.findMethodsByName("set" + StringUtil.capitalize(propertyName), true);
                     if (methods.length > 0) {
                         setMethod = methods[0];
