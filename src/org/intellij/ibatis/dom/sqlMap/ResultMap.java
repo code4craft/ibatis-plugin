@@ -30,7 +30,8 @@ public interface ResultMap extends CommonDomModelElement {
 
     /**
      * get all results included extended result
-     * @return
+     *
+     * @return Result List
      */
-   public List<Result> getAllResults();
+    public List<Result> getAllResults();
 }
