@@ -10,7 +10,6 @@ import org.intellij.ibatis.facet.IbatisFacetType;
 import org.intellij.ibatis.insepections.NullSettedToPrimaryTypeInspection;
 import org.intellij.ibatis.insepections.ResultMapInSelectInspection;
 import org.intellij.ibatis.insepections.SqlMapFileInConfigurationInspection;
-import org.intellij.ibatis.insepections.SqlMapUniqueIdInspection;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NonNls;
@@ -48,7 +47,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      *
      * @param dtds DTD URLs
      */
-    private static void registerDTDs(String dtds[]) {
+    private void registerDTDs(String dtds[]) {
         for (String url : dtds) {
             if (url.startsWith("http://")) {
                 int pos = url.lastIndexOf('/');
@@ -75,6 +74,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @return inspection class array
      */
     public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapUniqueIdInspection.class, SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class};
+        return new Class[]{SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class};
     }
 }
