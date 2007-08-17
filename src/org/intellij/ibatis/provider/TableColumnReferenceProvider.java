@@ -104,9 +104,9 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
             List<DatabaseTableFieldData> fields = databaseTableData.getFields();
             for (DatabaseTableFieldData field : fields) {
                 if (field.isPrimary()) {       //pk
-                    fieldList.add(LookupValueFactory.createLookupValue(field.getName().toUpperCase(), IbatisConstants.DATABASE_PK_FIELD));
+                    fieldList.add(LookupValueFactory.createLookupValue(field.getName(), IbatisConstants.DATABASE_PK_FIELD));
                 } else {   //common column
-                    fieldList.add(LookupValueFactory.createLookupValue(field.getName().toUpperCase(), IbatisConstants.DATABASE_COMMON_FIELD));
+                    fieldList.add(LookupValueFactory.createLookupValue(field.getName(), IbatisConstants.DATABASE_COMMON_FIELD));
                 }
             }
             return fieldList.toArray();
