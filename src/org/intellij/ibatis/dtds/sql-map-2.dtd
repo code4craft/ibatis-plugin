@@ -106,7 +106,7 @@ type CDATA #REQUIRED
 
 <!ELEMENT sql (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST sql
-id CDATA #REQUIRED
+id ID #REQUIRED
 >
 
 <!ELEMENT include EMPTY>
@@ -116,7 +116,7 @@ refid CDATA #REQUIRED
 
 <!ELEMENT statement (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST statement
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 resultMap CDATA #IMPLIED
@@ -131,7 +131,7 @@ timeout CDATA #IMPLIED
 
 <!ELEMENT select (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST select
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 resultMap CDATA #IMPLIED
@@ -146,7 +146,7 @@ timeout CDATA #IMPLIED
 
 <!ELEMENT insert (#PCDATA | include | dynamic | selectKey | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST insert
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 timeout CDATA #IMPLIED
@@ -161,7 +161,7 @@ type (pre|post) #IMPLIED
 
 <!ELEMENT update (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST update
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 timeout CDATA #IMPLIED
@@ -169,7 +169,7 @@ timeout CDATA #IMPLIED
 
 <!ELEMENT delete (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST delete
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 timeout CDATA #IMPLIED
@@ -177,7 +177,7 @@ timeout CDATA #IMPLIED
 
 <!ELEMENT procedure (#PCDATA | include | dynamic | iterate | isParameterPresent | isNotParameterPresent | isEmpty | isNotEmpty | isNotNull | isNull | isNotEqual | isEqual | isGreaterThan | isGreaterEqual | isLessThan | isLessEqual | isPropertyAvailable | isNotPropertyAvailable)*>
 <!ATTLIST procedure
-id CDATA #REQUIRED
+id ID #REQUIRED
 parameterMap CDATA #IMPLIED
 parameterClass CDATA #IMPLIED
 resultMap CDATA #IMPLIED
