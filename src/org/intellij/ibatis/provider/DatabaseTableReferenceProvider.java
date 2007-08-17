@@ -76,12 +76,28 @@ public class DatabaseTableReferenceProvider extends BaseReferenceProvider {
         }};
     }
 
+    /**
+     * get the datasource for ibatis
+     *
+     * @param psiElement psiElement
+     * @return DataSource Object
+     */
     public static DataSource getDataSourceForIbatis(PsiElement psiElement) {
         Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+        return getDataSourceForIbatis(module);
+    }
+
+    /**
+     * get the datasource for ibatis in module
+     *
+     * @param module Module object
+     * @return DataSource object
+     */
+    public static DataSource getDataSourceForIbatis(Module module) {
         IbatisFacet ibatisFacet = IbatisFacet.getInstance(module);
         if (ibatisFacet == null) return null;
         String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
-        DataSourceManager dataSourceManager = DataSourceManager.getInstance(psiElement.getProject());
+        DataSourceManager dataSourceManager = DataSourceManager.getInstance(module.getProject());
         return dataSourceManager.getDataSourceByName(selectedDataSourceName);
     }
 }
