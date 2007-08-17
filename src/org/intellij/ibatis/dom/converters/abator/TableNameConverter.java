@@ -10,7 +10,7 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.GenericDomValue;
-import org.intellij.ibatis.provider.DatabaseTableReferenceProvider;
+import org.intellij.ibatis.provider.JavadocTableNameReferenceProvider;
 import org.intellij.ibatis.provider.XmlAttributeValuePsiReference;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NonNls;
@@ -26,7 +26,7 @@ import java.util.List;
 public class TableNameConverter extends Converter<DatabaseTableData> implements CustomReferenceConverter<DatabaseTableData> {
 
     public DatabaseTableData fromString(@Nullable @NonNls String s, ConvertContext convertContext) {
-        DataSource dataSource = DatabaseTableReferenceProvider.getDataSourceForIbatis(convertContext.getReferenceXmlElement());
+        DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(convertContext.getReferenceXmlElement());
         for (DatabaseTableData databaseTableData : dataSource.getTables()) {
             if (databaseTableData.getName().equals(s))
                 return databaseTableData;
@@ -44,7 +44,7 @@ public class TableNameConverter extends Converter<DatabaseTableData> implements 
     public PsiReference[] createReferences(GenericDomValue genericDomValue, final PsiElement psiElement, ConvertContext convertContext) {
         return new PsiReference[]{new XmlAttributeValuePsiReference((XmlAttributeValue) psiElement) {
             public Object[] getVariants() {
-                DataSource dataSource = DatabaseTableReferenceProvider.getDataSourceForIbatis(psiElement);
+                DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
                 List<Object> variants = new ArrayList<Object>();
                 if (dataSource != null) {
                     List<DatabaseTableData> tables = dataSource.getTables();
