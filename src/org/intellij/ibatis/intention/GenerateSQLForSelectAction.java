@@ -58,11 +58,11 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
                                         String selectList = StringUtil.join(columns, ", ");
                                         if (psiClass != null) {  //get table name
                                             DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(psiClass);
-                                            if (tableData != null)   //表名不为空
+                                            if (tableData != null)   // table name ready
                                             {
-                                                xmlTag.getValue().setText("select " + selectList + " from " + tableData.getName());
+                                                xmlTag.getValue().setText("select " + selectList + " from " + tableData.getName() + "");
                                             }
-                                        } else {
+                                        } else {  //table name is empty
                                             xmlTag.getValue().setText("select " + selectList + " from");
                                         }
                                     }
