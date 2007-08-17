@@ -37,7 +37,7 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
         ResultMap resultMap = select.getReferencedResultMap();
         if (resultMap != null) {
             String sql = select.getValue() + ";";
-            if (sql.toUpperCase().contains(" FROM ")) {
+            if (sql.toUpperCase().contains(" FROM ") && sql.toUpperCase().contains("SELECT")) {
                 sql = sql.replaceAll("\\#[\\w\\.]*\\#", "''");
                 sql = sql.replaceAll("\\$[\\w\\.]*\\$", "temp1");
                 try {

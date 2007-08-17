@@ -41,10 +41,12 @@ public class SqlMapFileInConfigurationInspection extends SqlMapInspection {
         SqlMap sqlMap = fileElement.getRootElement();
         Module module = ModuleUtil.findModuleForPsiElement(fileElement.getXmlElement());
         IbatisConfigurationModel configurationModel = IbatisManager.getInstance().getConfigurationModel(module);
-        Set<XmlFile> sqlMapFiles = configurationModel.getSqlMapFiles();
-        if (!sqlMapFiles.contains(sqlMap.getContainingFile())) {
-            SqlMapConfig sqlMapConfig = configurationModel.getMergedModel();
-            holder.createProblem(sqlMap, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.notinconfiguration.error"), new InsertSqlMapIntoConfigurationQuickFix(sqlMapConfig, sqlMap));
+        if (configurationModel != null) {
+            Set<XmlFile> sqlMapFiles = configurationModel.getSqlMapFiles();
+            if (!sqlMapFiles.contains(sqlMap.getContainingFile())) {
+                SqlMapConfig sqlMapConfig = configurationModel.getMergedModel();
+                holder.createProblem(sqlMap, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.notinconfiguration.error"), new InsertSqlMapIntoConfigurationQuickFix(sqlMapConfig, sqlMap));
+            }
         }
     }
 
