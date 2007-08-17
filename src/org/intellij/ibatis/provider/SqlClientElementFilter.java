@@ -11,17 +11,13 @@ import java.util.List;
  * sqlclient method call filter
  */
 public class SqlClientElementFilter implements ElementFilter {
-    public static List<String> operationMethods = new ArrayList<String>();
+    public static String operationPattern ="\\w*(query|insert|update|delete)\\w*";
     public static List<String> operationClass = new ArrayList<String>();
 
     static {
-        operationMethods.add("insert");
-        operationMethods.add("update");
-        operationMethods.add("delete");
-        operationMethods.add("queryF");
-        operationMethods.add("queryW");
         operationClass.add("org.springframework.orm.ibatis.SqlMapClientOperations");
         operationClass.add("com.ibatis.sqlmap.client.SqlMapExecutor");
+        operationClass.add("com.taobao.common.dao.persistence.SqlMapBaseDAO");
     }
 
     public boolean isAcceptable(Object o, PsiElement psiElement) {
@@ -32,11 +28,8 @@ public class SqlClientElementFilter implements ElementFilter {
             final PsiMethod psiMethod = callExpression.resolveMethod();
             if (psiMethod != null) {
                 //method validation
-                String methodName = psiMethod.getName();
-                if (methodName.length() > 6) {
-                    methodName = methodName.substring(0, 6);
-                }
-                if (!operationMethods.contains(methodName)) {
+                String methodName = psiMethod.getName().toLowerCase();
+                if (!methodName.matches(operationPattern)) {
                     return false;
                 }
                 //first parameter validate
