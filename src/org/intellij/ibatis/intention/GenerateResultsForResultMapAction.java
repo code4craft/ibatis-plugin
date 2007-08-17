@@ -8,8 +8,10 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
+import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
+import org.intellij.ibatis.provider.TableColumnReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,11 +57,19 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                             PsiMethod[] psiMethods = psiClass.getMethods();
                             try {
                                 for (PsiMethod psiMethod : psiMethods) {
-                                    if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {    
+                                    if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
+                                        DatabaseTableFieldData tableFieldData = TableColumnReferenceProvider.getDatabaseTableFieldData(psiMethod);
                                         PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
                                         String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
                                         StringBuilder builder = new StringBuilder();
-                                        builder.append("<result property=\"" + propertyName + "\" column=\"\"");
+                                        builder.append("<result property=\"").append(propertyName).append("\"");
+                                        if (tableFieldData != null)    //@column javadoc tag ready
+                                        {
+                                            builder.append(" column=\"").append(tableFieldData.getName()).append("\"");
+                                        } else  //@column absent
+                                        {
+                                            builder.append(" column=\"\"");
+                                        }
                                         if (psiType.equals(PsiType.BOOLEAN)) {
                                             builder.append(" nullValue=\"false\"");
                                         } else if (psiType instanceof PsiPrimitiveType) {
