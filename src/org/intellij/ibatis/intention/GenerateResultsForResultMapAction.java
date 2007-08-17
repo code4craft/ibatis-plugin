@@ -56,6 +56,7 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                             PsiElementFactory psiElementFactory = PsiManager.getInstance(project).getElementFactory();
                             PsiMethod[] psiMethods = psiClass.getMethods();
                             try {
+                                xmlTag.getValue().setText(null);
                                 for (PsiMethod psiMethod : psiMethods) {
                                     if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
                                         DatabaseTableFieldData tableFieldData = TableColumnReferenceProvider.getDatabaseTableFieldData(psiMethod);
