@@ -15,7 +15,9 @@ import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 /**
- * @author Dmitry Avdeev
+ * iBATIS facet configuration
+ *
+ * @author Jacky
  */
 public class IbatisFacetConfiguration implements FacetConfiguration, ModificationTracker {
     private long myModificationCount;
