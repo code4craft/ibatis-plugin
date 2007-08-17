@@ -1,8 +1,13 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin version="2">
     <name>iBATIS Plugin</name>
-    <description>The plugin for IntelliJ IDEA to accelerate iBATIS developement. Please visit http://code.google.com/p/ibatis-plugin for detail.</description>
-    <version>0.2</version>
+    <description><![CDATA[
+    <html>
+        The plugin for IntelliJ IDEA to accelerate iBATIS developement.
+        Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
+    </html>
+    ]]></description>
+    <version>0.3</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
     <idea-version since-build="7000"/>
     <depends>com.intellij.javaee</depends>
@@ -27,4 +32,11 @@
             <implementation-class>org.intellij.ibatis.IbatisReferenceProvider</implementation-class>
         </component>
     </project-components>
+    <actions>
+        <action id="org.intellij.ibatis.actions.ModelClassGeneratorAction"
+                class="org.intellij.ibatis.actions.ModelClassGeneratorAction" text="Model Class Generation"
+                description="Generate model class acccording to table name in the database" icon="/icons/logo.png">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewAnnotationType"/>
+        </action>
+    </actions>
 </idea-plugin>
