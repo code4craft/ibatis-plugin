@@ -46,7 +46,7 @@ public class ModelClassGeneratorAction extends AnAction {
                     tableNames.add(tableData.getName());
                 }
                 if (tableNames.size() > 0) {
-                    int result = Messages.showChooseDialog(project, null, "Choose a database table", IbatisConstants.DATABASE_TABLE, tableNames.toArray(new String[]{""}), tableNames.get(0));
+                    int result = Messages.showChooseDialog(project, null, "Choose a database table", IbatisConstants.DATABASE, tableNames.toArray(new String[]{""}), tableNames.get(0));
                     if (result > -1)  //a table name selected
                     {
                         String tableName = tableNames.get(result);
