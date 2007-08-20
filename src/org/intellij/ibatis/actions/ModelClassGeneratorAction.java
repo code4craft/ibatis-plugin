@@ -162,6 +162,12 @@ public class ModelClassGeneratorAction extends AnAction {
                     engine.evaluate(context, writer, "iBATIS", new StringReader(TEMPLATE_CONTENT));
                     psiFile = psiDirectory.createFile(className + ".java");
                     FileContentUtil.setFileText(project, psiFile.getVirtualFile(), writer.toString());
+                    String sqlMapFileName=StringUtil.decapitalize(className)+"-sql-map.xml";
+                    PsiFile sqlMapFile = psiDirectory.findFile(sqlMapFileName);
+                    if(sqlMapFile==null) {
+                        sqlMapFile = psiDirectory.createFile(sqlMapFileName);
+                        FileContentUtil.setFileText(project, sqlMapFile.getVirtualFile(), SQL_MAP_TEMPLATE.replace("class_name",className));
+                    }
                 }
                 FileEditorManager.getInstance(project).openFile(psiFile.getVirtualFile(), true);
             } catch (Exception e) {
@@ -207,4 +213,14 @@ public class ModelClassGeneratorAction extends AnAction {
             "    }\n" +
             "#end\n" +
             "}";
+
+    /**
+     * Sql map file template
+     */
+    public static final String SQL_MAP_TEMPLATE="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<!DOCTYPE sqlMap PUBLIC \"-//iBATIS.com//DTD SQL Map 2.0//EN\" \"http://www.ibatis.com/dtd/sql-map-2.dtd\">\n" +
+            "\n" +
+            "<sqlMap namespace=\"class_name\">\n" +
+            "    \n" +
+            "</sqlMap>";
 }
