@@ -6,5 +6,5 @@ import org.intellij.ibatis.dom.sqlMap.Sql;
 /**
  * sql element implementation
  */
-public abstract class SqlImpl extends BaseImpl implements Sql {
+public abstract class SqlImpl extends SentenceBaseImpl implements Sql {
 }

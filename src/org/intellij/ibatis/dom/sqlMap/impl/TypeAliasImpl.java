@@ -1,7 +1,7 @@
 package org.intellij.ibatis.dom.sqlMap.impl;
 
-import org.intellij.ibatis.dom.sqlMap.TypeAlias;
 import com.intellij.javaee.model.xml.impl.BaseImpl;
+import org.intellij.ibatis.dom.sqlMap.TypeAlias;
 
 /**
  * typeAlias element implementation

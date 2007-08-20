@@ -1,6 +1,5 @@
 package org.intellij.ibatis.dom.sqlMap.impl;
 
-import com.intellij.javaee.model.xml.impl.BaseImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.xml.XmlTag;
@@ -13,7 +12,7 @@ import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 /**
  * select element implementatioin.
  */
-public abstract class SelectImpl extends BaseImpl implements Select {
+public abstract class SelectImpl extends SentenceBaseImpl implements Select {
     public ResultMap getReferencedResultMap() {
         String resultMapName = getResultMap().getValue();
         if (StringUtil.isNotEmpty(resultMapName)) {
@@ -34,7 +33,4 @@ public abstract class SelectImpl extends BaseImpl implements Select {
         return null;
     }
 
-    public String getSQL() {
-        return getValue();        //todo include process
-    }
 }

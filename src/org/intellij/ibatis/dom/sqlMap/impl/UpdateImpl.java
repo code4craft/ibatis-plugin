@@ -1,9 +1,7 @@
 package org.intellij.ibatis.dom.sqlMap.impl;
 
-import org.intellij.ibatis.dom.sqlMap.Select;
-import org.intellij.ibatis.dom.sqlMap.Update;
-import com.intellij.javaee.model.xml.impl.RootBaseImpl;
 import com.intellij.javaee.model.xml.impl.BaseImpl;
+import org.intellij.ibatis.dom.sqlMap.Update;
 
 /**
  * select element implementatioin.
