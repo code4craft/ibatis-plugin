@@ -60,24 +60,20 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                                 for (PsiMethod psiMethod : psiMethods) {
                                     if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
                                         DatabaseTableFieldData tableFieldData = TableColumnReferenceProvider.getDatabaseTableFieldData(psiMethod);
-                                        PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
-                                        String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
-                                        StringBuilder builder = new StringBuilder();
-                                        builder.append("<result property=\"").append(propertyName).append("\"");
-                                        if (tableFieldData != null)    //@column javadoc tag ready
-                                        {
+                                        if (tableFieldData != null) {   //set method contains @column javadoc tag
+                                            PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
+                                            String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
+                                            StringBuilder builder = new StringBuilder();
+                                            builder.append("<result property=\"").append(propertyName).append("\"");
                                             builder.append(" column=\"").append(tableFieldData.getName()).append("\"");
-                                        } else  //@column absent
-                                        {
-                                            builder.append(" column=\"\"");
+                                            if (psiType.equals(PsiType.BOOLEAN)) {
+                                                builder.append(" nullValue=\"false\"");
+                                            } else if (psiType instanceof PsiPrimitiveType) {
+                                                builder.append(" nullValue=\"0\"");
+                                            }
+                                            builder.append("/>");
+                                            xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
                                         }
-                                        if (psiType.equals(PsiType.BOOLEAN)) {
-                                            builder.append(" nullValue=\"false\"");
-                                        } else if (psiType instanceof PsiPrimitiveType) {
-                                            builder.append(" nullValue=\"0\"");
-                                        }
-                                        builder.append("/>");
-                                        xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
                                     }
                                 }
                             } catch (Exception e) {
