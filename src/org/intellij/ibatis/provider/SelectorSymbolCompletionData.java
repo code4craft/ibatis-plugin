@@ -28,6 +28,11 @@ import java.util.List;
  * completion data for selector symbol
  */
 public class SelectorSymbolCompletionData extends CompletionData {
+    private CompletionData systemCompletionData;
+
+    public SelectorSymbolCompletionData(CompletionData completionData) {
+        this.systemCompletionData = completionData;
+    }
 
     /**
      * get prefix for psiElement
@@ -47,21 +52,23 @@ public class SelectorSymbolCompletionData extends CompletionData {
             final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
             if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
                 XmlTag tag = getParentSentence(psiElement);
-                if (tag != null) {
+                if (tag != null && !prefix.contains("#")) {   //not symbol
                     LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
                     CompletionVariant variant = new CompletionVariant(left);
                     List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
-                    for (String parameterName : parameterNames) {
-
-                        variant.addCompletion(parameterName);
+                    if (parameterNames.size() > 0) {
+                        for (String parameterName : parameterNames) {
+                            variant.addCompletion(parameterName);
+                        }
+                        variant.includeScopeClass(PsiElement.class, true);
+                        variant.addCompletionFilter(TrueFilter.INSTANCE);
+                        variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+                        return new CompletionVariant[]{variant};
                     }
-                    variant.includeScopeClass(PsiElement.class, true);
-                    variant.addCompletionFilter(TrueFilter.INSTANCE);
-                    variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-                    return new CompletionVariant[]{variant};
                 }
             }
         }
+        if (systemCompletionData != null) return systemCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
     }
 
