@@ -186,7 +186,13 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         return null;
     }
 
-    public List<String> getAllSetterMethods(PsiClass psiClass, String currentMethodName) {
+    /**
+     *   get all  set method for psiClass
+     * @param psiClass PsiClass object
+     * @param currentMethodName current set method
+     * @return set method list
+     */
+    public static List<String> getAllSetterMethods(PsiClass psiClass, String currentMethodName) {
         List<String> methodNames = new ArrayList<String>();
         PsiMethod[] psiMethods = null;
         String prefix = "";
@@ -213,7 +219,13 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         return methodNames;
     }
 
-    public List<String> getAllGetterMethods(PsiClass psiClass, String currentMethodName) {
+    /**
+     * get all get method in psi class
+     * @param psiClass    PsiClass object
+     * @param currentMethodName  current methodName for children
+     * @return  get method list
+     */
+    public static List<String> getAllGetterMethods(PsiClass psiClass, String currentMethodName) {
         List<String> methodNames = new ArrayList<String>();
         PsiMethod[] psiMethods = null;
         String prefix = "";

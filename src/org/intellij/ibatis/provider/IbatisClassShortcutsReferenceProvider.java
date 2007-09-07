@@ -106,6 +106,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     /**
      * find PsiClass according to class full name
      *
+     * @param psiElement PsiElement object
      * @param className any name of shortcut, type alias or java class
      * @return PsiClass object
      */
