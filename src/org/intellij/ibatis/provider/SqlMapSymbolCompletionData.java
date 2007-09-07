@@ -91,7 +91,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         if (StringUtil.isNotEmpty(parameterClass)) {
             PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(xmlTag, parameterClass);
             if (psiClass != null && !"Map".equals(psiClass.getName())) {
-                if (isDomain(psiClass)) {   //domain class
+                if (IbatisClassShortcutsReferenceProvider.isDomain(psiClass)) {   //domain class
                     List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
                     for (String methodName : methodNames) {
                         nameList.add(prefix + methodName + CLOSE_TAG);
@@ -135,19 +135,6 @@ public class SqlMapSymbolCompletionData extends CompletionData {
      */
     public void addDefaultSymbol(List<String> nameList, String prefix) {
         nameList.add(prefix + "value" + CLOSE_TAG);
-    }
-
-    /**
-     * validate a psiClass is damain class
-     *
-     * @param psiClass psiClass object
-     * @return domain class mark
-     */
-    public boolean isDomain(PsiClass psiClass) {
-        String className = psiClass.getName().toLowerCase();
-        if (className.equals("integer")) className = "int";
-        if (className.equals("BigDecimal")) className = "decimal";
-        return !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
     }
 
     /**
