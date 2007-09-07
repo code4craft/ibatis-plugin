@@ -19,7 +19,7 @@ import java.util.*;
  * class reference provider  for ibatis, including internal shortcuts and typealias
  */
 public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvider {
-    private static Map<String, String> classShortcuts = new HashMap<String, String>();
+    public static Map<String, String> classShortcuts = new HashMap<String, String>();
 
     static {
         classShortcuts.put("boolean", "java.lang.Boolean");
@@ -123,5 +123,19 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
             return typeAlias.get(className);
         }
         return psiManager.findClass(className, GlobalSearchScope.allScope(project));
+    }
+
+
+    /**
+     * validate a psiClass is damain class
+     *
+     * @param psiClass psiClass object
+     * @return domain class mark
+     */
+    public static boolean isDomain(PsiClass psiClass) {
+        String className = psiClass.getName().toLowerCase();
+        if (className.equals("integer")) className = "int";
+        if (className.equals("BigDecimal")) className = "decimal";
+        return !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
     }
 }
