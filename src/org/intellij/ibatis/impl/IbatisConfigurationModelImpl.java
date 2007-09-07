@@ -1,6 +1,7 @@
 package org.intellij.ibatis.impl;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -26,7 +27,9 @@ public class IbatisConfigurationModelImpl extends DomModelImpl<SqlMapConfig> imp
         Set<XmlFile> xmlFiles = new HashSet<XmlFile>();
         List<SqlMap> sqlMaps = getMergedModel().getSqlMaps();
         for (SqlMap sqlMap : sqlMaps) {
-            xmlFiles.add((XmlFile) sqlMap.getResource().getValue());
+            PsiFile psiFile = sqlMap.getResource().getValue();
+            if(psiFile!=null)
+               xmlFiles.add((XmlFile) psiFile);
         }
         return xmlFiles;
     }
