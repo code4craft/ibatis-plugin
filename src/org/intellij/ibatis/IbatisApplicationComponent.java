@@ -12,6 +12,8 @@ import org.intellij.ibatis.facet.IbatisFacetType;
 import org.intellij.ibatis.insepections.NullSettedToPrimaryTypeInspection;
 import org.intellij.ibatis.insepections.ResultMapInSelectInspection;
 import org.intellij.ibatis.insepections.SqlMapFileInConfigurationInspection;
+import org.intellij.ibatis.insepections.SymbolInSQLInspection;
+import org.intellij.ibatis.provider.SelectorSymbolCompletionData;
 import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -36,7 +38,10 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         registerDTDs(IbatisConstants.SQLMAP_DTDS);
         registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
-        CompletionUtil.registerCompletionData(StdFileTypes.XML, new SqlMapSymbolCompletionData());
+        SqlMapSymbolCompletionData sqlMapSymbolCompletionData = new SqlMapSymbolCompletionData(CompletionUtil.getCompletionDataByFileType(StdFileTypes.XML));
+        CompletionUtil.registerCompletionData(StdFileTypes.XML, sqlMapSymbolCompletionData);
+        SelectorSymbolCompletionData selectorSymbolCompletionData = new SelectorSymbolCompletionData(sqlMapSymbolCompletionData);
+        CompletionUtil.registerCompletionData(StdFileTypes.XML, selectorSymbolCompletionData);
     }
 
     public void disposeComponent() {
@@ -78,6 +83,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @return inspection class array
      */
     public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class};
+        return new Class[]{SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class, SymbolInSQLInspection.class};
     }
 }
