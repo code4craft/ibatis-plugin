@@ -42,13 +42,21 @@ public class SqlMapSymbolCompletionData extends CompletionData {
     }
 
 
+    /**
+     * get prefix for psiElement
+     *
+     * @param psiElement   PsiElement object
+     * @param offsetInFile offset in file
+     * @return prefix
+     */
     public String findPrefix(PsiElement psiElement, int offsetInFile) {
         return psiElement.getText().substring(0, offsetInFile - psiElement.getTextRange().getStartOffset());
     }
 
     public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
         PsiFile psiFile = completionContext.file;
-        if (psiFile instanceof XmlFile && OPEN_TAG.equals(completionContext.getPrefix())) {
+        String prefix = completionContext.getPrefix();
+        if (psiFile instanceof XmlFile && prefix.startsWith(OPEN_TAG)) {   //xml file and prefix match
             final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
             if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
                 XmlTag tag = getParentSentence(psiElement);
@@ -62,6 +70,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                     }
                     variant.includeScopeClass(PsiElement.class, true);
                     variant.addCompletionFilter(TrueFilter.INSTANCE);
+                    variant.setInsertHandler(new SqlMapSymbolnsertHandler());
                     return new CompletionVariant[]{variant};
                 }
             }
@@ -81,10 +90,15 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         String parameterClass = xmlTag.getAttributeValue("parameterClass");
         if (StringUtil.isNotEmpty(parameterClass)) {
             PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(xmlTag, parameterClass);
-            if (psiClass != null) {
-                List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
-                for (String methodName : methodNames) {
-                    nameList.add(prefix + methodName + CLOSE_TAG);
+            if (psiClass != null && !"Map".equals(psiClass.getName())) {
+                if (isDomain(psiClass)) {   //domain class
+                    List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
+                    for (String methodName : methodNames) {
+                        nameList.add(prefix + methodName + CLOSE_TAG);
+                    }
+                } else  //internal class
+                {
+                    addDefaultSymbol(nameList, OPEN_TAG);
                 }
             }
         }
@@ -106,7 +120,34 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                 }
             }
         }
+        if (parameterClass == null && parameterMap == null)  //if parameterClass and parameterMap absent, use #value# as default
+        {
+            addDefaultSymbol(nameList, OPEN_TAG);
+        }
         return nameList;
+    }
+
+    /**
+     * add default symbol
+     *
+     * @param nameList name list
+     * @param prefix   prefix
+     */
+    public void addDefaultSymbol(List<String> nameList, String prefix) {
+        nameList.add(prefix + "value" + CLOSE_TAG);
+    }
+
+    /**
+     * validate a psiClass is damain class
+     *
+     * @param psiClass psiClass object
+     * @return domain class mark
+     */
+    public boolean isDomain(PsiClass psiClass) {
+        String className = psiClass.getName().toLowerCase();
+        if (className.equals("integer")) className = "int";
+        if (className.equals("BigDecimal")) className = "decimal";
+        return !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
     }
 
     /**
