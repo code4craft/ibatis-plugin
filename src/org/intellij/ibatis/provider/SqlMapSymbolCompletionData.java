@@ -31,8 +31,10 @@ public class SqlMapSymbolCompletionData extends CompletionData {
     public static String OPEN_TAG = "#";
     public static String CLOSE_TAG = "#";
     private List<String> sentenceNames = new ArrayList<String>();
+    private CompletionData systemCompletionData;
 
-    public SqlMapSymbolCompletionData() {
+    public SqlMapSymbolCompletionData(CompletionData completionData) {
+        this.systemCompletionData = completionData;
         sentenceNames.add("select");
         sentenceNames.add("insert");
         sentenceNames.add("update");
@@ -40,7 +42,6 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         sentenceNames.add("procedue");
         sentenceNames.add("statement");
     }
-
 
     /**
      * get prefix for psiElement
@@ -65,7 +66,6 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                     CompletionVariant variant = new CompletionVariant(left);
                     List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
                     for (String parameterName : parameterNames) {
-
                         variant.addCompletion(parameterName);
                     }
                     variant.includeScopeClass(PsiElement.class, true);
@@ -75,6 +75,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                 }
             }
         }
+        if (systemCompletionData != null) return systemCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
     }
 
@@ -88,17 +89,38 @@ public class SqlMapSymbolCompletionData extends CompletionData {
     public List<String> getParameterNamesForXmlTag(XmlTag xmlTag, String prefix) {
         List<String> nameList = new ArrayList<String>();
         String parameterClass = xmlTag.getAttributeValue("parameterClass");
+        XmlAttribute parameterMap = xmlTag.getAttribute("parameterMap");
+        List<String> symbolNames = getAllSymbolsInXmlTag(xmlTag);
+        if (parameterClass == null && parameterMap == null)  //if parameterClass and parameterMap absent, use #value# as default
+        {
+            symbolNames.add("value");
+        }
+        for (String symbolName : symbolNames) {
+            nameList.add(OPEN_TAG + symbolName + CLOSE_TAG);
+        }
+        return nameList;
+    }
+
+    /**
+     * get all symbols for xml tag
+     *
+     * @param xmlTag Xml Tag
+     * @return symbol name list
+     */
+    public static List<String> getAllSymbolsInXmlTag(XmlTag xmlTag) {
+        String parameterClass = xmlTag.getAttributeValue("parameterClass");
+        List<String> nameList = new ArrayList<String>();
         if (StringUtil.isNotEmpty(parameterClass)) {
             PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(xmlTag, parameterClass);
             if (psiClass != null && !"Map".equals(psiClass.getName())) {
                 if (IbatisClassShortcutsReferenceProvider.isDomain(psiClass)) {   //domain class
                     List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
                     for (String methodName : methodNames) {
-                        nameList.add(prefix + methodName + CLOSE_TAG);
+                        nameList.add(methodName);
                     }
                 } else  //internal class
                 {
-                    addDefaultSymbol(nameList, OPEN_TAG);
+                    nameList.add("value");
                 }
             }
         }
@@ -114,15 +136,11 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                         for (XmlTag parameterTag : parameterTags) {
                             String property = parameterTag.getAttributeValue("property");
                             if (StringUtil.isNotEmpty(property))
-                                nameList.add(prefix + property + CLOSE_TAG);
+                                nameList.add(property);
                         }
                     }
                 }
             }
-        }
-        if (parameterClass == null && parameterMap == null)  //if parameterClass and parameterMap absent, use #value# as default
-        {
-            addDefaultSymbol(nameList, OPEN_TAG);
         }
         return nameList;
     }
