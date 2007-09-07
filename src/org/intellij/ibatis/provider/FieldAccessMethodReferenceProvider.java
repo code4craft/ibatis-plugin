@@ -249,6 +249,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                 }
             }
         }
+        methodNames.remove("class");    //getClass is controled by JVM
         return methodNames;
     }
 
