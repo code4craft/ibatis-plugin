@@ -48,14 +48,14 @@ public class SqlMapSymbolCompletionData extends CompletionData {
 
     public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
         PsiFile psiFile = completionContext.file;
-        if (psiFile instanceof XmlFile && "#".equals(completionContext.getPrefix())) {
+        if (psiFile instanceof XmlFile && OPEN_TAG.equals(completionContext.getPrefix())) {
             final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
             if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
                 XmlTag tag = getParentSentence(psiElement);
                 if (tag != null) {
                     LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
                     CompletionVariant variant = new CompletionVariant(left);
-                    List<String> parameterNames = getParameterNamesForXmlTag(tag, "#");
+                    List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
                     for (String parameterName : parameterNames) {
 
                         variant.addCompletion(parameterName);
@@ -84,7 +84,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
             if (psiClass != null) {
                 List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
                 for (String methodName : methodNames) {
-                    nameList.add(prefix + methodName + "#");
+                    nameList.add(prefix + methodName + CLOSE_TAG);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                         for (XmlTag parameterTag : parameterTags) {
                             String property = parameterTag.getAttributeValue("property");
                             if (StringUtil.isNotEmpty(property))
-                                nameList.add(prefix + property + "#");
+                                nameList.add(prefix + property + CLOSE_TAG);
                         }
                     }
                 }
