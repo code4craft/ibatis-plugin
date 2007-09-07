@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.infos.CandidateInfo;
 import com.intellij.psi.impl.source.resolve.reference.ProcessorRegistry;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSetBase;
@@ -95,9 +96,8 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
                 return addDefaultRoots(result, context);
             }
 
-            protected PsiScopeProcessor createProcessor(final List result, List<Class> allowedClasses, List<PsiConflictResolver> resolvers)
-                    throws ProcessorRegistry.IncompatibleReferenceTypeException {
-                final PsiScopeProcessor baseProcessor = super.createProcessor(result, allowedClasses, resolvers);
+            protected PsiScopeProcessor createProcessor(List<CandidateInfo> candidateInfos, List<Class> classes, List<PsiConflictResolver> psiConflictResolvers) throws ProcessorRegistry.IncompatibleReferenceTypeException {
+                final PsiScopeProcessor baseProcessor = super.createProcessor(candidateInfos, classes, psiConflictResolvers);
                 return new PsiScopeProcessor() {
                     public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
                         final boolean isFile = element instanceof PsiFile;
@@ -112,7 +112,6 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
                         baseProcessor.handleEvent(event, associated);
                     }
                 };
-
             }
         };
     }
