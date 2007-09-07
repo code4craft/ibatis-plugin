@@ -23,6 +23,7 @@ public interface IbatisConstants {
     public Icon TYPE_ALIAS = IconLoader.findIcon("/icons/typealias.png");
 
     //database related field
+    public Icon DATABASE= IconLoader.findIcon("/icons/database.png");
     public Icon DATABASE_TABLE = IconLoader.findIcon("/icons/dbTable.png");
     public Icon DATABASE_PK_FIELD = IconLoader.findIcon("/icons/dataPkColumn.png");
     public Icon DATABASE_COMMON_FIELD = IconLoader.findIcon("/icons/dataColumn.png");
