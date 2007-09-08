@@ -129,11 +129,11 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     /**
      * validate a psiClass is damain class
      *
-     * @param psiClass psiClass object
+     * @param className class name
      * @return domain class mark
      */
-    public static boolean isDomain(PsiClass psiClass) {
-        String className = psiClass.getName().toLowerCase();
+    public static boolean isDomain(String className) {
+        className=className.toLowerCase();
         if (className.equals("integer")) className = "int";
         if (className.equals("BigDecimal")) className = "decimal";
         return !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
