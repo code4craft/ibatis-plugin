@@ -9,9 +9,9 @@ import com.intellij.psi.xml.XmlText;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import org.intellij.ibatis.IbatisSqlMapModel;
-import org.intellij.ibatis.dom.sqlMap.Select;
-import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import org.intellij.ibatis.dom.sqlMap.*;
 import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
+import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -31,13 +31,81 @@ public class SymbolInSQLInspection extends SqlMapInspection {
         return IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.id");
     }
 
+
     protected void checkSelect(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Select select, DomElementAnnotationHolder holder) {
         List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(select.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, select, holder, nameList);
     }
 
+    /**
+     * check insert
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param insert      current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkInsert(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Insert insert, DomElementAnnotationHolder holder) {
+        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(insert.getXmlTag());
+        checkSymbol(sqlMapModel, sqlMap, insert, holder, nameList);
+    }
+
+
+    /**
+     * check update
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param update      current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkUpdate(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Update update, DomElementAnnotationHolder holder) {
+        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(update.getXmlTag());
+        checkSymbol(sqlMapModel, sqlMap, update, holder, nameList);
+    }
+
+    /**
+     * check delete
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param delete      current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkDelete(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Delete delete, DomElementAnnotationHolder holder) {
+        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(delete.getXmlTag());
+        checkSymbol(sqlMapModel, sqlMap, delete, holder, nameList);
+    }
+
+    /**
+     * check statement
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param statement   current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkStatement(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Statement statement, DomElementAnnotationHolder holder) {
+        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(statement.getXmlTag());
+        checkSymbol(sqlMapModel, sqlMap, statement, holder, nameList);
+    }
+
+    /**
+     * check procedure
+     *
+     * @param sqlMapModel sqlMapModel
+     * @param sqlMap      current sqlMap
+     * @param procedure   current select
+     * @param holder      domelement annotation holder
+     */
+    protected void checkProcedure(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Procedure procedure, DomElementAnnotationHolder holder) {
+        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(procedure.getXmlTag());
+        checkSymbol(sqlMapModel, sqlMap, procedure, holder, nameList);
+    }
 
     protected void checkSymbol(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, DomElement domElement, DomElementAnnotationHolder holder, List<String> names) {
+        if (names.size() == 0) return;  //map parameter class
+        if (names.size() == 1 && names.get(0).equals("value")) return; // internal map
         String[] words = getAllTextInTag(domElement.getXmlTag()).trim().split("\\s+");
         if (words != null) {
             for (String word : words) {
