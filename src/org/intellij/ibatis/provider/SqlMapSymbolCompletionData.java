@@ -113,7 +113,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         if (StringUtil.isNotEmpty(parameterClass)) {
             PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(xmlTag, parameterClass);
             if (psiClass != null && !"Map".equals(psiClass.getName())) {
-                if (IbatisClassShortcutsReferenceProvider.isDomain(psiClass)) {   //domain class
+                if (IbatisClassShortcutsReferenceProvider.isDomain(psiClass.getName())) {   //domain class
                     List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
                     for (String methodName : methodNames) {
                         nameList.add(methodName);
