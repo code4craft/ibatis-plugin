@@ -15,6 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlText;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
@@ -30,17 +31,20 @@ import java.util.List;
 public class SqlMapSymbolCompletionData extends CompletionData {
     public static String OPEN_TAG = "#";
     public static String CLOSE_TAG = "#";
-    private List<String> sentenceNames = new ArrayList<String>();
+    private static List<String> sentenceNames = new ArrayList<String>();
     private CompletionData systemCompletionData;
 
-    public SqlMapSymbolCompletionData(CompletionData completionData) {
-        this.systemCompletionData = completionData;
+    static {
         sentenceNames.add("select");
         sentenceNames.add("insert");
         sentenceNames.add("update");
         sentenceNames.add("delete");
         sentenceNames.add("procedue");
         sentenceNames.add("statement");
+    }
+
+    public SqlMapSymbolCompletionData(CompletionData completionData) {
+        this.systemCompletionData = completionData;
     }
 
     /**
@@ -55,23 +59,25 @@ public class SqlMapSymbolCompletionData extends CompletionData {
     }
 
     public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
-        PsiFile psiFile = completionContext.file;
-        String prefix = completionContext.getPrefix();
-        if (psiFile instanceof XmlFile && prefix.startsWith(OPEN_TAG)) {   //xml file and prefix match
-            final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
-            if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
-                XmlTag tag = getParentSentence(psiElement);
-                if (tag != null) {
-                    LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
-                    CompletionVariant variant = new CompletionVariant(left);
-                    List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
-                    for (String parameterName : parameterNames) {
-                        variant.addCompletion(parameterName);
+        if (psiElement.getParent() instanceof XmlText) {   // text only
+            PsiFile psiFile = completionContext.file;
+            String prefix = completionContext.getPrefix();
+            if (psiFile instanceof XmlFile && prefix.startsWith(OPEN_TAG)) {   //xml file and prefix match
+                final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
+                if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
+                    XmlTag tag = getParentSentence(psiElement);
+                    if (tag != null) {
+                        LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
+                        CompletionVariant variant = new CompletionVariant(left);
+                        List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
+                        for (String parameterName : parameterNames) {
+                            variant.addCompletion(parameterName);
+                        }
+                        variant.includeScopeClass(PsiElement.class, true);
+                        variant.addCompletionFilter(TrueFilter.INSTANCE);
+                        variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+                        return new CompletionVariant[]{variant};
                     }
-                    variant.includeScopeClass(PsiElement.class, true);
-                    variant.addCompletionFilter(TrueFilter.INSTANCE);
-                    variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-                    return new CompletionVariant[]{variant};
                 }
             }
         }
@@ -162,7 +168,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
      * @return XmlTag object
      */
     @Nullable
-    public XmlTag getParentSentence(PsiElement psiElement) {
+    public static XmlTag getParentSentence(PsiElement psiElement) {
         XmlTag tag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
         if (tag != null) {
             if (sentenceNames.contains(tag.getName())) {
