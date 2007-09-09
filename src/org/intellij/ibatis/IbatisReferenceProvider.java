@@ -33,7 +33,6 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registry.registerReferenceProvider(new SqlClientElementFilter(), PsiLiteralExpression.class, new StatementIdReferenceProvider());
         registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTagFilter("table"), true, new JavadocTableNameReferenceProvider());
         registry.registerDocTagReferenceProvider(new String[]{"column"}, new JavadocTagFilter("column"), true, new JavadocTableColumnReferenceProvider());
-//        registry.registerXmlTagReferenceProvider(new String[]{"insert"},ibatisSqlMapNamespaceFilter,true,new FieldInXmlTagReferenceProvider());
         JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
         IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
         FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
