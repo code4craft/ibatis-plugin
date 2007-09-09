@@ -7,7 +7,7 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.3</version>
+    <version>0.4</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
     <idea-version since-build="7000"/>
     <depends>com.intellij.javaee</depends>
