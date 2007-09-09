@@ -13,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * filed access method reference  provider
@@ -80,10 +82,10 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                         if ("Map".equals(psiClass.getName())) {
                             return null;
                         }
-                        List<String> setterMethods = getAllSetterMethods(psiClass, getCanonicalText());
+                        Map<String, String> setterMethods = getAllSetterMethods(psiClass, getCanonicalText());
                         List<Object> variants = new ArrayList<Object>();
-                        for (String setterMethod : setterMethods) {
-                            variants.add(LookupValueFactory.createLookupValue(setterMethod, IbatisConstants.CLASS_FIELD));
+                        for (Map.Entry<String, String> entry : setterMethods.entrySet()) {
+                            variants.add(LookupValueFactory.createLookupValueWithHint(entry.getKey(), IbatisConstants.CLASS_FIELD, entry.getValue()));
                         }
                         return variants.toArray();
                     }
@@ -147,10 +149,10 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                         if ("Map".equals(psiClass.getName())) {
                             return null;
                         }
-                        List<String> setterMethods = getAllGetterMethods(psiClass, getCanonicalText().replace("IntellijIdeaRulezzz ", ""));
+                        Map<String, String> setterMethods = getAllGetterMethods(psiClass, getCanonicalText().replace("IntellijIdeaRulezzz ", ""));
                         List<Object> variants = new ArrayList<Object>();
-                        for (String setterMethod : setterMethods) {
-                            variants.add(LookupValueFactory.createLookupValue(setterMethod, IbatisConstants.CLASS_FIELD));
+                        for (String setterMethod : setterMethods.keySet()) {
+                            variants.add(LookupValueFactory.createLookupValueWithHint(setterMethod, IbatisConstants.CLASS_FIELD, setterMethods.get(setterMethod)));
                         }
                         return variants.toArray();
                     }
@@ -187,14 +189,14 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
     }
 
     /**
-     * get all  set method for psiClass
+     * get all  set method for psiClass with type added
      *
      * @param psiClass          PsiClass object
      * @param currentMethodName current set method
-     * @return set method list
+     * @return set method list  without prefix
      */
-    public static List<String> getAllSetterMethods(PsiClass psiClass, String currentMethodName) {
-        List<String> methodNames = new ArrayList<String>();
+    public static Map<String, String> getAllSetterMethods(PsiClass psiClass, String currentMethodName) {
+        Map<String, String> methodNames = new HashMap<String, String>();
         PsiMethod[] psiMethods = null;
         String prefix = "";
         //flat field
@@ -213,7 +215,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             for (PsiMethod psiMethod : psiMethods) {
                 String methodName = psiMethod.getName();
                 if (methodName.startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
-                    methodNames.add(prefix + StringUtil.decapitalize(methodName.replaceFirst("set", "")));
+                    String name = prefix + StringUtil.decapitalize(methodName.replaceFirst("set", ""));
+                    String type = psiMethod.getParameterList().getParameters()[0].getType().getPresentableText();
+                    methodNames.put(name, type);
                 }
             }
         }
@@ -221,14 +225,14 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
     }
 
     /**
-     * get all get method in psi class
+     * get all get method in psi class with return type
      *
      * @param psiClass          PsiClass object
      * @param currentMethodName current methodName for children
-     * @return get method list
+     * @return get method list without prefix
      */
-    public static List<String> getAllGetterMethods(PsiClass psiClass, String currentMethodName) {
-        List<String> methodNames = new ArrayList<String>();
+    public static Map<String, String> getAllGetterMethods(PsiClass psiClass, String currentMethodName) {
+        Map<String, String> methodNames = new HashMap<String, String>();
         PsiMethod[] psiMethods = null;
         String prefix = "";
         //flat field
@@ -247,10 +251,14 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             for (PsiMethod psiMethod : psiMethods) {
                 String methodName = psiMethod.getName();
                 if (methodName.startsWith("get") && psiMethod.getParameterList().getParametersCount() == 0) {
-                    methodNames.add(prefix + StringUtil.decapitalize(methodName.replaceFirst("get", "")));
+                    String name = prefix + StringUtil.decapitalize(methodName.replaceFirst("get", ""));
+                    String type = psiMethod.getReturnType().getPresentableText();
+                    methodNames.put(name, type);
                 }
                 if (methodName.startsWith("is") && psiMethod.getParameterList().getParametersCount() == 0) {
-                    methodNames.add(prefix + StringUtil.decapitalize(methodName.replaceFirst("is", "")));
+                    String name = prefix + StringUtil.decapitalize(methodName.replaceFirst("is", ""));
+                    String type = psiMethod.getReturnType().getPresentableText();
+                    methodNames.put(name, type);
                 }
             }
         }
