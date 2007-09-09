@@ -11,6 +11,13 @@
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
     <idea-version since-build="7000"/>
     <depends>com.intellij.javaee</depends>
+    <change-notes><![CDATA[
+    <ul>
+      <li>Code completion for table column and inline parameter in SQL sentence</li>
+      <li>Inspection for invalid inline parameter name</li>
+      <li>Bug fix and minor performance enhanced</li>
+   </ul>
+   ]]></change-notes>
     <extensions xmlns="com.intellij">
         <applicationService serviceInterface="org.intellij.ibatis.IbatisManager"
                             serviceImplementation="org.intellij.ibatis.impl.IbatisManagerImpl"/>
