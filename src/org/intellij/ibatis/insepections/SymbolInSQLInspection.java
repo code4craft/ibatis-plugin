@@ -110,8 +110,12 @@ public class SymbolInSQLInspection extends SqlMapInspection {
             for (String word : words) {
                 if (word.startsWith("#") && word.endsWith("#"))  // symbol
                 {
-                    if (!names.contains(word.replaceAll("#", ""))) {
-                        holder.createProblem(domElement, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.error", word.replace("#", "")));
+                    String parameterName = word.replaceAll("#", "");
+                   if(parameterName.contains(":")) {   //parameter:jdbctype:value
+                       parameterName = parameterName.substring(0, parameterName.indexOf(":"));
+                   }
+                    if (!names.contains(parameterName)) {
+                        holder.createProblem(domElement, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.error", parameterName));
                     }
                 }
             }
