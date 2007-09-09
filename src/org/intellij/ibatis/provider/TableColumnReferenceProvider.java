@@ -18,6 +18,7 @@ import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,9 +105,9 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
             List<DatabaseTableFieldData> fields = databaseTableData.getFields();
             for (DatabaseTableFieldData field : fields) {
                 if (field.isPrimary()) {       //pk
-                    fieldList.add(LookupValueFactory.createLookupValue(field.getName(), IbatisConstants.DATABASE_PK_FIELD));
+                    fieldList.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_PK_FIELD, getJdbcTypeName(field.getJdbcType())));
                 } else {   //common column
-                    fieldList.add(LookupValueFactory.createLookupValue(field.getName(), IbatisConstants.DATABASE_COMMON_FIELD));
+                    fieldList.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_COMMON_FIELD, getJdbcTypeName(field.getJdbcType())));
                 }
             }
             return fieldList.toArray();
@@ -115,5 +116,105 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
         public boolean isSoft() {
             return true;
         }
+    }
+
+    /**
+     * get jdbc type name according type id
+     *
+     * @param jdbcType jdbc type id
+     * @return type name
+     */
+    public static String getJdbcTypeName(int jdbcType) {
+        String name = "";
+        switch (jdbcType) {
+            case Types.BIT:
+                name = "BIT";
+                break;
+            case Types.TINYINT:
+                name = "TINYINT";
+                break;
+            case Types.SMALLINT:
+                name = "SMALLINT";
+                break;
+            case Types.INTEGER:
+                name = "INTEGER";
+                break;
+            case Types.BIGINT:
+                name = "BIGINT";
+                break;
+            case Types.FLOAT:
+                name = "FLOAT";
+                break;
+            case Types.REAL:
+                name = "REAL";
+                break;
+            case Types.DOUBLE:
+                name = "DOUBLE";
+                break;
+            case Types.NUMERIC:
+                name = "NUMERIC";
+                break;
+            case Types.DECIMAL:
+                name = "DECIMAL";
+                break;
+            case Types.CHAR:
+                name = "CHAR";
+                break;
+            case Types.VARCHAR:
+                name = "VARCHAR";
+                break;
+            case Types.LONGVARCHAR:
+                name = "LONGVARCHAR";
+                break;
+            case Types.DATE:
+                name = "DATE";
+                break;
+            case Types.TIME:
+                name = "TIME";
+                break;
+            case Types.TIMESTAMP:
+                name = "TIMESTAMP";
+                break;
+            case Types.BINARY:
+                name = "BINARY";
+                break;
+            case Types.VARBINARY:
+                name = "VARBINARY";
+                break;
+            case Types.LONGVARBINARY:
+                name = "LONGVARBINARY";
+                break;
+            case Types.NULL:
+                name = "NULL";
+                break;
+            case Types.OTHER:
+                name = "OTHER";
+                break;
+            case Types.JAVA_OBJECT:
+                name = "JAVA_OBJECT";
+                break;
+            case Types.DISTINCT:
+                name = "DISTINCT";
+                break;
+            case Types.STRUCT:
+                name = "STRUCT";
+                break;
+            case Types.ARRAY:
+                name = "ARRAY";
+                break;
+            case Types.BLOB:
+                name = "BLOB";
+                break;
+            case Types.CLOB:
+                name = "CLOB";
+                break;
+            case Types.REF:
+                name = "REF";
+                break;
+            case Types.DATALINK:
+                name = "DATALINK";
+                break;
+        }
+        return name;
     }
 }
