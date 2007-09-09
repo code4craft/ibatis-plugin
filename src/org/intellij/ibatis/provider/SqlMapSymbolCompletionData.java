@@ -4,17 +4,17 @@ import com.intellij.codeInsight.completion.CompletionContext;
 import com.intellij.codeInsight.completion.CompletionData;
 import com.intellij.codeInsight.completion.CompletionVariant;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * completion data for sql map symbol
@@ -120,7 +121,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
             PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(xmlTag, parameterClass);
             if (psiClass != null && !"Map".equals(psiClass.getName())) {
                 if (IbatisClassShortcutsReferenceProvider.isDomain(psiClass.getName())) {   //domain class
-                    List<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "");
+                    Set<String> methodNames = FieldAccessMethodReferenceProvider.getAllGetterMethods(psiClass, "").keySet();
                     for (String methodName : methodNames) {
                         nameList.add(methodName);
                     }
