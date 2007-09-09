@@ -64,9 +64,9 @@ public class JavadocTableColumnReferenceProvider extends BaseReferenceProvider {
                     if (tableData != null) {
                         for (DatabaseTableFieldData field : tableData.getFields()) {
                             if (field.isPrimary()) {       //pk
-                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_PK_FIELD, field.getType()));
+                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_PK_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
                             } else {   //common column
-                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(),IbatisConstants.DATABASE_COMMON_FIELD,field.getType()));
+                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_COMMON_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
                             }
                         }
                     }
