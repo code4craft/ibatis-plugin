@@ -11,7 +11,6 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import org.intellij.ibatis.IbatisSqlMapModel;
 import org.intellij.ibatis.dom.sqlMap.*;
 import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
-import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -125,7 +124,7 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param xmlTag xml tag
      * @return xml text
      */
-    public String getAllTextInTag(XmlTag xmlTag) {
+    public static String getAllTextInTag(XmlTag xmlTag) {
         StringBuilder sql = new StringBuilder();
         PsiElement[] children = xmlTag.getChildren();
         for (PsiElement child : children) {
