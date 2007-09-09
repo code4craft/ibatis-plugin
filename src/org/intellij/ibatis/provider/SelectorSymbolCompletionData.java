@@ -108,19 +108,31 @@ public class SelectorSymbolCompletionData extends CompletionData {
         return nameList;
     }
 
+    /**
+     * get table name in SQL Map tag
+     * @param xmlTag  xml tag
+     * @return  table name in SQL sentence
+     */
     @Nullable
     public String getTableName(XmlTag xmlTag) {
         String sql = getSQL(xmlTag).trim().toLowerCase();
         if (sql.startsWith("insert")) {   // insert
             String tableName = sql.substring(sql.indexOf("into") + 4).trim();
-            tableName = tableName.substring(0, tableName.indexOf(" "));  //todo table name parser
+            tableName = tableName.split("\\s+")[0];
+            if (tableName.contains("."))
+                tableName = tableName.substring(0, tableName.indexOf("."));
             return tableName;
         } else if (sql.startsWith("update")) {     //update
-
+            String tableName = sql.substring(sql.indexOf("update") + 6).trim();
+            tableName = tableName.split("\\s+")[0];
+            if (tableName.contains("."))
+                tableName = tableName.substring(0, tableName.indexOf("."));
+            return tableName;
         } else {  //select and delete
-            String[] parts = sql.split("from \\s*");
+            String[] parts = sql.split("from\\s+");
             if (parts.length > 1) {
-                String tableName = parts[1].substring(0, parts[1].indexOf(" ")).trim();
+                String tableName = parts[1].trim();
+                tableName = tableName.split("\\s+")[0];
                 if (tableName.contains("."))
                     tableName = tableName.substring(0, tableName.indexOf("."));
                 return tableName;
