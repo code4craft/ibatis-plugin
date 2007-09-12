@@ -58,7 +58,7 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
                 if (dataSource != null) {
                     List<DatabaseTableData> tables = dataSource.getTables();
                     for (DatabaseTableData table : tables) {
-                        if (table.getName().equals(tableName)) {
+                        if (table.getName().replaceAll("\\w*\\.","" ).equals(tableName)) {
                             return table;
                         }
                     }

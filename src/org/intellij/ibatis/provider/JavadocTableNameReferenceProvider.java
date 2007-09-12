@@ -64,7 +64,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
                 if (dataSource != null) {
                     List<DatabaseTableData> tables = dataSource.getTables();
                     for (DatabaseTableData table : tables) {
-                        variants.add(LookupValueFactory.createLookupValue(table.getName(), IbatisConstants.DATABASE_TABLE));
+                        variants.add(LookupValueFactory.createLookupValue(table.getName().replaceAll("\\w*\\.","" ), IbatisConstants.DATABASE_TABLE));
                     }
                 }
                 return variants.toArray();

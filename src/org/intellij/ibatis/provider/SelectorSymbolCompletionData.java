@@ -91,7 +91,7 @@ public class SelectorSymbolCompletionData extends CompletionData {
                 DatabaseTableData table = null;
                 List<DatabaseTableData> tableList = dataSource.getTables();
                 for (DatabaseTableData databaseTableData : tableList) {
-                    if (databaseTableData.getName().equalsIgnoreCase(tableName)) {  //table name match
+                    if (databaseTableData.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tableName)) {  //table name match
                         table = databaseTableData;
                         break;
                     }
