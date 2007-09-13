@@ -42,6 +42,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         sentenceNames.add("delete");
         sentenceNames.add("procedue");
         sentenceNames.add("statement");
+        sentenceNames.add("sql");
     }
 
     public SqlMapSymbolCompletionData(CompletionData completionData) {
