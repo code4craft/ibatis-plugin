@@ -58,22 +58,47 @@ public class SelectorSymbolCompletionData extends CompletionData {
                     if (tag != null && !prefix.contains("#")) {   //not symbol
                         LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
                         CompletionVariant variant = new CompletionVariant(left);
-                        List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
-                        if (parameterNames.size() > 0) {
-                            for (String parameterName : parameterNames) {
-                                variant.addCompletion(parameterName);
+                        String previousText = getPreviousText(psiElement);
+                        if (previousText != null && previousText.equalsIgnoreCase("from")) {
+                            DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
+                            if(datasource!=null)
+                            {
+                                List<DatabaseTableData> tables = datasource.getTables();
+                                for (DatabaseTableData table : tables) {
+                                    variant.addCompletion(table.getName().replaceAll("\\w*\\.", ""));
+                                }
                             }
-                            variant.includeScopeClass(PsiElement.class, true);
-                            variant.addCompletionFilter(TrueFilter.INSTANCE);
-                            variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-                            return new CompletionVariant[]{variant};
+                        } else {
+                            List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
+                            if (parameterNames.size() > 0) {
+                                for (String parameterName : parameterNames) {
+                                    variant.addCompletion(parameterName);
+                                }
+                            }
                         }
+                        variant.includeScopeClass(PsiElement.class, true);
+                        variant.addCompletionFilter(TrueFilter.INSTANCE);
+                        variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+                        return new CompletionVariant[]{variant};
                     }
                 }
             }
         }
         if (systemCompletionData != null) return systemCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
+    }
+
+    @Nullable
+    public String getPreviousText(PsiElement psiElement) {
+        PsiElement prev = psiElement.getPrevSibling();
+        if (prev != null) {
+            if (StringUtil.isNotEmpty(prev.getText().trim())) {
+                return prev.getText();
+            } else {
+                return getPreviousText(prev);
+            }
+        }
+        return null;
     }
 
     /**
@@ -91,7 +116,7 @@ public class SelectorSymbolCompletionData extends CompletionData {
                 DatabaseTableData table = null;
                 List<DatabaseTableData> tableList = dataSource.getTables();
                 for (DatabaseTableData databaseTableData : tableList) {
-                    if (databaseTableData.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tableName)) {  //table name match
+                    if (databaseTableData.getName().replaceAll("\\w*\\.", "").equalsIgnoreCase(tableName)) {  //table name match
                         table = databaseTableData;
                         break;
                     }
@@ -110,8 +135,9 @@ public class SelectorSymbolCompletionData extends CompletionData {
 
     /**
      * get table name in SQL Map tag
-     * @param xmlTag  xml tag
-     * @return  table name in SQL sentence
+     *
+     * @param xmlTag xml tag
+     * @return table name in SQL sentence
      */
     @Nullable
     public String getTableName(XmlTag xmlTag) {
