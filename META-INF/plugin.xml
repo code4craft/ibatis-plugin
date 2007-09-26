@@ -7,9 +7,9 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.4</version>
+    <version>0.4.2</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
-    <idea-version since-build="7000"/>
+    <idea-version since-build="7290"/>
     <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
@@ -17,7 +17,7 @@
                   <li>Code completion for table column and inline parameter in SQL sentence</li>
                   <li>Inspection for invalid inline parameter name</li>
                   <li>Bug fix and minor performance enhanced</li>
-               </ul>
+               </ul>                       
         ]]>
     </change-notes>
     <extensions xmlns="com.intellij">
