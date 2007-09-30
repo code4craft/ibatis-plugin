@@ -20,6 +20,7 @@ import com.intellij.javaee.dataSource.DataSource;
 import com.intellij.javaee.dataSource.DatabaseTableData;
 import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class SelectorSymbolCompletionData extends CompletionData {
                             {
                                 List<DatabaseTableData> tables = datasource.getTables();
                                 for (DatabaseTableData table : tables) {
-                                    variant.addCompletion(table.getName().replaceAll("\\w*\\.", ""));
+                                    variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()));
                                 }
                             }
                         } else {

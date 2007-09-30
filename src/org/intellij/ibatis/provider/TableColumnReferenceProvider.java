@@ -15,6 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.util.IbatisConstants;
+import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,7 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
                 if (dataSource != null) {
                     List<DatabaseTableData> tables = dataSource.getTables();
                     for (DatabaseTableData table : tables) {
-                        if (table.getName().replaceAll("\\w*\\.","" ).equals(tableName)) {
+                        if (IbatisUtil.getTableNameWithoutSchema(table.getName()).equals(tableName)) {
                             return table;
                         }
                     }
