@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * completion data for sql map symbol
+ * completion data for SQL map symbol
  */
 public class SqlMapSymbolCompletionData extends CompletionData {
     public static String OPEN_TAG = "#";
@@ -134,6 +134,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         }
         XmlAttribute parameterMap = xmlTag.getAttribute("parameterMap");
         if (parameterMap != null && StringUtil.isNotEmpty(parameterMap.getValue())) {
+            //noinspection ConstantConditions
             PsiReference psiReference = parameterMap.getValueElement().getReference();
             if (psiReference != null) {
                 PsiElement psiElement = psiReference.resolve();
@@ -164,7 +165,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
     }
 
     /**
-     * get sql setence tag for  psiElement
+     * get SQL sentence tag for  psiElement
      *
      * @param psiElement psiElement object
      * @return XmlTag object
