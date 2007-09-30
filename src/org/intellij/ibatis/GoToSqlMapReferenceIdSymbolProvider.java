@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * GoTo sql map id support.
+ * goto SQL map id support.
  *
  * @author Jacky
  */
@@ -20,7 +20,6 @@ public class GoToSqlMapReferenceIdSymbolProvider extends GoToSymbolProvider {
         IbatisManager manager = IbatisManager.getInstance();
         Map<String, DomElement> allReference = manager.getAllSqlMapReference(module);
         GoToSymbolProvider.addNames(allReference.values(), result);
-
     }
 
     protected void getItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
