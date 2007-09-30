@@ -1,4 +1,4 @@
-package org.intellij.ibatis.insepections;
+package org.intellij.ibatis.inspections;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;

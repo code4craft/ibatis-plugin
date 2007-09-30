@@ -1,4 +1,4 @@
-package org.intellij.ibatis.insepections;
+package org.intellij.ibatis.inspections;
 
 import Zql.ZQuery;
 import Zql.ZSelectItem;

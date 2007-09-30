@@ -1,4 +1,4 @@
-package org.intellij.ibatis.insepections;
+package org.intellij.ibatis.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;

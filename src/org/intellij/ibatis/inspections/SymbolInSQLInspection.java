@@ -1,4 +1,4 @@
-package org.intellij.ibatis.insepections;
+package org.intellij.ibatis.inspections;
 
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.text.StringUtil;
