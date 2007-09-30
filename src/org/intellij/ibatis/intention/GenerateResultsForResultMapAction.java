@@ -73,11 +73,25 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                                             }
                                             builder.append("/>");
                                             xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
-                                        }
+                                        }else{
+											// no @column tag, so just assume a reasonable default value
+											PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
+											String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
+											StringBuilder builder = new StringBuilder();
+											builder.append("<result property=\"").append(propertyName).append("\"");
+											builder.append(" column=\"").append(propertyName).append("\"");
+											if (psiType.equals(PsiType.BOOLEAN)) {
+												builder.append(" nullValue=\"false\"");
+											} else if (psiType instanceof PsiPrimitiveType) {
+												builder.append(" nullValue=\"0\"");
+											}
+											builder.append("/>");
+											xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
+										}
                                     }
                                 }
                             } catch (Exception e) {
-
+								// where do we go from here?
                             }
                         }
                     }

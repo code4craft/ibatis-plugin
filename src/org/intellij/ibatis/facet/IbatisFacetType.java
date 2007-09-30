@@ -34,7 +34,7 @@ public class IbatisFacetType extends FacetType<IbatisFacet, IbatisFacetConfigura
     }
 
     public boolean isOnlyOneFacetAllowed() {
-        return true;
+        return false;
     }
 
     public boolean isSuitableModuleType(final ModuleType moduleType) {

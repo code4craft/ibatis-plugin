@@ -9,11 +9,17 @@
     ]]></description>
     <version>0.4.2</version>
     <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
-    <idea-version since-build="7000"/>
-    <depends>com.intellij.javaee</depends>
+    <!-- 6833 is 7 M1b -->
+    <!-- 7126 is 7 M2  -->
+	<idea-version since-build="7000"/>
+
+	<depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
                 <ul>
+                  <li>Added reflection-based result map generation</li>
+                  <li>Added select generation based on resultClass</li>
+                  <li>Code completion for table column and inline parameter in SQL sentence</li>
                   <li>Database schema problem fixed</li>
                   <li>Compiled with JDK 1.5</li>
                   <li>Bug fix</li>

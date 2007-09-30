@@ -43,31 +43,61 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
     }
 
     /**
-     * get tableData in  PsiClass
+     * Get jdbc data for a table that the class maps is mapped to
      *
+	 * If the class has a javadoc @table tag, we use that.
+	 *
+	 * If not, we'll look in the datasource for a table that matches the class name
+	 *
+	 * If we still don't find a match, we'll look in the datasource for a table that matches the
+	 * class name with an "s" appended to it.
+	 *
+	 * If we *still* don't find a match, we give up and return null.
+	 *
      * @param psiClass PsiClass
      * @return tableData object
      */
     @Nullable
     public static DatabaseTableData getDatabaseTableData(PsiClass psiClass) {
-        PsiDocComment docComment = psiClass.getDocComment();
-        if (docComment != null && docComment.findTagByName("table") != null) {
-            PsiDocTag tableTag = docComment.findTagByName("table");
-            String tableName = tableTag.getValueElement().getText().trim();
-            if (StringUtil.isNotEmpty(tableName)) {
-                DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiClass);
-                if (dataSource != null) {
-                    List<DatabaseTableData> tables = dataSource.getTables();
-                    for (DatabaseTableData table : tables) {
-                        if (IbatisUtil.getTableNameWithoutSchema(table.getName()).equals(tableName)) {
-                            return table;
-                        }
-                    }
-                }
-            }
+		DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiClass);
+		List<DatabaseTableData> tables = dataSource.getTables();
+		String name = psiClass.getName();
+
+		PsiDocComment docComment = psiClass.getDocComment();
+		if (docComment != null && docComment.findTagByName("table") != null) {
+			// there is a @table tag, look for it and return what you find.
+			PsiDocTag tableTag = docComment.findTagByName("table");
+			String tableName = tableTag.getValueElement().getText().trim();
+			if (StringUtil.isNotEmpty(tableName)) {
+				for (DatabaseTableData table : tables) {
+					if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tableName)) {
+						return table;
+					}
+				}
+			}
         }
-        return null;
-    }
+
+		// OK, if we got here, we need to look for the class name
+		for (DatabaseTableData table : tables) {
+			if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(name)) {
+				return table;
+			}
+		}
+
+		// OK, if we got here, we need to look for the class name pluralized
+		if(null != name){
+			String tmp = StringUtil.pluralize(name);
+			for (DatabaseTableData table : tables) {
+				if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tmp)) {
+					return table;
+				}
+			}
+		}
+
+		// by the time we get here...I give up
+		return null;
+
+	}
 
     /**
      * get tableFieldData in psiMethod
@@ -218,4 +248,13 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
         }
         return name;
     }
+
+	public static List<DatabaseTableFieldData> getPrimaryKeyColumns(DatabaseTableData tableData){
+		List<DatabaseTableFieldData> l = new ArrayList<DatabaseTableFieldData>();
+		for(DatabaseTableFieldData f : tableData.getFields()){
+			if(f.isPrimary()) l.add(f);
+		}
+		return l;
+	}
+
 }
