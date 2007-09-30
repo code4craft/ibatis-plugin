@@ -9,10 +9,10 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.PsiElement;
 import org.intellij.ibatis.facet.IbatisFacetType;
-import org.intellij.ibatis.insepections.NullSettedToPrimaryTypeInspection;
-import org.intellij.ibatis.insepections.ResultMapInSelectInspection;
-import org.intellij.ibatis.insepections.SqlMapFileInConfigurationInspection;
-import org.intellij.ibatis.insepections.SymbolInSQLInspection;
+import org.intellij.ibatis.inspections.NullSettedToPrimaryTypeInspection;
+import org.intellij.ibatis.inspections.ResultMapInSelectInspection;
+import org.intellij.ibatis.inspections.SqlMapFileInConfigurationInspection;
+import org.intellij.ibatis.inspections.SymbolInSQLInspection;
 import org.intellij.ibatis.provider.SelectorSymbolCompletionData;
 import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
 import org.intellij.ibatis.util.IbatisBundle;
@@ -54,10 +54,10 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     /**
      * register DTD for iBATIS
      *
-     * @param dtds DTD URLs
+     * @param dtdArray URLs
      */
-    private void registerDTDs(String dtds[]) {
-        for (String url : dtds) {
+    private void registerDTDs(String dtdArray[]) {
+        for (String url : dtdArray) {
             if (url.startsWith("http://")) {
                 int pos = url.lastIndexOf('/');
                 @NonNls String file = "/org/intellij/ibatis/dtds" + url.substring(pos);
@@ -69,7 +69,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     /**
      * icon for special psiFile
      *
-     * @param psiElement PsiFile sub calss
+     * @param psiElement PsiFile sub class
      * @param i          i
      * @return icon for special psiFile
      */
