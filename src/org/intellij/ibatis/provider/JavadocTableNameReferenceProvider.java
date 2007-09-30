@@ -15,6 +15,7 @@ import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.ibatis.facet.IbatisFacet;
 import org.intellij.ibatis.util.IbatisConstants;
+import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,11 +46,11 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
             public String getCanonicalText() {
                 return docTag.getText().trim();
             }
-
+            @Nullable
             public PsiElement handleElementRename(String s) throws IncorrectOperationException {
                 return null;
             }
-
+            @Nullable
             public PsiElement bindToElement(@NotNull PsiElement psiElement) throws IncorrectOperationException {
                 return null;
             }
@@ -64,7 +65,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
                 if (dataSource != null) {
                     List<DatabaseTableData> tables = dataSource.getTables();
                     for (DatabaseTableData table : tables) {
-                        variants.add(LookupValueFactory.createLookupValue(table.getName().replaceAll("\\w*\\.","" ), IbatisConstants.DATABASE_TABLE));
+                        variants.add(LookupValueFactory.createLookupValue(IbatisUtil.getTableNameWithoutSchema(table.getName()), IbatisConstants.DATABASE_TABLE));
                     }
                 }
                 return variants.toArray();
@@ -77,7 +78,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
     }
 
     /**
-     * get the datasource for ibatis
+     * get the data source for iBATIS
      *
      * @param psiElement psiElement
      * @return DataSource Object
@@ -88,16 +89,17 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
     }
 
     /**
-     * get the datasource for ibatis in module
+     * get the data source for iBATIS in module
      *
      * @param module Module object
      * @return DataSource object
      */
-    public static DataSource getDataSourceForIbatis(Module module) {
+    @Nullable public static DataSource getDataSourceForIbatis(Module module) {
         IbatisFacet ibatisFacet = IbatisFacet.getInstance(module);
         if (ibatisFacet == null) return null;
         String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
         DataSourceManager dataSourceManager = DataSourceManager.getInstance(module.getProject());
         return dataSourceManager.getDataSourceByName(selectedDataSourceName);
     }
+
 }
