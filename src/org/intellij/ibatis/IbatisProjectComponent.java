@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.intention.GenerateResultsForResultMapAction;
 import org.intellij.ibatis.intention.GenerateSQLForSelectAction;
+import org.intellij.ibatis.intention.GenerateSQLForInsertAction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,5 +63,6 @@ public class IbatisProjectComponent implements ProjectComponent {
     private void registerIntentionActions() {
         IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateResultsForResultMapAction(), "iBATIS");
         IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForSelectAction(), "iBATIS");
+        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForInsertAction(), "iBATIS");
     }
 }

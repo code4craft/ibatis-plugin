@@ -15,7 +15,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.util.IbatisConstants;
-import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -255,6 +254,45 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
 			if(f.isPrimary()) l.add(f);
 		}
 		return l;
+	}
+
+	private static String methodNameToPropertyName(String methodName) {
+		String returnValue = methodName.substring(3);
+
+		// if the second character is upper case, we just return the name unscathed
+		if (Character.isUpperCase(returnValue.charAt(1))) return returnValue;
+
+		// make char #1 lower case, and attach the rest
+		return returnValue.substring(0, 1).toLowerCase() + returnValue.substring(1);
+
+	}
+
+	public static String getPropNameForColumn(PsiClass psiClass, DatabaseTableFieldData c) {
+
+		// look for a @column on a getter
+		for (PsiMethod m : psiClass.getMethods()) {
+			if (m.getName().startsWith("get")) {
+				PsiDocComment docComment = m.getDocComment();
+				if (docComment != null) {
+					PsiDocTag psiDocTag = docComment.findTagByName("column");
+					if (null != psiDocTag) {
+						if (psiDocTag.getValueElement().getText().trim().equalsIgnoreCase(c.getName())) {
+							return methodNameToPropertyName(m.getName());
+						}
+					}
+				}
+			}
+		}
+
+		// look for a matching name
+		for (PsiMethod m : psiClass.getMethods()) {
+			if (m.getName().startsWith("get")) {
+				if (m.getName().substring(3).equalsIgnoreCase(c.getName())) {
+					return methodNameToPropertyName(m.getName());
+				}
+			}
+		}
+		return null;
 	}
 
 }
