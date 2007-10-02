@@ -292,7 +292,41 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
 				}
 			}
 		}
+
+		// look for a "mangled name"
+		// this maps columns NAMED_LIKE_THIS to fields namedLikeThis
+		String mangledColumnName;
+		mangledColumnName = mangleUnderscore(c.getName(), false);
+		for (PsiMethod m : psiClass.getMethods()) {
+			if (m.getName().startsWith("get")) {
+				if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
+					return methodNameToPropertyName(m.getName());
+				}
+			}
+		}
+
+		mangledColumnName = mangleUnderscore(c.getName(), true);
+		for (PsiMethod m : psiClass.getMethods()) {
+			if (m.getName().startsWith("get")) {
+				if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
+					return methodNameToPropertyName(m.getName());
+				}
+			}
+		}
 		return null;
+	}
+
+	private static String mangleUnderscore(String testColumnName, boolean allowLowerCaseSingle) {
+		String[] strings = testColumnName.toLowerCase().split("_");
+		if(!allowLowerCaseSingle){
+			if(strings[0].length() == 1){
+				strings[0] = strings[0].toUpperCase();
+			}
+		}
+		for (int i = 1; i < strings.length; i++) {
+			strings[i] = StringUtil.firstLetterToUpperCase(strings[i]);
+		}
+		return StringUtil.join(strings, "");
 	}
 
 }
