@@ -5,9 +5,10 @@ import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.javadoc.PsiDocTag;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
@@ -18,7 +19,8 @@ import org.intellij.ibatis.dom.sqlMap.Result;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.dom.sqlMap.Select;
 import org.intellij.ibatis.dom.sqlMap.TypeAlias;
-import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
+import static org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider.getPsiClass;
+import org.intellij.ibatis.provider.TableColumnReferenceProvider;
 import static org.intellij.ibatis.provider.TableColumnReferenceProvider.getDatabaseTableData;
 import static org.intellij.ibatis.provider.TableColumnReferenceProvider.getPrimaryKeyColumns;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,7 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
 		if (isAvailable(project, editor, file)) {
+			// this is the select xml tag
 			XmlTag xmlTag = (XmlTag) element;
 			PsiReference psiReference = getReference(xmlTag, "resultMap");
 
@@ -59,7 +62,7 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 						String className = resultMap.getClazz().getValue();
 
 						if (StringUtil.isNotEmpty(className)) {
-							PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(element, resultMap.getClazz().getValue());
+							PsiClass psiClass = getPsiClass(element, resultMap.getClazz().getValue());
 							List<Result> list = resultMap.getResults();
 							List<String> columns = new ArrayList<String>();
 							for (Result result : list) {
@@ -99,25 +102,25 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 				if (null == psiElement) {
 					return;
 				}
-				XmlTag TAxmlTag = ((XmlTag) psiElement); // this is the typeAlias tag
-				DomElement select = DomManager.getDomManager(project).getDomElement(TAxmlTag); // this is the DOM element of the select tag
-				PsiClass value;
-				if (select != null && select instanceof TypeAlias) {
-					TypeAlias ta = (TypeAlias) select;
-					value = ta.getType().getValue();
-					String className;
-					if (null != value) {
-						className = value.getQualifiedName();
-						PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, className);
 
-						// we have the setters, now get the columns and match them up
+				// todo: what if it isn't a type alias?
+				XmlTag typeAliasTag = ((XmlTag) psiElement); // this is the typeAlias tag
+
+				// this is the DOM element of the type alias tag
+				DomElement typeAliasElement = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+
+				if (typeAliasElement != null && typeAliasElement instanceof TypeAlias) {
+					TypeAlias typeAlias = (TypeAlias) typeAliasElement;
+					PsiClass value = typeAlias.getType().getValue();
+					if (null != value) {
+						PsiClass psiClass = getPsiClass(psiElement, value.getQualifiedName());
 						DatabaseTableData tableData = getDatabaseTableData(value);
 						if (null != tableData) {
 
 							List<DatabaseTableFieldData> fieldList = tableData.getFields();
 							StringBuilder selectList = new StringBuilder("");
 							for (DatabaseTableFieldData d : fieldList) {
-								String propName = getPropNameForColumn(psiClass, d);
+								String propName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, d);
 								if (null != propName) {
 									if (selectList.length() > 0) selectList.append(", ");
 									selectList.append(d.getName()).append(" as \"").append(propName).append("\"");
@@ -153,7 +156,7 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 	private String getSQLWhere(PsiClass psiClass, List<DatabaseTableFieldData> keyCols) {
 		StringBuilder sqlWhere = new StringBuilder("");
 		for (DatabaseTableFieldData c : keyCols) {
-			String propertyName = getPropNameForColumn(psiClass, c);
+			String propertyName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, c);
 			if (sqlWhere.length() == 0) {
 				sqlWhere.append(" where ");
 			} else {
@@ -162,45 +165,6 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 			sqlWhere.append(c.getName()).append(" = #").append(propertyName).append("#");
 		}
 		return sqlWhere.toString();
-	}
-
-	private String getPropNameForColumn(PsiClass psiClass, DatabaseTableFieldData c) {
-
-		// look for a @column on a getter
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				PsiDocComment docComment = m.getDocComment();
-				if (docComment != null) {
-					PsiDocTag psiDocTag = docComment.findTagByName("column");
-					if (null != psiDocTag) {
-						if (psiDocTag.getValueElement().getText().trim().equalsIgnoreCase(c.getName())) {
-							return methodNameToPropertyName(m.getName());
-						}
-					}
-				}
-			}
-		}
-
-		// look for a matching name
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				if (m.getName().substring(3).equalsIgnoreCase(c.getName())) {
-					return methodNameToPropertyName(m.getName());
-				}
-			}
-		}
-		return null;
-	}
-
-	private String methodNameToPropertyName(String methodName) {
-		String returnValue = methodName.substring(3);
-
-		// if the second character is upper case, we just return the name unscathed
-		if (Character.isUpperCase(returnValue.charAt(1))) return returnValue;
-
-		// make char #1 lower case, and attach the rest
-		return returnValue.substring(0, 1).toLowerCase() + returnValue.substring(1);
-
 	}
 
 	protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
