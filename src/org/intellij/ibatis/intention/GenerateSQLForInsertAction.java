@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GenerateSQLForInsertAction extends PsiIntentionBase {
+public class GenerateSQLForInsertAction extends GenerateSQLBase {
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement insertElement) {
 		if (isAvailable(project, editor, file)) {
 
@@ -61,15 +61,20 @@ public class GenerateSQLForInsertAction extends PsiIntentionBase {
 					PsiReference psiReference = xmlAttributeValue.getReference();
 					if (null != psiReference) {
 						PsiElement psiElement = psiReference.resolve();
-						XmlTag typeAliasTag = (XmlTag) psiElement;
-						DomElement typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
-
-						if (typeAliasTemp != null && typeAliasTemp instanceof TypeAlias) {
-							TypeAlias ta = (TypeAlias) typeAliasTemp;
-							PsiClass value = ta.getType().getValue();
-							if(null!=value){
-								createSqlStatement(insertElement, psiElement, value);
+						if(psiElement instanceof XmlTag){
+							XmlTag typeAliasTag = (XmlTag) psiElement;
+							DomElement typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+							//todo: if the type alias is defined in the main config, this fails
+							// there are 2 types of type alias interfaces. crap.
+							if (typeAliasTemp != null && typeAliasTemp instanceof TypeAlias) {
+								TypeAlias ta = (TypeAlias) typeAliasTemp;
+								PsiClass value = ta.getType().getValue();
+								if(null!=value){
+									createSqlStatement(insertElement, psiElement, value);
+								}
 							}
+						}else if(psiElement instanceof PsiClass){
+							createSqlStatement(insertElement, psiElement, (PsiClass) psiElement);
 						}
 					}else{
 						// is this a class?
@@ -106,7 +111,7 @@ public class GenerateSQLForInsertAction extends PsiIntentionBase {
 						valueList.append(", ");
 					}
 					insertList.append(d.getName());
-					valueList.append("#").append(propName).append("#");
+					valueList.append("#").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
 				}
 			}
 			if(insertList.length() > 0){
@@ -155,6 +160,6 @@ public class GenerateSQLForInsertAction extends PsiIntentionBase {
 
 	@NotNull
 	public String getFamilyName() {
-		return "GenerateSqlForInsert";
+		return "GenerateSQLForInsert";
 	}
 }

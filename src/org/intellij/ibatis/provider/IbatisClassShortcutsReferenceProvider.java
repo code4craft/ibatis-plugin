@@ -13,6 +13,7 @@ import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -22,18 +23,27 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     public static Map<String, String> classShortcuts = new HashMap<String, String>();
 
     static {
-        classShortcuts.put("boolean", "java.lang.Boolean");
-        classShortcuts.put("byte", "java.lang.Byte");
-        classShortcuts.put("short", "java.lang.Short");
-        classShortcuts.put("int", "java.lang.Integer");
-        classShortcuts.put("long", "java.lang.Long");
-        classShortcuts.put("float", "java.lang.Float");
-        classShortcuts.put("double", "java.lang.Double");
-        classShortcuts.put("string", "java.lang.String");
-        classShortcuts.put("date", "java.util.Date");
-        classShortcuts.put("decimal", "java.math.BigDecimal");
-        classShortcuts.put("map", "java.util.Map");
-    }
+		classShortcuts.put("arraylist", ArrayList.class.getName());
+		classShortcuts.put("boolean", Boolean.class.getName());
+		classShortcuts.put("byte", Byte.class.getName());
+		classShortcuts.put("collection", Collection.class.getName());
+		classShortcuts.put("cursor", java.sql.ResultSet.class.getName());
+		classShortcuts.put("date", Date.class.getName());
+		classShortcuts.put("decimal", BigDecimal.class.getName());
+		classShortcuts.put("double", Double.class.getName());
+		classShortcuts.put("float", Float.class.getName());
+		classShortcuts.put("hashmap", HashMap.class.getName());
+		classShortcuts.put("int", Integer.class.getName());
+		classShortcuts.put("integer", Integer.class.getName());
+		classShortcuts.put("iterator", Iterator.class.getName());
+		classShortcuts.put("list", List.class.getName());
+		classShortcuts.put("long", Long.class.getName());
+		classShortcuts.put("map", Map.class.getName());
+		classShortcuts.put("object", Object.class.getName());
+		classShortcuts.put("short", Short.class.getName());
+		classShortcuts.put("string", String.class.getName());
+		
+	}
 
     public IbatisClassShortcutsReferenceProvider() {
         super(new JavaClassReferenceProvider());

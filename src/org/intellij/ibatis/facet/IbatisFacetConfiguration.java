@@ -23,6 +23,8 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
     private long myModificationCount;
     public String dataSourceName;
     public String sqlMapSuffix;
+    public String sqlMapPackage;
+    public String beanPackage;
 
     public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
         return new FacetEditorTab[]{
@@ -33,11 +35,15 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
     public void readExternal(Element element) throws InvalidDataException {
         dataSourceName = JDOMExternalizer.readString(element, "datasourceName");
         sqlMapSuffix = JDOMExternalizer.readString(element, "sqlMapSuffix");
-    }
+        sqlMapPackage = JDOMExternalizer.readString(element, "sqlMapPackage");
+        beanPackage = JDOMExternalizer.readString(element, "beanPackage");
+	}
 
     public void writeExternal(Element element) throws WriteExternalException {
         JDOMExternalizer.write(element, "datasourceName", dataSourceName);
         JDOMExternalizer.write(element, "sqlMapSuffix", sqlMapSuffix);
+        JDOMExternalizer.write(element, "sqlMapPackage", sqlMapPackage);
+        JDOMExternalizer.write(element, "beanPackage", beanPackage);
     }
 
     public long getModificationCount() {

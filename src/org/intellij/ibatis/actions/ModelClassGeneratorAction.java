@@ -50,9 +50,12 @@ public class ModelClassGeneratorAction extends AnAction {
                     if (result > -1)  //a table name selected
                     {
                         String tableName = tableNames.get(result);
-                        for (DatabaseTableData tableData : tableDataList) {
+						// try to make the name singular
+						String beanName = StringUtil.unpluralize(tableName);
+						if(null == beanName) beanName = tableName;
+						for (DatabaseTableData tableData : tableDataList) {
                             if (tableData.getName().equals(tableName)) {
-                                ApplicationManager.getApplication().runWriteAction(new GenerateModelClassRunner(project, psiDirectory, tableData));
+                                ApplicationManager.getApplication().runWriteAction(new GenerateModelClassRunner(project, psiDirectory, tableData, beanName));
                                 break;
                             }
                         }
@@ -135,16 +138,18 @@ public class ModelClassGeneratorAction extends AnAction {
         private Project project;
         private PsiDirectory psiDirectory;
         private DatabaseTableData tableData;
+		private String beanName;
 
-        public GenerateModelClassRunner(Project project, PsiDirectory psiDirectory, DatabaseTableData tableData) {
+		public GenerateModelClassRunner(Project project, PsiDirectory psiDirectory, DatabaseTableData tableData, String beanName) {
             this.project = project;
             this.psiDirectory = psiDirectory;
             this.tableData = tableData;
-        }
+			this.beanName = beanName;
+		}
 
         @SuppressWarnings({"ConstantConditions"}) public void run() {
             try {
-                String className = getModelClassName(tableData.getName());
+                String className = getModelClassName(beanName);
                 PsiFile psiFile = psiDirectory.findFile(className + ".java");
                 if (psiFile == null) {  //文件不存在
                     VelocityContext context = new VelocityContext();
@@ -153,7 +158,7 @@ public class ModelClassGeneratorAction extends AnAction {
                     context.put("tableName", tableData.getName());
                     List<ClassField> classFields = new ArrayList<ClassField>();
                     for (DatabaseTableFieldData tableFieldData : tableData.getFields()) {
-                        classFields.add(getClassField(tableFieldData));
+						classFields.add(getClassField(tableFieldData));
                     }
                     context.put("fieldList", classFields);
                     StringWriter writer = new StringWriter();

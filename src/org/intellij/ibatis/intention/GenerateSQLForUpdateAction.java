@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GenerateSQLForUpdateAction extends PsiIntentionBase {
+public class GenerateSQLForUpdateAction extends GenerateSQLBase {
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
 		if(isAvailable(project, editor, file)){
 			XmlAttribute attribute;
@@ -54,8 +54,12 @@ public class GenerateSQLForUpdateAction extends PsiIntentionBase {
 					if (null != psiReference) {
 						PsiElement psiElement = psiReference.resolve();
 						// todo: what if its not a type alias?
-						XmlTag typeAliasTag = (XmlTag) psiElement;
-						DomElement typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+						XmlTag typeAliasTag; // this is the typeAlias tag
+						DomElement typeAliasTemp = null;
+						if(psiElement instanceof XmlTag) {
+							typeAliasTag = ((XmlTag) psiElement);
+							typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+						}
 
 						if (typeAliasTemp != null && typeAliasTemp instanceof TypeAlias) {
 							TypeAlias ta = (TypeAlias) typeAliasTemp;
@@ -82,12 +86,12 @@ public class GenerateSQLForUpdateAction extends PsiIntentionBase {
 												}else{
 													keyFields.append(" and ");
 												}
-												keyFields.append(d.getName()).append(" = #").append(propName).append("#");
+												keyFields.append(d.getName()).append(" = #").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
 											}else{
 												if(fieldsToUpdate.length() > 0) {
 													fieldsToUpdate.append(", ");
 												}
-												fieldsToUpdate.append(d.getName()).append(" = #").append(propName).append("#");
+												fieldsToUpdate.append(d.getName()).append(" = #").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
 											}
 										}
 									}
@@ -98,6 +102,45 @@ public class GenerateSQLForUpdateAction extends PsiIntentionBase {
 									}
 								}
 							}
+						}else if(psiElement instanceof PsiClass){
+							PsiClass value = (PsiClass) psiElement;
+							String className = value.getQualifiedName();
+							DatabaseTableData tableData = getDatabaseTableData(value);
+							if(null != tableData){
+								List<DatabaseTableFieldData> fieldList = tableData.getFields();
+
+								PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, className);
+								// ok, now we have the table meta-data and the class meta-data.
+								// now we can build our update statement
+								StringBuilder updateStatement = new StringBuilder("\nupdate ").append(tableData.getName()).append(" set ");
+								StringBuilder fieldsToUpdate = new StringBuilder("");
+								StringBuilder keyFields = new StringBuilder("");
+
+								for (DatabaseTableFieldData d : fieldList) {
+									String propName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, d);
+									if(null != propName){
+										if(d.isPrimary()){
+											if(keyFields.length() == 0) {
+												keyFields.append(" where ");
+											}else{
+												keyFields.append(" and ");
+											}
+											keyFields.append(d.getName()).append(" = #").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
+										}else{
+											if(fieldsToUpdate.length() > 0) {
+												fieldsToUpdate.append(", ");
+											}
+											fieldsToUpdate.append(d.getName()).append(" = #").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
+										}
+									}
+								}
+								if(fieldsToUpdate.length() > 0){
+									// ok, build the SQL statement...
+									XmlTag xmlTag = (XmlTag) element;
+									xmlTag.getValue().setText(updateStatement.append(fieldsToUpdate).append(keyFields).toString());
+								}
+							}
+
 						}
 					}
 				}
@@ -144,6 +187,6 @@ public class GenerateSQLForUpdateAction extends PsiIntentionBase {
 
 	@NotNull
 	public String getFamilyName() {
-		return "GenerateSqlForUpdate";
+		return "GenerateSQLForUpdate";
 	}
 }

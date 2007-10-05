@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * generate sql for select with result map
  */
-public class GenerateSQLForSelectAction extends PsiIntentionBase {
+public class GenerateSQLForSelectAction extends GenerateSQLBase {
 	private static final String NAME = "GenerateSQLForSelectWithResultMap";
 	private static final String TEXT = "Generate SQL for select with resultMap or resultClass";
 
@@ -104,10 +104,14 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 				}
 
 				// todo: what if it isn't a type alias?
-				XmlTag typeAliasTag = ((XmlTag) psiElement); // this is the typeAlias tag
+				XmlTag typeAliasTag; // this is the typeAlias tag
+				DomElement typeAliasElement = null;
+				if(psiElement instanceof XmlTag) {
+					typeAliasTag = ((XmlTag) psiElement);
+					typeAliasElement = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+				}
 
 				// this is the DOM element of the type alias tag
-				DomElement typeAliasElement = DomManager.getDomManager(project).getDomElement(typeAliasTag);
 
 				if (typeAliasElement != null && typeAliasElement instanceof TypeAlias) {
 					TypeAlias typeAlias = (TypeAlias) typeAliasElement;
@@ -133,6 +137,27 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 							xmlTag.getValue().setText(tmp);
 						}
 					}
+				}else if (psiElement instanceof PsiClass){
+					PsiClass x = (PsiClass) psiElement;
+					DatabaseTableData tableData = getDatabaseTableData(x);
+					if (null != tableData) {
+
+						List<DatabaseTableFieldData> fieldList = tableData.getFields();
+						StringBuilder selectList = new StringBuilder("");
+						for (DatabaseTableFieldData d : fieldList) {
+							String propName = TableColumnReferenceProvider.getPropNameForColumn(x, d);
+							if (null != propName) {
+								if (selectList.length() > 0) selectList.append(", ");
+								selectList.append(d.getName()).append(" as \"").append(propName).append("\"");
+							}
+						}
+						selectList.insert(0, "\nselect ");
+						selectList.append("\nfrom ").append(tableData.getName());
+						selectList.append("\n").append(getSQLWhere(x, getPrimaryKeyColumns(tableData)));
+						String tmp = selectList.toString();
+						xmlTag.getValue().setText(tmp);
+					}
+
 				}
 
 
@@ -162,7 +187,7 @@ public class GenerateSQLForSelectAction extends PsiIntentionBase {
 			} else {
 				sqlWhere.append(" and ");
 			}
-			sqlWhere.append(c.getName()).append(" = #").append(propertyName).append("#");
+			sqlWhere.append(c.getName()).append(" = #").append(propertyName).append(":").append(jdbcTypeNameMap.get(c.getJdbcType())).append("#");
 		}
 		return sqlWhere.toString();
 	}
