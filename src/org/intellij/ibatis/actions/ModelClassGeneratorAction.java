@@ -1,5 +1,6 @@
 package org.intellij.ibatis.actions;
 
+import com.intellij.ide.util.PackageUtil;
 import com.intellij.javaee.dataSource.DataSource;
 import com.intellij.javaee.dataSource.DatabaseTableData;
 import com.intellij.javaee.dataSource.DatabaseTableFieldData;
@@ -18,18 +19,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.ide.util.PackageUtil;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.intellij.ibatis.provider.JavadocTableNameReferenceProvider;
-import org.intellij.ibatis.util.IbatisConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.intellij.ibatis.facet.IbatisFacet;
 import org.intellij.ibatis.facet.IbatisFacetConfiguration;
+import org.intellij.ibatis.provider.JavadocTableNameReferenceProvider;
+import org.intellij.ibatis.util.IbatisConstants;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * model class generate according to table name
@@ -47,8 +49,7 @@ public class ModelClassGeneratorAction extends AnAction {
 		}
 
 		PsiElement psiElement = e.getData(DataKeys.PSI_ELEMENT);
-//		PsiDirectory psiDirectoryBean = (PsiDirectory) psiElement;
-		PsiDirectory psiDirectoryBean = null;
+		PsiDirectory psiDirectoryBean;
 
 		if(config.beanPackage.trim().length() == 0){
 			// 0 = yes, 1 = no
@@ -121,13 +122,18 @@ public class ModelClassGeneratorAction extends AnAction {
 						if (null == beanName) beanName = tableName;
 						for (DatabaseTableData tableData : tableDataList) {
 							if (tableData.getName().equals(tableName)) {
-								ApplicationManager.getApplication()
+								try {
+									ApplicationManager.getApplication()
 									.runWriteAction(
 										new GenerateModelClassRunner(
-											project, psiDirectoryBean, psiDirectorySqlMap,
-											tableData, beanName, config
-										)
-									);
+												project, psiDirectoryBean, psiDirectorySqlMap,
+												tableData, beanName, config
+											)
+										);
+								} catch (Exception e1) {
+									// we just notified the user, so we can just bail out.
+									return;
+								}
 								break;
 							}
 						}
@@ -231,13 +237,34 @@ public class ModelClassGeneratorAction extends AnAction {
 			DatabaseTableData tableData,
 			String beanName,
 			IbatisFacetConfiguration config
-		) {
+		) throws Exception {
 			this.project = project;
 			this.psiDirectoryBean = psiDirectoryBean;
 			this.psiDirectorySqlMap = psiDirectorySqlMap;
 			this.tableData = tableData;
 			this.beanName = beanName;
 			this.config = config;
+
+			VelocityEngine ve = new VelocityEngine();
+			Properties props = new Properties();
+			props.setProperty(VelocityEngine.RESOURCE_LOADER, "classpath");
+			props.setProperty(
+					"classpath." + VelocityEngine.RESOURCE_LOADER + ".class",
+					ClasspathResourceLoader.class.getName()
+			);
+			try {
+				ve.init(props);
+				System.out.println("Velocity started OK.");
+			} catch (Exception e) {
+				Messages.showDialog(
+					project,
+					"There was an error setting up velocity for bean creation, so I'm giving up.",
+					"Uh-oh.",
+					new String[]{"Darn it."},
+					0,
+					Messages.getErrorIcon());
+				throw e;
+			}
 		}
 
 		@SuppressWarnings({"ConstantConditions"})
@@ -258,19 +285,22 @@ public class ModelClassGeneratorAction extends AnAction {
 					StringWriter writer = new StringWriter();
 					VelocityEngine engine = new VelocityEngine();
 					engine.init();
-					engine.evaluate(context, writer, "iBATIS", new StringReader(TEMPLATE_CONTENT));
+					engine.evaluate(context, writer, "iBATIS", new StringReader(config.beanTemplate));
 					psiFile = psiDirectoryBean.createFile(className + ".java");
 					FileContentUtil.setFileText(project, psiFile.getVirtualFile(), writer.toString());
 					String sqlMapFileName = className + config.sqlMapSuffix;
 					PsiFile sqlMapFile = psiDirectorySqlMap.findFile(sqlMapFileName);
 					if (sqlMapFile == null) {
+						StringWriter sw = new StringWriter();
+						context = new VelocityContext();
+						context.put("className", className);
+						context.put("FQCN", psiDirectoryBean.getPackage().getQualifiedName() + "." + className);
 						sqlMapFile = psiDirectorySqlMap.createFile(sqlMapFileName);
-						String content = SQL_MAP_TEMPLATE.replace("class_name", className);
-						content = content.replace("FQCN", psiDirectoryBean.getPackage().getQualifiedName()+"."+className);
+						engine.evaluate(context, sw, "iBATIS", new StringReader(config.sqlMapTemplate));
 						FileContentUtil.setFileText(
 							project,
 							sqlMapFile.getVirtualFile(),
-							content);
+							sw.toString());
 					}
 				}
 				FileEditorManager.getInstance(project).openFile(psiFile.getVirtualFile(), true);
@@ -279,52 +309,4 @@ public class ModelClassGeneratorAction extends AnAction {
 			}
 		}
 	}
-
-	/**
-	 * the template for model class generation
-	 */
-	public static final String TEMPLATE_CONTENT = "package $package;\n" +
-		"\n" +
-		"/**\n" +
-		" * model class generate from table $tableName\n" +
-		" *\n" +
-		" *@table $tableName\n" +
-		" */\n" +
-		"public class $name\n" +
-		"{\n" +
-		"#foreach( $field in $fieldList)\n" +
-		"    private ${field.type} ${field.name};\n" +
-		"#end\n" +
-		"\n" +
-		"#foreach ($field in $fieldList)\n" +
-		"    /**\n" +
-		"     *\n" +
-		"     *@return\n" +
-		"     */\n" +
-		"    public  $field.type ${field.getGetterMethodName()}()\n" +
-		"    {\n" +
-		"        return ${field.name};\n" +
-		"    }\n" +
-		"\n" +
-		"    /**\n" +
-		"     *\n" +
-		"     * @param ${field.name}\n" +
-		"     * @column ${field.columnName}\n" +
-		"     */\n" +
-		"    public void ${field.getSetterMethodName()}(${field.type} ${field.name})\n" +
-		"    {\n" +
-		"         this.${field.name} = ${field.name};\n" +
-		"    }\n" +
-		"#end\n" +
-		"}";
-
-	/**
-	 * Sql map file template
-	 */
-	public static final String SQL_MAP_TEMPLATE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-		"<!DOCTYPE sqlMap PUBLIC \"-//iBATIS.com//DTD SQL Map 2.0//EN\" \"http://ibatis.apache.org/dtd/sql-map-2.dtd\">\n" +
-		"\n" +
-		"<sqlMap namespace=\"class_name\">\n" +
-		"    \n<typeAlias alias=\"class_name\" type=\"FQCN\" />\n\n" +
-		"</sqlMap>";
 }

@@ -25,8 +25,14 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
     public String sqlMapSuffix;
     public String sqlMapPackage;
     public String beanPackage;
+	public String sqlMapTemplate;
+	public String beanTemplate;
 
-    public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
+	public IbatisFacetConfiguration() {
+		resetToDefaultTemplates();
+	}
+
+	public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext, final FacetValidatorsManager validatorsManager) {
         return new FacetEditorTab[]{
                 new IbatisConfigurationTab(editorContext, this)
         };
@@ -53,4 +59,58 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
     public void setModified() {
         myModificationCount++;
     }
+
+	public void resetToDefaultTemplates(){
+		resetSqlMapTemplate();
+		resetBeanTemplate();
+	}
+
+	public void resetBeanTemplate() {
+		beanTemplate = "package $package;\n" +
+			"\n" +
+			"/**\n" +
+			" * model class generate from table $tableName\n" +
+			" *\n" +
+			" *@table $tableName\n" +
+			" */\n" +
+			"public class $name\n" +
+			"{\n" +
+			"#foreach( $field in $fieldList)\n" +
+			"    private ${field.type} ${field.name};\n" +
+			"#end\n" +
+			"\n" +
+			"#foreach ($field in $fieldList)\n" +
+			"    /**\n" +
+			"     *\n" +
+			"     *@return\n" +
+			"     */\n" +
+			"    public  $field.type ${field.getGetterMethodName()}()\n" +
+			"    {\n" +
+			"        return ${field.name};\n" +
+			"    }\n" +
+			"\n" +
+			"    /**\n" +
+			"     *\n" +
+			"     * @param ${field.name}\n" +
+			"     * @column ${field.columnName}\n" +
+			"     */\n" +
+			"    public void ${field.getSetterMethodName()}(${field.type} ${field.name})\n" +
+			"    {\n" +
+			"         this.${field.name} = ${field.name};\n" +
+			"    }\n" +
+			"#end\n" +
+			"}";
+	}
+
+	public void resetSqlMapTemplate() {
+		sqlMapTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			"<!DOCTYPE sqlMap PUBLIC \"-//iBATIS.com//DTD SQL Map 2.0//EN\"\n" +
+			"\t\"http://ibatis.apache.org/dtd/sql-map-2.dtd\">\n" +
+			"\n" +
+			"<sqlMap namespace=\"$className\">\n" +
+			"\n" +
+			"    <typeAlias alias=\"$className\" type=\"$FQCN\" />\n" +
+			"\n" +
+			"</sqlMap>";
+	}
 }
