@@ -28,6 +28,9 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	private JButton selectSqlMapPackage;
 	private JButton button1;
 	private JButton configureDatasourcesButton;
+	private JTabbedPane tabbedPane1;
+	private JTextArea sqlMapTemplate;
+	private JTextArea beanTemplate;
 	private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 
@@ -63,11 +66,13 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 				if(null != psiPackage) beanPackageTextField.setText(psiPackage.getQualifiedName());
 			}
 		});
+
 		sqlmapSuffixTextField.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				configuration.sqlMapSuffix = sqlmapSuffixTextField.getText();
 			}
 		});
+
 		configureDatasourcesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
@@ -76,6 +81,18 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 				for (DataSource dataSource : dataSourceList) {
 					dataSourceComboBox.addItem(dataSource.getName());
 				}				
+			}
+		});
+
+		beanTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.beanTemplate = beanTemplate.getText();
+			}
+		});
+
+		sqlMapTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.sqlMapTemplate = sqlMapTemplate.getText();
 			}
 		});
 	}
@@ -96,6 +113,10 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 
 		beanPackageTextField.setText(configuration.beanPackage);
 		beanPackageTextField.setEnabled(false);
+
+		beanTemplate.setText(configuration.beanTemplate);
+		sqlMapTemplate.setText(configuration.sqlMapTemplate);
+		
 	}
 
     @Nls public String getDisplayName() {
