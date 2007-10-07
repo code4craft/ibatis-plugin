@@ -10,13 +10,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.dom.sqlMap.Insert;
-import org.intellij.ibatis.dom.sqlMap.TypeAlias;
 import org.intellij.ibatis.dom.sqlMap.ParameterMap;
+import org.intellij.ibatis.dom.sqlMap.TypeAlias;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.provider.TableColumnReferenceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -123,39 +122,12 @@ public class GenerateSQLForInsertAction extends GenerateSQLBase {
 	}
 
 	protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
-		// the default answer is no
-		boolean returnValue = false;
-
-		if (file instanceof XmlFile && element instanceof XmlTag) {
-			XmlTag xmlTag = (XmlTag) element;
-			if (xmlTag.getName().equals("insert") && xmlTag.getValue().getText().trim().length() == 0) {
-				// we are looking at an empty insert tag
-				if (xmlTag.getAttributeValue("parameterMap") != null) {
-					// we have a parameter map
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Insert) {
-						// we have an insert tag w/ a parameter map
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				} else if (xmlTag.getAttributeValue("parameterClass") != null) {
-					// we have a parameter class
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Insert) {
-						// we have an insert tag w/ a parameter class
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				}
-			}
-		}
-
-		return returnValue;
+		return checkAvailable(project, file, element, "insert", Insert.class, "parameterClass");
 	}
 
 	@NotNull
 	public String getText() {
-		return "Generate SQL for an insert based on parameter class or parameter map";
+		return "Generate SQL for an insert based on parameter class";
 	}
 
 	@NotNull

@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class GenerateSQLForDeleteAction extends GenerateSQLBase {
-
 
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
 		if(isAvailable(project, editor, file)){
@@ -142,39 +140,12 @@ public class GenerateSQLForDeleteAction extends GenerateSQLBase {
 	}
 
 	protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
-		// the default answer is no
-		boolean returnValue = false;
-
-		if (file instanceof XmlFile && element instanceof XmlTag) {
-			XmlTag xmlTag = (XmlTag) element;
-			if (xmlTag.getName().equals("delete") && xmlTag.getValue().getText().trim().length() == 0) {
-				// we are looking at an empty delete tag
-				if (xmlTag.getAttributeValue("parameterMap") != null) {
-					// we have a parameter map
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Delete) {
-						// we have an insert tag w/ a parameter map
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				} else if (xmlTag.getAttributeValue("parameterClass") != null) {
-					// we have a parameter class
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Delete) {
-						// we have an insert tag w/ a parameter class
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				}
-			}
-		}
-
-		return returnValue;
+		return checkAvailable(project, file, element, "delete", Delete.class, "parameterClass");
 	}
 
 	@NotNull
 	public String getText() {
-		return "Generate SQL for a delete based on parameter class or parameter map";
+		return "Generate SQL for a delete based on parameter class";
 	}
 
 	@NotNull

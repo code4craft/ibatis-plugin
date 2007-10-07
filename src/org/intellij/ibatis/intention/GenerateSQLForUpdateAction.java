@@ -1,24 +1,23 @@
 package org.intellij.ibatis.intention;
 
+import com.intellij.javaee.dataSource.DatabaseTableData;
+import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
-import com.intellij.javaee.dataSource.DatabaseTableData;
-import com.intellij.javaee.dataSource.DatabaseTableFieldData;
-import org.intellij.ibatis.dom.sqlMap.Update;
 import org.intellij.ibatis.dom.sqlMap.TypeAlias;
-import static org.intellij.ibatis.provider.TableColumnReferenceProvider.getDatabaseTableData;
+import org.intellij.ibatis.dom.sqlMap.Update;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.provider.TableColumnReferenceProvider;
+import static org.intellij.ibatis.provider.TableColumnReferenceProvider.getDatabaseTableData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -150,34 +149,7 @@ public class GenerateSQLForUpdateAction extends GenerateSQLBase {
 	}
 
 	protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
-		// the default answer is no
-		boolean returnValue = false;
-
-		if (file instanceof XmlFile && element instanceof XmlTag) {
-			XmlTag xmlTag = (XmlTag) element;
-			if (xmlTag.getName().equals("update") && xmlTag.getValue().getText().trim().length() == 0) {
-				// we are looking at an empty update tag
-				if (xmlTag.getAttributeValue("parameterMap") != null) {
-					// we have a parameter map
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Update) {
-						// we have an insert tag w/ a parameter map
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				} else if (xmlTag.getAttributeValue("parameterClass") != null) {
-					// we have a parameter class
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
-					if (domElement != null && domElement instanceof Update) {
-						// we have an insert tag w/ a parameter class
-						// todo: what if the parameter is a Map?
-						returnValue = true;
-					}
-				}
-			}
-		}
-
-		return returnValue;
+		return checkAvailable(project, file, element, "update", Update.class, "parameterClass");
 	}
 
 	@NotNull

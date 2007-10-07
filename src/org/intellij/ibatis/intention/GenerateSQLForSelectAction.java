@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
@@ -193,22 +192,7 @@ public class GenerateSQLForSelectAction extends GenerateSQLBase {
 	}
 
 	protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
-		if (file instanceof XmlFile && element instanceof XmlTag) {
-			XmlTag xmlTag = (XmlTag) element;
-			if (xmlTag.getName().equals("select") && xmlTag.getValue().getText().trim().length() == 0) {   // empty select
-				if (xmlTag.getAttributeValue("resultMap") != null) {	  //resultMap included
-					DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);   //Sql Map file
-					if (domElement != null && domElement instanceof Select) {
-						return true;
-					}
-				}
-				if (xmlTag.getAttributeValue("resultClass") != null) {
-					return true;
-				}
-
-			}
-		}
-		return false;
+		return checkAvailable(project, file, element, "select", Select.class, "resultMap", "resultClass");
 	}
 
 	@NotNull
