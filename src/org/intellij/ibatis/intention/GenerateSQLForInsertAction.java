@@ -1,7 +1,5 @@
 package org.intellij.ibatis.intention;
 
-import com.intellij.javaee.dataSource.DatabaseTableData;
-import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -15,12 +13,7 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.dom.sqlMap.Insert;
 import org.intellij.ibatis.dom.sqlMap.ParameterMap;
-import org.intellij.ibatis.dom.sqlMap.TypeAlias;
-import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
-import org.intellij.ibatis.provider.TableColumnReferenceProvider;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class GenerateSQLForInsertAction extends GenerateSQLBase {
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement insertElement) {
@@ -61,62 +54,21 @@ public class GenerateSQLForInsertAction extends GenerateSQLBase {
 					if (null != psiReference) {
 						PsiElement psiElement = psiReference.resolve();
 						if(psiElement instanceof XmlTag){
+							// it's a type alias
 							XmlTag typeAliasTag = (XmlTag) psiElement;
 							DomElement typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
-							//todo: if the type alias is defined in the main config, this fails
-							// there are 2 types of type alias interfaces. crap.
-							if (typeAliasTemp != null && typeAliasTemp instanceof TypeAlias) {
-								TypeAlias ta = (TypeAlias) typeAliasTemp;
-								PsiClass value = ta.getType().getValue();
-								if(null!=value){
-									createSqlStatement(insertElement, psiElement, value);
-								}
+							if (typeAliasTemp != null && typeAliasTemp instanceof org.intellij.ibatis.dom.sqlMap.TypeAlias) {
+								org.intellij.ibatis.dom.sqlMap.TypeAlias ta = (org.intellij.ibatis.dom.sqlMap.TypeAlias) typeAliasTemp;
+								buildInsert(insertElement, ta.getType().getValue());
+							} else if (typeAliasTemp != null && typeAliasTemp instanceof org.intellij.ibatis.dom.configuration.TypeAlias) {
+								org.intellij.ibatis.dom.configuration.TypeAlias ta = (org.intellij.ibatis.dom.configuration.TypeAlias) typeAliasTemp;
+								buildInsert(insertElement, ta.getType().getValue());
 							}
 						}else if(psiElement instanceof PsiClass){
-							createSqlStatement(insertElement, psiElement, (PsiClass) psiElement);
+							buildInsert(insertElement, (PsiClass) psiElement);
 						}
-					}else{
-						// is this a class?
-						xmlAttributeValue.getClass();
 					}
 				}
-				
-			}
-		}
-	}
-
-	private void createSqlStatement(PsiElement element, PsiElement psiElement, PsiClass value) {
-		String className = value.getQualifiedName();
-		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(value);
-		if(null != tableData){
-			List<DatabaseTableFieldData> fieldList = tableData.getFields();
-			PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, className);
-			// ok, now we have the table meta-data and the class meta-data.
-			// now we can build our insert statement
-			StringBuilder insertStatement = new StringBuilder("\ninsert into ").append(tableData.getName());
-			StringBuilder insertList = new StringBuilder("");
-			StringBuilder valueList = new StringBuilder("");
-			for (DatabaseTableFieldData d : fieldList) {
-				String propName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, d);
-				if(null != propName){
-					if(insertList.length() == 0) {
-						insertList.append(" (");
-					}else{
-						insertList.append(", ");
-					}
-					if(valueList.length() == 0) {
-						valueList.append("\nvalues (");
-					}else{
-						valueList.append(", ");
-					}
-					insertList.append(d.getName());
-					valueList.append("#").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
-				}
-			}
-			if(insertList.length() > 0){
-				// ok, build the SQL statement...
-				XmlTag xmlTag = (XmlTag) element;
-				xmlTag.getValue().setText(insertStatement.append(insertList).append(") ").append(valueList).append(")").toString());
 			}
 		}
 	}
