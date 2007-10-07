@@ -41,8 +41,8 @@ public class GenerateSQLForInsertAction extends GenerateSQLBase {
 							XmlTag paramMapTag = ((XmlAttribute) psiElement).getParent();
 							DomElement paramMapTemp = DomManager.getDomManager(project).getDomElement(paramMapTag);
 							if(paramMapTemp != null && paramMapTemp instanceof ParameterMap){
-								ParameterMap pm = (ParameterMap) paramMapTemp;
 								// todo: handle this
+								//ParameterMap pm = (ParameterMap) paramMapTemp;
 							}
 						}
 					}
