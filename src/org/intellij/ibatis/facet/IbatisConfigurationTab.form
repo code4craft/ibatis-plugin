@@ -164,7 +164,7 @@
           <text value="Please make sure there is a SQL Map configuration file in a source directory"/>
         </properties>
       </component>
-      <tabbedpane id="53386" binding="tabbedPane1" default-binding="true">
+      <tabbedpane id="53386" default-binding="true">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
@@ -211,5 +211,8 @@
   </grid>
   <inspectionSuppressions>
     <suppress inspection="NoLabelFor" id="2000"/>
+    <suppress inspection="NoLabelFor" id="9347e"/>
+    <suppress inspection="NoLabelFor" id="6aff3"/>
+    <suppress inspection="NoLabelFor" id="92c5c"/>
   </inspectionSuppressions>
 </form>

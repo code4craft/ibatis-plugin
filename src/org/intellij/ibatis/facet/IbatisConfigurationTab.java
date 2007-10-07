@@ -6,6 +6,7 @@ import com.intellij.ide.util.PackageChooserDialog;
 import com.intellij.javaee.dataSource.DataSource;
 import com.intellij.javaee.dataSource.DataSourceManager;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.Nls;
 
@@ -20,7 +21,7 @@ import java.beans.PropertyChangeEvent;
  * ibatis configuration facet tab
  */
 public class IbatisConfigurationTab extends FacetEditorTab {
-    private JPanel mainPanel;
+	private JPanel mainPanel;
     private JComboBox dataSourceComboBox;
     private JTextField sqlmapSuffixTextField;
 	private JTextField sqlMapPackageName;
@@ -28,16 +29,17 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	private JButton selectSqlMapPackage;
 	private JButton button1;
 	private JButton configureDatasourcesButton;
-	private JTabbedPane tabbedPane1;
 	private JTextArea sqlMapTemplate;
 	private JTextArea beanTemplate;
 	private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
+	private Project project;
 
-    public IbatisConfigurationTab(final FacetEditorContext editorContext, final IbatisFacetConfiguration configuration) {
+	public IbatisConfigurationTab(final FacetEditorContext editorContext, final IbatisFacetConfiguration configuration) {
         this.editorContext = editorContext;
         this.configuration = configuration;
-        fillData();
+		project = editorContext.getProject();
+		fillData();
 		selectSqlMapPackage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PackageChooserDialog pcd = new PackageChooserDialog(
@@ -75,7 +77,7 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 
 		configureDatasourcesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
+				DataSourceManager sourceManager = DataSourceManager.getInstance(project);
 				sourceManager.manageDatasources();
 				fillDatasourceList();
 			}
@@ -111,14 +113,16 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	}
 
 	private void fillDatasourceList() {
-		DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
-		List<DataSource> dataSourceList = sourceManager.getDataSources();
-		dataSourceComboBox.removeAllItems();
-		for (DataSource dataSource : dataSourceList) {
-			dataSourceComboBox.addItem(dataSource.getName());
+		if(null != editorContext.getProject()){
+			DataSourceManager sourceManager = DataSourceManager.getInstance(project);
+			List<DataSource> dataSourceList = sourceManager.getDataSources();
+			dataSourceComboBox.removeAllItems();
+			for (DataSource dataSource : dataSourceList) {
+				dataSourceComboBox.addItem(dataSource.getName());
+			}
+			if (configuration.dataSourceName != null)
+				dataSourceComboBox.setSelectedItem(configuration.dataSourceName);
 		}
-		if (configuration.dataSourceName != null)
-			dataSourceComboBox.setSelectedItem(configuration.dataSourceName);
 	}
 
 	@Nls public String getDisplayName() {
