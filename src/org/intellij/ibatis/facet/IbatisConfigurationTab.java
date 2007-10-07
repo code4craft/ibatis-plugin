@@ -77,10 +77,7 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 			public void actionPerformed(ActionEvent e) {
 				DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
 				sourceManager.manageDatasources();
-				List<DataSource> dataSourceList = sourceManager.getDataSources();
-				for (DataSource dataSource : dataSourceList) {
-					dataSourceComboBox.addItem(dataSource.getName());
-				}				
+				fillDatasourceList();
 			}
 		});
 
@@ -98,13 +95,7 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	}
 
     public void fillData() {
-        DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
-        List<DataSource> dataSourceList = sourceManager.getDataSources();
-        for (DataSource dataSource : dataSourceList) {
-            dataSourceComboBox.addItem(dataSource.getName());
-        }
-        if (configuration.dataSourceName != null)
-            dataSourceComboBox.setSelectedItem(configuration.dataSourceName);
+		fillDatasourceList();
 
 		sqlmapSuffixTextField.setText(configuration.sqlMapSuffix);
 
@@ -119,7 +110,18 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 		
 	}
 
-    @Nls public String getDisplayName() {
+	private void fillDatasourceList() {
+		DataSourceManager sourceManager = DataSourceManager.getInstance(editorContext.getProject());
+		List<DataSource> dataSourceList = sourceManager.getDataSources();
+		dataSourceComboBox.removeAllItems();
+		for (DataSource dataSource : dataSourceList) {
+			dataSourceComboBox.addItem(dataSource.getName());
+		}
+		if (configuration.dataSourceName != null)
+			dataSourceComboBox.setSelectedItem(configuration.dataSourceName);
+	}
+
+	@Nls public String getDisplayName() {
         return "Configuration";
     }
 
