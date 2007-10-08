@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * inpsection for set null to primary type variable
+ * inspection for set null to primary type variable
  */
 public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
     @Nls @NotNull public String getDisplayName() {
@@ -37,11 +37,11 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
 
     @SuppressWarnings({"ConstantConditions"})
     protected void checkResultMap(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, ResultMap resultMap, DomElementAnnotationHolder holder) {
-        PsiClass psiClass = resultMap.getPsiClass();
+        PsiClass psiClass = resultMap.getClazz().getValue();
         if (psiClass == null) return;
         List<Result> results = resultMap.getResults();
         for (Result result : results) {
-            if (result.getXmlTag().getAttribute("nullValue") == null) {    //null value setted
+            if (result.getXmlTag().getAttribute("nullValue") == null) {    //null value setter
                 String propertyName = result.getProperty().getValue();
                 PsiMethod setMethod = null;
                 if (propertyName!=null && !propertyName.contains(".")) {
