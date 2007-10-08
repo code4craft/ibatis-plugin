@@ -44,7 +44,6 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
 		classShortcuts.put("object", Object.class.getName());
 		classShortcuts.put("short", Short.class.getName());
 		classShortcuts.put("string", String.class.getName());
-		classShortcuts.put("xml", String.class.getName());
 	}
 
     public IbatisClassShortcutsReferenceProvider() {
