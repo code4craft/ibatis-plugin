@@ -2,22 +2,26 @@ package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.psi.PsiClass;
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.*;
+import org.intellij.ibatis.dom.converters.IbatisClassConverter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
- * typeAlias element in SQL map xml file.
+ * parameter map element in SQL map file
+ *
+ * @author Jacky
  */
 public interface ParameterMap extends CommonDomModelElement {
 
     @Attribute("class")
-    public GenericAttributeValue<String> getClazz();
+    @Convert(IbatisClassConverter.class)
+    public GenericAttributeValue<PsiClass> getClazz();
 
     @NotNull
     public GenericAttributeValue<String> getId();
 
-    @Nullable
-    public PsiClass getPsiClass();
+    @SubTagList("parameter")
+    public List<Parameter> getParameters();
 }
