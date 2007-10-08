@@ -1,8 +1,10 @@
 package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Attribute;
+import com.intellij.psi.PsiClass;
+import com.intellij.util.xml.*;
+import org.intellij.ibatis.dom.converters.ParameterClassConverter;
+import org.intellij.ibatis.dom.converters.ParameterMapConverter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +25,8 @@ public interface BaseStatement extends CommonDomModelElement {
      * @return get parameter class
      */
     @Attribute("parameterClass")
-    public GenericAttributeValue<String> getParameterClass();
+    @Convert(ParameterClassConverter.class)
+    public GenericAttributeValue<PsiClass> getParameterClass();
 
     /**
      * get parameter Map for class
@@ -31,7 +34,8 @@ public interface BaseStatement extends CommonDomModelElement {
      * @return parameter map class
      */
     @Attribute("parameterMap")
-    public GenericAttributeValue<String> getParameterMap();
+    @Convert(ParameterMapConverter.class)
+    public GenericAttributeValue<ParameterMap> getParameterMap();
 
     /**
      * get the SQL code for statement
