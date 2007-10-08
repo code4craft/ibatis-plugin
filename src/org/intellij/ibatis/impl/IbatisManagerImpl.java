@@ -97,7 +97,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<ResultMap> resultMapList = model.getMergedModel().getResultMaps();
             for (ResultMap map : resultMapList) {
-                PsiClass psiClass = map.getPsiClass();
+                PsiClass psiClass = map.getClazz().getValue();
                 if (psiClass != null) {
                     resultMap.put(getUniqueName(map.getRoot(), map.getId().getValue()), psiClass);
                 }
