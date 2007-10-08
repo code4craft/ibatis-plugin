@@ -12,6 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ * iBATIS manager service
+ *
+ * @author Jacky
+ */
 public abstract class IbatisManager {
 
     public IbatisManager() {
@@ -31,7 +36,7 @@ public abstract class IbatisManager {
     public abstract IbatisConfigurationModel getConfigurationModel(@NotNull Module module);
 
     /**
-     * get ibatis sql map model according to psiElement
+     * get iBATIS sql map model according to psiElement
      *
      * @param psiElement psiElement in sql map file
      * @return IbatisSqlMapModel object
@@ -140,6 +145,7 @@ public abstract class IbatisManager {
     /**
      * get all sql map  id reference
      *
+     * @param module module
      * @return sql map    id reference
      */
     public abstract Map<String, DomElement> getAllSqlMapReference(Module module);
@@ -147,9 +153,16 @@ public abstract class IbatisManager {
     /**
      * get all  cacheModel
      *
+     * @param psiElement requested psi element
      * @return sql map    id reference
      */
     public abstract Map<String, CacheModel> getAllCacheModel(PsiElement psiElement);
 
-    public abstract Map<String, XmlTag> getAllTypeAlias2(PsiElement psiElement) ;
+    /**
+     * get all type alias in all iBATIS SQL Map files
+     *
+     * @param psiElement requested psi element
+     * @return type alias
+     */
+    public abstract Map<String, XmlTag> getAllTypeAlias2(PsiElement psiElement);
 }
