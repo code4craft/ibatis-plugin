@@ -1,13 +1,14 @@
 package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
+import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * typeAlias element in sql map xml file.
+ * typeAlias element in SQL map xml file.
  */
 public interface ParameterMap extends CommonDomModelElement {
 
@@ -17,5 +18,6 @@ public interface ParameterMap extends CommonDomModelElement {
     @NotNull
     public GenericAttributeValue<String> getId();
 
+    @Nullable
     public PsiClass getPsiClass();
 }
