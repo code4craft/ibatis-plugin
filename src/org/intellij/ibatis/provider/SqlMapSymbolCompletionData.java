@@ -1,30 +1,19 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.CompletionContext;
-import com.intellij.codeInsight.completion.CompletionData;
-import com.intellij.codeInsight.completion.CompletionVariant;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlText;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomManager;
+import com.intellij.psi.xml.*;
+import com.intellij.util.xml.*;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import org.intellij.ibatis.model.JdbcType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * completion data for SQL map symbol
@@ -71,13 +60,21 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                     if (tag != null) {
                         LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
                         CompletionVariant variant = new CompletionVariant(left);
-                        List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
-                        for (String parameterName : parameterNames) {
-                            variant.addCompletion(parameterName);
-                        }
                         variant.includeScopeClass(PsiElement.class, true);
                         variant.addCompletionFilter(TrueFilter.INSTANCE);
                         variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+                        if (!prefix.contains(":")) {   //just clear in line parameter name
+                            List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
+                            for (String parameterName : parameterNames) {
+                                variant.addCompletion(parameterName);
+                            }
+                        } else //jdbc type will be added
+                        {
+                            prefix = prefix.substring(0, prefix.indexOf(':'));
+                            for (String typeName : JdbcType.TYPES.keySet()) {
+                                variant.addCompletion(prefix + ":" + typeName);
+                            }
+                        }
                         return new CompletionVariant[]{variant};
                     }
                 }
