@@ -19,7 +19,7 @@ public abstract class SqlImpl extends BaseImpl implements Sql {
      *
      * @return SQL sentence
      */
-    @SuppressWarnings({"ConstantConditions"}) @NotNull public String getSQL() {
+    @NotNull public String getSQL() {
         return IbatisUtil.getSQLForXmlTag(getXmlTag());
     }
 }
