@@ -1,14 +1,15 @@
 package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.TagValue;
+import com.intellij.util.xml.*;
+import org.intellij.ibatis.dom.converters.SqlConverter;
 
 /**
- * sql select element
+ * SQL include element
  */
 public interface Include extends CommonDomModelElement {
-    public GenericAttributeValue<String> getRefid();
+    @Convert(SqlConverter.class)
+    public GenericAttributeValue<Sql> getRefid();
 
     @TagValue String getValue();
 }
