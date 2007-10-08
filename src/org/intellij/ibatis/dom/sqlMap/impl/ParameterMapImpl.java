@@ -5,12 +5,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import org.intellij.ibatis.dom.sqlMap.ParameterMap;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * paramterMap in sql map file
+ * paramterMap in SQL map file
  */
 public abstract class ParameterMapImpl extends BaseImpl implements ParameterMap {
-    public PsiClass getPsiClass() {
+    @Nullable public PsiClass getPsiClass() {
         String classname = getClazz().getValue();
         if (StringUtil.isNotEmpty(classname)) {
             IbatisClassShortcutsReferenceProvider.getPsiClass(getClazz().getXmlAttribute(), classname);
