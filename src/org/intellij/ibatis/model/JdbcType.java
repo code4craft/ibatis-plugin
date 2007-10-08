@@ -84,6 +84,10 @@ public class JdbcType {
         return this.name;
     }
 
+    public boolean equals(Object jdbcType) {
+        return jdbcType instanceof JdbcType && ((JdbcType) jdbcType).getName().equals(name);
+    }
+
     /**
      * get integer value for jdbc type, please reference java.sql.Types
      *
