@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Jacky
  */
-public class ParameterClassConverter extends Converter<PsiClass> {
+public class IbatisClassConverter extends Converter<PsiClass> {
     @Nullable public PsiClass fromString(@Nullable @NonNls String className, ConvertContext convertContext) {
         return StringUtil.isNotEmpty(className) ? IbatisClassShortcutsReferenceProvider.getPsiClass(convertContext.getXmlElement(), className) : null;
     }
