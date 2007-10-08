@@ -9,6 +9,7 @@ import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.sqlMap.Result;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,26 +17,17 @@ import java.util.List;
  * resultMap element implementation
  */
 public abstract class ResultMapImpl extends BaseImpl implements ResultMap {
-    public PsiClass getPsiClass() {
-        String classname = getClazz().getValue();
-        if (StringUtil.isNotEmpty(classname)) {
-            return IbatisClassShortcutsReferenceProvider.getPsiClass(getClazz().getXmlAttribute(), classname);
-        }
-        return null;
-    }
 
-    public List<Result> getAllResults() {
+    /**
+     * get all results included extended result
+     *
+     * @return Result List
+     */
+    @NotNull public List<Result> getAllResults() {
         List<Result> results = getResults();
-        String extendedResultMapName = getExtends().getValue();
-        if (StringUtil.isNotEmpty(extendedResultMapName)) {
-            XmlTag tag = IbatisManager.getInstance().getAllResultMap2(getXmlElement()).get(extendedResultMapName);
-            if (tag != null) {
-                DomElement element = getManager().getDomElement(tag);
-                if (element != null && element instanceof ResultMap) {
-                    ResultMap parentResultMap = (ResultMap) element;
-                    results.addAll(parentResultMap.getResults());
-                }
-            }
+        ResultMap extendedMap = getExtends().getValue();
+        if (extendedMap != null) {
+            results.addAll(extendedMap.getAllResults());
         }
         return results;
     }
