@@ -17,7 +17,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * class reference provider  for ibatis, including internal shortcuts and typealias
+ * class reference provider  for iBATIS  including internal shortcuts and type alias
+ *
+ * @author Jacky
  */
 public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvider {
     public static Map<String, String> classShortcuts = new HashMap<String, String>();
@@ -90,7 +92,8 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     /**
      * find PsiClass according to class full name
      *
-     * @param className any name of shortcut, type alias or java class
+     * @param psiElement psi element
+     * @param className any name of shortcut, type alias or Java class
      * @return PsiClass object
      */
     public static PsiElement getPsiElement(PsiElement psiElement, String className) {
@@ -113,11 +116,12 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
 */
         return psiManager.findClass(className, GlobalSearchScope.allScope(project));
     }
+    
     /**
      * find PsiClass according to class full name
      *
      * @param psiElement PsiElement object
-     * @param className any name of shortcut, type alias or java class
+     * @param className any name of shortcut, type alias or Java class
      * @return PsiClass object
      */
     public static PsiClass getPsiClass(PsiElement psiElement, String className) {
@@ -135,9 +139,8 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         return psiManager.findClass(className, GlobalSearchScope.allScope(project));
     }
 
-
     /**
-     * validate a psiClass is damain class
+     * validate a psiClass is domain class
      *
      * @param className class name
      * @return domain class mark
