@@ -3,7 +3,7 @@ package org.intellij.ibatis.dom.sqlMap;
 import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
-import org.intellij.ibatis.dom.converters.ParameterClassConverter;
+import org.intellij.ibatis.dom.converters.IbatisClassConverter;
 import org.intellij.ibatis.dom.converters.ParameterMapConverter;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public interface BaseStatement extends CommonDomModelElement {
      * @return get parameter class
      */
     @Attribute("parameterClass")
-    @Convert(ParameterClassConverter.class)
+    @Convert(IbatisClassConverter.class)
     public GenericAttributeValue<PsiClass> getParameterClass();
 
     /**
