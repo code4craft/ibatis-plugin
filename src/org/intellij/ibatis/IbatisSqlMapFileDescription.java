@@ -26,5 +26,6 @@ public class IbatisSqlMapFileDescription extends DomFileDescription<SqlMap> {
         registerImplementation(Procedure.class, ProcedureImpl.class);
         registerImplementation(CacheModel.class, CacheModelImpl.class);
         registerImplementation(Parameter.class, ParameterImpl.class);
+        registerImplementation(Include.class, IncludeImpl.class);
     }
 }
