@@ -34,7 +34,7 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
     }
 
     protected void checkSelect(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Select select, DomElementAnnotationHolder holder) {
-        ResultMap resultMap = select.getReferencedResultMap();
+        ResultMap resultMap = select.getResultMap().getValue();
         if (resultMap != null) {
             String sql = select.getSQL() + ";";
             sql = sql.toUpperCase();
