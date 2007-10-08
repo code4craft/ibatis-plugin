@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * converter for parameter class reference
+ * converter for iBATIS class reference
  *
  * @author Jacky
  */
