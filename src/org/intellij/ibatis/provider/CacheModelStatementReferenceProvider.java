@@ -19,7 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * cache model reference provider
+ * flushOnExecute's statement reference provider, case like <flushOnExecute statement="<caret>"/>
+ *
+ * @author Jacky
  */
 public class CacheModelStatementReferenceProvider extends BaseReferenceProvider {
     @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement) {
@@ -55,8 +57,6 @@ public class CacheModelStatementReferenceProvider extends BaseReferenceProvider 
               if(procedure != null) {
                 return procedure.getId().getXmlAttribute();
               }
-
-
                 return null;
             }
 
