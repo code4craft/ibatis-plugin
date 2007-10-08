@@ -26,7 +26,7 @@ public class IbatisManagerImpl extends IbatisManager {
     public IbatisManagerImpl() {
     }
 
-    public IbatisConfigurationModel getConfigurationModel(@NotNull Module module) {
+    @Nullable public IbatisConfigurationModel getConfigurationModel(@NotNull Module module) {
         IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(module.getProject());
         List<IbatisConfigurationModel> models = projectComponent.getConfigurationModelFactory().getAllModels(module);
         if (models.size() > 0) return models.get(0);
@@ -48,7 +48,7 @@ public class IbatisManagerImpl extends IbatisManager {
     }
 
 
-    public IbatisSqlMapModel getSqlMapModel(@Nullable PsiElement psiElement) {
+    @Nullable public IbatisSqlMapModel getSqlMapModel(@Nullable PsiElement psiElement) {
         if (psiElement == null) return null;
         IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(psiElement.getProject());
         return projectComponent.getSqlMapModelFactory().getModel(psiElement);
@@ -127,7 +127,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<ParameterMap> parameterMapList = model.getMergedModel().getParameterMap();
             for (ParameterMap map : parameterMapList) {
-                PsiClass psiClass = map.getPsiClass();
+                PsiClass psiClass = map.getClazz().getValue();
                 if (psiClass != null) {
                     parameterMap.put(getUniqueName(map.getRoot(), map.getId().getValue()), psiClass);
                 }
