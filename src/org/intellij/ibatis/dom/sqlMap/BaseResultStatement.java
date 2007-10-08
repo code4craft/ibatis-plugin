@@ -1,7 +1,9 @@
 package org.intellij.ibatis.dom.sqlMap;
 
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.psi.PsiClass;
+import com.intellij.util.xml.*;
+import org.intellij.ibatis.dom.converters.IbatisClassConverter;
+import org.intellij.ibatis.dom.converters.ResultMapConverter;
 
 /**
  * base result statement, such select, statement, procedure.
@@ -12,8 +14,9 @@ public interface BaseResultStatement extends BaseStatement {
      *
      * @return result class
      */
+    @Convert(IbatisClassConverter.class)
     @Attribute("resultClass")
-    public GenericAttributeValue<String> getResultClass();
+    public GenericAttributeValue<PsiClass> getResultClass();
 
     /**
      * get result map for statement
@@ -21,5 +24,6 @@ public interface BaseResultStatement extends BaseStatement {
      * @return result map
      */
     @Attribute("resultMap")
-    public GenericAttributeValue<String> getResultMap();
+    @Convert(ResultMapConverter.class)
+    public GenericAttributeValue<ResultMap> getResultMap();
 }
