@@ -12,7 +12,7 @@ import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 /**
  * select element implementation.
  */
-public abstract class SelectImpl extends BaseStatementImpl implements Select {
+public abstract class SelectImpl extends BaseResultStatementImpl implements Select {
     public ResultMap getReferencedResultMap() {
         String resultMapName = getResultMap().getValue();
         if (StringUtil.isNotEmpty(resultMapName)) {

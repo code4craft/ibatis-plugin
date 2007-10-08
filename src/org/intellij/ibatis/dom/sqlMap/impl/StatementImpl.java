@@ -5,5 +5,5 @@ import org.intellij.ibatis.dom.sqlMap.Statement;
 /**
  * statement element implementation.
  */
-public abstract class StatementImpl extends BaseStatementImpl implements Statement {
+public abstract class StatementImpl extends BaseResultStatementImpl implements Statement {
 }

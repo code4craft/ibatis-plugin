@@ -2,6 +2,7 @@ package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,6 +14,7 @@ public interface BaseStatement extends CommonDomModelElement {
      *
      * @return statement id
      */
+    @Attribute("id")
     public GenericAttributeValue<String> getId();
 
     /**
@@ -20,6 +22,7 @@ public interface BaseStatement extends CommonDomModelElement {
      *
      * @return get parameter class
      */
+    @Attribute("parameterClass")
     public GenericAttributeValue<String> getParameterClass();
 
     /**
@@ -27,6 +30,7 @@ public interface BaseStatement extends CommonDomModelElement {
      *
      * @return parameter map class
      */
+    @Attribute("parameterMap")
     public GenericAttributeValue<String> getParameterMap();
 
     /**

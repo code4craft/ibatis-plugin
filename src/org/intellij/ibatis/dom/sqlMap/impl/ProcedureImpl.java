@@ -5,5 +5,5 @@ import org.intellij.ibatis.dom.sqlMap.Procedure;
 /**
  * procedure element implementation.
  */
-public abstract class ProcedureImpl extends BaseStatementImpl implements Procedure {
+public abstract class ProcedureImpl extends BaseResultStatementImpl implements Procedure {
 }

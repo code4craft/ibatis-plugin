@@ -6,8 +6,6 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * statement element
  */
-public interface Statement extends BaseStatement {
-    public GenericAttributeValue<String> getResultClass();
-
-    public GenericAttributeValue<String> getResultMap();
+public interface Statement extends BaseResultStatement {
+    
 }

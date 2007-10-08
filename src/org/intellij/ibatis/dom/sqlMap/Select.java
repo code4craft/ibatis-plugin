@@ -9,16 +9,12 @@ import com.intellij.util.xml.TagValue;
 /**
  * select element
  */
-public interface Select extends BaseStatement {
+public interface Select extends BaseResultStatement {
 
     @TagValue
     public String getValue();
 
-    @Attribute("resultClass")
-    public GenericAttributeValue<String> getResultClass();
 
-    @Attribute("resultMap")
-    public GenericAttributeValue<String> getResultMap();
 
     public Include getInclude();
 
