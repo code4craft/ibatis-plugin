@@ -2,8 +2,8 @@ package org.intellij.ibatis.dom.sqlMap;
 
 import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.util.xml.*;
-import org.intellij.ibatis.dom.converters.ResultMapConverter;
-import org.intellij.ibatis.dom.converters.SelectConverter;
+import org.intellij.ibatis.dom.converters.*;
+import org.intellij.ibatis.model.JdbcType;
 
 /**
  * result element
@@ -15,7 +15,8 @@ public interface Result extends CommonDomModelElement {
 
     public GenericAttributeValue<String> getColumn();
 
-    public GenericAttributeValue<String> getJdbcType();
+    @Convert(JdbcTypeConverter.class)
+    public GenericAttributeValue<JdbcType> getJdbcType();
 
     @Convert(ResultMapConverter.class)
     public GenericAttributeValue<ResultMap> getResultMap();
