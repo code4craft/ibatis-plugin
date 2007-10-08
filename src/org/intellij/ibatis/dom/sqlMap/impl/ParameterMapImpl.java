@@ -11,11 +11,5 @@ import org.jetbrains.annotations.Nullable;
  * paramterMap in SQL map file
  */
 public abstract class ParameterMapImpl extends BaseImpl implements ParameterMap {
-    @Nullable public PsiClass getPsiClass() {
-        String classname = getClazz().getValue();
-        if (StringUtil.isNotEmpty(classname)) {
-            IbatisClassShortcutsReferenceProvider.getPsiClass(getClazz().getXmlAttribute(), classname);
-        }
-        return null;
-    }
+   
 }
