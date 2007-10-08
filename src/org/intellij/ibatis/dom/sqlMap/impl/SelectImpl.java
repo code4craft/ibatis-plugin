@@ -13,24 +13,5 @@ import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
  * select element implementation.
  */
 public abstract class SelectImpl extends BaseResultStatementImpl implements Select {
-    public ResultMap getReferencedResultMap() {
-        String resultMapName = getResultMap().getValue();
-        if (StringUtil.isNotEmpty(resultMapName)) {
-            XmlTag tag = IbatisManager.getInstance().getAllResultMap2(getXmlElement()).get(resultMapName);
-            DomElement element = getManager().getDomElement(tag);
-            if (element instanceof ResultMap) {
-                return (ResultMap) element;
-            }
-        }
-        return null;
-    }
-
-    public PsiClass getResultClazz() {
-        String resultClassName = getResultClass().getValue();
-        if (StringUtil.isNotEmpty(resultClassName)) {
-            return IbatisClassShortcutsReferenceProvider.getPsiClass(getXmlElement(), resultClassName);
-        }
-        return null;
-    }
 
 }

@@ -10,16 +10,4 @@ import com.intellij.util.xml.TagValue;
  * select element
  */
 public interface Select extends BaseResultStatement {
-
-    @TagValue
-    public String getValue();
-
-
-
-    public Include getInclude();
-
-    public ResultMap getReferencedResultMap();
-
-    public PsiClass getResultClazz();
-
 }
