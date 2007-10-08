@@ -15,7 +15,7 @@ import org.intellij.ibatis.provider.TableColumnReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * intention action to create results for resultmap
+ * intention action to create results for result map
  */
 public class GenerateResultsForResultMapAction extends PsiIntentionBase {
 
@@ -50,49 +50,47 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                 DomElement domElement = DomManager.getDomManager(project).getDomElement(xmlTag);
                 if (domElement != null && domElement instanceof ResultMap) {
                     ResultMap resultMap = (ResultMap) domElement;
-                    if (StringUtil.isNotEmpty(resultMap.getClazz().getValue())) {
-                        PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(element, resultMap.getClazz().getValue());
-                        if (psiClass != null) {
-                            PsiElementFactory psiElementFactory = PsiManager.getInstance(project).getElementFactory();
-                            PsiMethod[] psiMethods = psiClass.getMethods();
-                            try {
-                                xmlTag.getValue().setText(null);
-                                for (PsiMethod psiMethod : psiMethods) {
-                                    if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
-                                        DatabaseTableFieldData tableFieldData = TableColumnReferenceProvider.getDatabaseTableFieldData(psiMethod);
-                                        if (tableFieldData != null) {   //set method contains @column javadoc tag
-                                            PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
-                                            String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
-                                            StringBuilder builder = new StringBuilder();
-                                            builder.append("<result property=\"").append(propertyName).append("\"");
-                                            builder.append(" column=\"").append(tableFieldData.getName()).append("\"");
-                                            if (psiType.equals(PsiType.BOOLEAN)) {
-                                                builder.append(" nullValue=\"false\"");
-                                            } else if (psiType instanceof PsiPrimitiveType) {
-                                                builder.append(" nullValue=\"0\"");
-                                            }
-                                            builder.append("/>");
-                                            xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
-                                        }else{
-											// no @column tag, so just assume a reasonable default value
-											PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
-											String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
-											StringBuilder builder = new StringBuilder();
-											builder.append("<result property=\"").append(propertyName).append("\"");
-											builder.append(" column=\"").append(propertyName).append("\"");
-											if (psiType.equals(PsiType.BOOLEAN)) {
-												builder.append(" nullValue=\"false\"");
-											} else if (psiType instanceof PsiPrimitiveType) {
-												builder.append(" nullValue=\"0\"");
-											}
-											builder.append("/>");
-											xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
-										}
+                    PsiClass psiClass = resultMap.getClazz().getValue();
+                    if (psiClass != null) {
+                        PsiElementFactory psiElementFactory = PsiManager.getInstance(project).getElementFactory();
+                        PsiMethod[] psiMethods = psiClass.getMethods();
+                        try {
+                            xmlTag.getValue().setText(null);
+                            for (PsiMethod psiMethod : psiMethods) {
+                                if (psiMethod.getName().startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
+                                    DatabaseTableFieldData tableFieldData = TableColumnReferenceProvider.getDatabaseTableFieldData(psiMethod);
+                                    if (tableFieldData != null) {   //setter method contains @column tag
+                                        PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
+                                        String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
+                                        StringBuilder builder = new StringBuilder();
+                                        builder.append("<result property=\"").append(propertyName).append("\"");
+                                        builder.append(" column=\"").append(tableFieldData.getName()).append("\"");
+                                        if (psiType.equals(PsiType.BOOLEAN)) {
+                                            builder.append(" nullValue=\"false\"");
+                                        } else if (psiType instanceof PsiPrimitiveType) {
+                                            builder.append(" nullValue=\"0\"");
+                                        }
+                                        builder.append("/>");
+                                        xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
+                                    } else {
+                                        // no @column tag, so just assume a reasonable default value
+                                        PsiType psiType = psiMethod.getParameterList().getParameters()[0].getType();
+                                        String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
+                                        StringBuilder builder = new StringBuilder();
+                                        builder.append("<result property=\"").append(propertyName).append("\"");
+                                        builder.append(" column=\"").append(propertyName).append("\"");
+                                        if (psiType.equals(PsiType.BOOLEAN)) {
+                                            builder.append(" nullValue=\"false\"");
+                                        } else if (psiType instanceof PsiPrimitiveType) {
+                                            builder.append(" nullValue=\"0\"");
+                                        }
+                                        builder.append("/>");
+                                        xmlTag.add(psiElementFactory.createTagFromText(builder.toString()));
                                     }
                                 }
-                            } catch (Exception e) {
-								// where do we go from here?
                             }
+                        } catch (Exception e) {
+                            // where do we go from here?
                         }
                     }
                 }
