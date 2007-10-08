@@ -6,13 +6,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * statement element
  */
-public interface Statement extends CommonDomModelElement {
-    public GenericAttributeValue<String> getId();
-
-    public GenericAttributeValue<String> getParameterClass();
-
-    public GenericAttributeValue<String> getParameterMap();
-
+public interface Statement extends BaseStatement {
     public GenericAttributeValue<String> getResultClass();
 
     public GenericAttributeValue<String> getResultMap();

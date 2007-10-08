@@ -6,13 +6,8 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * procedure element
  */
-public interface Procedure extends CommonDomModelElement {
-    public GenericAttributeValue<String> getId();
-
-     public GenericAttributeValue<String> getParameterClass();
-
-    public GenericAttributeValue<String> getParameterMap();
-
+public interface Procedure extends BaseStatement {
+    
     public GenericAttributeValue<String> getResultClass();
 
     public GenericAttributeValue<String> getResultMap();

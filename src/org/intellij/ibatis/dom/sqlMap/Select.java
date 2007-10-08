@@ -9,18 +9,10 @@ import com.intellij.util.xml.TagValue;
 /**
  * select element
  */
-public interface Select extends CommonDomModelElement {
+public interface Select extends BaseStatement {
 
     @TagValue
     public String getValue();
-
-    public GenericAttributeValue<String> getId();
-
-    @Attribute("parameterClass")
-    public GenericAttributeValue<String> getParameterClass();
-
-    @Attribute("parameterMap")
-    public GenericAttributeValue<String> getParameterMap();
 
     @Attribute("resultClass")
     public GenericAttributeValue<String> getResultClass();
@@ -34,5 +26,4 @@ public interface Select extends CommonDomModelElement {
 
     public PsiClass getResultClazz();
 
-    public String getSQL();
 }

@@ -6,11 +6,6 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * update element
  */
-public interface Update extends CommonDomModelElement {
-    public GenericAttributeValue<String> getId();
-
-    public GenericAttributeValue<String> getParameterClass();
-
-    public GenericAttributeValue<String> getParameterMap();
+public interface Update extends BaseStatement {
 
 }

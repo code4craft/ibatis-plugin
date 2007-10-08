@@ -3,7 +3,7 @@ package org.intellij.ibatis.dom.sqlMap.impl;
 import org.intellij.ibatis.dom.sqlMap.Procedure;
 
 /**
- * procedure element implementatioin.
+ * procedure element implementation.
  */
-public abstract class ProcedureImpl extends SentenceBaseImpl implements Procedure {
+public abstract class ProcedureImpl extends BaseStatementImpl implements Procedure {
 }

@@ -10,9 +10,9 @@ import org.intellij.ibatis.dom.sqlMap.Select;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 
 /**
- * select element implementatioin.
+ * select element implementation.
  */
-public abstract class SelectImpl extends SentenceBaseImpl implements Select {
+public abstract class SelectImpl extends BaseStatementImpl implements Select {
     public ResultMap getReferencedResultMap() {
         String resultMapName = getResultMap().getValue();
         if (StringUtil.isNotEmpty(resultMapName)) {

@@ -3,7 +3,7 @@ package org.intellij.ibatis.dom.sqlMap.impl;
 import org.intellij.ibatis.dom.sqlMap.Statement;
 
 /**
- * statement element implementatioin.
+ * statement element implementation.
  */
-public abstract class StatementImpl extends SentenceBaseImpl implements Statement {
+public abstract class StatementImpl extends BaseStatementImpl implements Statement {
 }
