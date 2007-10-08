@@ -12,6 +12,7 @@ import com.intellij.util.xml.model.DomModelFactory;
 import org.intellij.ibatis.dom.configuration.SqlMapConfig;
 import org.intellij.ibatis.impl.IbatisConfigurationModelImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,7 +22,7 @@ import java.util.Set;
 /**
  * iBATIS configuration model factory
  *
- * @author
+ * @author Jacky
  */
 public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfig, IbatisConfigurationModel, PsiElement> {
     private  Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
@@ -30,7 +31,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "iBATIS");
     }
 
-    public IbatisConfigurationModel getModel(@NotNull PsiElement context) {
+    @Nullable public IbatisConfigurationModel getModel(@NotNull PsiElement context) {
         final PsiFile psiFile = context.getContainingFile();
         if (psiFile instanceof XmlFile) {
             return getModelByConfigFile((XmlFile) psiFile);
