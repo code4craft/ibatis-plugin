@@ -1,37 +1,33 @@
 package org.intellij.ibatis.dom.converters;
 
 import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.Converter;
-import com.intellij.util.xml.CustomReferenceConverter;
-import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.*;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.sqlMap.Select;
 import org.intellij.ibatis.provider.XmlAttributeValuePsiReference;
 import org.intellij.ibatis.util.IbatisConstants;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * select statement converter
  */
 public class SelectConverter extends Converter<Select> implements CustomReferenceConverter<Select> {
-    public Select fromString(@Nullable @NonNls String s, ConvertContext convertContext) {
-        Map<String, Select> allSelect = IbatisManager.getInstance().getAllSelect(convertContext.getReferenceXmlElement());
-        return allSelect.get(s);
+    @Nullable public Select fromString(@Nullable @NonNls String selectName, ConvertContext convertContext) {
+        if (StringUtil.isNotEmpty(selectName)) {
+            Map<String, Select> allSelect = IbatisManager.getInstance().getAllSelect(convertContext.getReferenceXmlElement());
+            return allSelect.get(selectName);
+        }
+        return null;
     }
 
     public String toString(@Nullable Select select, ConvertContext convertContext) {
-        return null;
+        return select != null ? select.getId().getValue() : "";
     }
 
     @NotNull
