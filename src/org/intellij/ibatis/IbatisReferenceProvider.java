@@ -97,6 +97,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"resultMap"}, resultMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"resultMap"}, resultMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "resultMap", new String[]{"extends"}, resultMapReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "subMap", new String[]{"resultMap"}, resultMapReferenceProvider);
         //parameter map reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"parameterMap"}, parameterMapReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"parameterMap"}, parameterMapReferenceProvider);
