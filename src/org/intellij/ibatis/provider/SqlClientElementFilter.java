@@ -18,6 +18,7 @@ public class SqlClientElementFilter implements ElementFilter {
         operationClass.add("org.springframework.orm.ibatis.SqlMapClientOperations");
         operationClass.add("com.ibatis.sqlmap.client.SqlMapExecutor");
         operationClass.add("com.taobao.common.dao.persistence.SqlMapBaseDAO");
+        operationClass.add("com.ibatis.dao.client.template.SqlMapDaoTemplate");
     }
 
     public boolean isAcceptable(Object o, PsiElement psiElement) {
