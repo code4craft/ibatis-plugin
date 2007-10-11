@@ -38,10 +38,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         registerDTDs(IbatisConstants.SQLMAP_DTDS);
         registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
-        SqlMapSymbolCompletionData sqlMapSymbolCompletionData = new SqlMapSymbolCompletionData(CompletionUtil.getCompletionDataByFileType(StdFileTypes.XML));
-        CompletionUtil.registerCompletionData(StdFileTypes.XML, sqlMapSymbolCompletionData);
-        SelectorSymbolCompletionData selectorSymbolCompletionData = new SelectorSymbolCompletionData(sqlMapSymbolCompletionData);
-        CompletionUtil.registerCompletionData(StdFileTypes.XML, selectorSymbolCompletionData);
     }
 
     public void disposeComponent() {
