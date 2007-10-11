@@ -43,60 +43,61 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
 
     /**
      * Get jdbc data for a table that the class maps is mapped to
+     * <p/>
+     * If the class has a javadoc @table tag, we use that.
+     * <p/>
+     * If not, we'll look in the datasource for a table that matches the class name
+     * <p/>
+     * If we still don't find a match, we'll look in the datasource for a table that matches the
+     * class name with an "s" appended to it.
+     * <p/>
+     * If we *still* don't find a match, we give up and return null.
      *
-	 * If the class has a javadoc @table tag, we use that.
-	 *
-	 * If not, we'll look in the datasource for a table that matches the class name
-	 *
-	 * If we still don't find a match, we'll look in the datasource for a table that matches the
-	 * class name with an "s" appended to it.
-	 *
-	 * If we *still* don't find a match, we give up and return null.
-	 *
      * @param psiClass PsiClass
      * @return tableData object
      */
     @Nullable
     public static DatabaseTableData getDatabaseTableData(PsiClass psiClass) {
-		DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiClass);
-		List<DatabaseTableData> tables = dataSource.getTables();
-		String name = psiClass.getName();
+        DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiClass);
+        if (dataSource == null) return null;
+        List<DatabaseTableData> tables = dataSource.getTables();
+        String name = psiClass.getName();
 
-		PsiDocComment docComment = psiClass.getDocComment();
-		if (docComment != null && docComment.findTagByName("table") != null) {
-			// there is a @table tag, look for it and return what you find.
-			PsiDocTag tableTag = docComment.findTagByName("table");
-			String tableName = tableTag.getValueElement().getText().trim();
-			if (StringUtil.isNotEmpty(tableName)) {
-				for (DatabaseTableData table : tables) {
-					if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tableName)) {
-						return table;
-					}
-				}
-			}
+        PsiDocComment docComment = psiClass.getDocComment();
+        if (docComment != null && docComment.findTagByName("table") != null) {
+            // there is a @table tag, look for it and return what you find.
+            PsiDocTag tableTag = docComment.findTagByName("table");
+            String tableName = tableTag.getValueElement().getText().trim();
+            if (StringUtil.isNotEmpty(tableName)) {
+                for (DatabaseTableData table : tables) {
+                    if (table.getName().replaceAll("\\w*\\.", "").equalsIgnoreCase(tableName)) {
+                        return table;
+                    }
+                }
+            }
         }
 
-		// OK, if we got here, we need to look for the class name
-		for (DatabaseTableData table : tables) {
-			if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(name)) {
-				return table;
-			}
-		}
+        // OK, if we got here, we need to look for the class name
+        for (DatabaseTableData table : tables) {
+            if (table.getName().replaceAll("\\w*\\.", "").equalsIgnoreCase(name)) {
+                return table;
+            }
+        }
 
-		// OK, if we got here, we need to look for the class name pluralized
-		if(null != name){
-			String tmp = StringUtil.pluralize(name);
-			for (DatabaseTableData table : tables) {
-				if (table.getName().replaceAll("\\w*\\.","" ).equalsIgnoreCase(tmp)) {
-					return table;
-				}
-			}
-		}
+        // OK, if we got here, we need to look for the class name pluralized
+        if (null != name) {
+            String tmp = StringUtil.pluralize(name);
+            for (DatabaseTableData table : tables) {
+                if (table.getName().replaceAll("\\w*\\.", "").equalsIgnoreCase(tmp)) {
+                    return table;
+                }
+            }
+        }
 
-		// by the time we get here...I give up
-		return null;
+        // by the time we get here...I give up
+        return null;
 
-	}
+    }
 
     /**
      * get tableFieldData in psiMethod
@@ -248,85 +249,85 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
         return name;
     }
 
-	public static List<DatabaseTableFieldData> getPrimaryKeyColumns(DatabaseTableData tableData){
-		List<DatabaseTableFieldData> l = new ArrayList<DatabaseTableFieldData>();
-		for(DatabaseTableFieldData f : tableData.getFields()){
-			if(f.isPrimary()) l.add(f);
-		}
-		return l;
-	}
+    public static List<DatabaseTableFieldData> getPrimaryKeyColumns(DatabaseTableData tableData) {
+        List<DatabaseTableFieldData> l = new ArrayList<DatabaseTableFieldData>();
+        for (DatabaseTableFieldData f : tableData.getFields()) {
+            if (f.isPrimary()) l.add(f);
+        }
+        return l;
+    }
 
-	private static String methodNameToPropertyName(String methodName) {
-		String returnValue = methodName.substring(3);
+    private static String methodNameToPropertyName(String methodName) {
+        String returnValue = methodName.substring(3);
 
-		// if the second character is upper case, we just return the name unscathed
-		if (Character.isUpperCase(returnValue.charAt(1))) return returnValue;
+        // if the second character is upper case, we just return the name unscathed
+        if (Character.isUpperCase(returnValue.charAt(1))) return returnValue;
 
-		// make char #1 lower case, and attach the rest
-		return returnValue.substring(0, 1).toLowerCase() + returnValue.substring(1);
+        // make char #1 lower case, and attach the rest
+        return returnValue.substring(0, 1).toLowerCase() + returnValue.substring(1);
 
-	}
+    }
 
-	public static String getPropNameForColumn(PsiClass psiClass, DatabaseTableFieldData c) {
+    public static String getPropNameForColumn(PsiClass psiClass, DatabaseTableFieldData c) {
 
-		// look for a @column on a getter
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				PsiDocComment docComment = m.getDocComment();
-				if (docComment != null) {
-					PsiDocTag psiDocTag = docComment.findTagByName("column");
-					if (null != psiDocTag) {
-						if (psiDocTag.getValueElement().getText().trim().equalsIgnoreCase(c.getName())) {
-							return methodNameToPropertyName(m.getName());
-						}
-					}
-				}
-			}
-		}
+        // look for a @column on a getter
+        for (PsiMethod m : psiClass.getMethods()) {
+            if (m.getName().startsWith("get")) {
+                PsiDocComment docComment = m.getDocComment();
+                if (docComment != null) {
+                    PsiDocTag psiDocTag = docComment.findTagByName("column");
+                    if (null != psiDocTag) {
+                        if (psiDocTag.getValueElement().getText().trim().equalsIgnoreCase(c.getName())) {
+                            return methodNameToPropertyName(m.getName());
+                        }
+                    }
+                }
+            }
+        }
 
-		// look for a matching name
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				if (m.getName().substring(3).equalsIgnoreCase(c.getName())) {
-					return methodNameToPropertyName(m.getName());
-				}
-			}
-		}
+        // look for a matching name
+        for (PsiMethod m : psiClass.getMethods()) {
+            if (m.getName().startsWith("get")) {
+                if (m.getName().substring(3).equalsIgnoreCase(c.getName())) {
+                    return methodNameToPropertyName(m.getName());
+                }
+            }
+        }
 
-		// look for a "mangled name"
-		// this maps columns NAMED_LIKE_THIS to fields namedLikeThis
-		String mangledColumnName;
-		mangledColumnName = mangleUnderscore(c.getName(), false);
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
-					return methodNameToPropertyName(m.getName());
-				}
-			}
-		}
+        // look for a "mangled name"
+        // this maps columns NAMED_LIKE_THIS to fields namedLikeThis
+        String mangledColumnName;
+        mangledColumnName = mangleUnderscore(c.getName(), false);
+        for (PsiMethod m : psiClass.getMethods()) {
+            if (m.getName().startsWith("get")) {
+                if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
+                    return methodNameToPropertyName(m.getName());
+                }
+            }
+        }
 
-		mangledColumnName = mangleUnderscore(c.getName(), true);
-		for (PsiMethod m : psiClass.getMethods()) {
-			if (m.getName().startsWith("get")) {
-				if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
-					return methodNameToPropertyName(m.getName());
-				}
-			}
-		}
-		return null;
-	}
+        mangledColumnName = mangleUnderscore(c.getName(), true);
+        for (PsiMethod m : psiClass.getMethods()) {
+            if (m.getName().startsWith("get")) {
+                if (m.getName().substring(3).equalsIgnoreCase(mangledColumnName)) {
+                    return methodNameToPropertyName(m.getName());
+                }
+            }
+        }
+        return null;
+    }
 
-	private static String mangleUnderscore(String testColumnName, boolean allowLowerCaseSingle) {
-		String[] strings = testColumnName.toLowerCase().split("_");
-		if(!allowLowerCaseSingle){
-			if(strings[0].length() == 1){
-				strings[0] = strings[0].toUpperCase();
-			}
-		}
-		for (int i = 1; i < strings.length; i++) {
-			strings[i] = StringUtil.firstLetterToUpperCase(strings[i]);
-		}
-		return StringUtil.join(strings, "");
-	}
+    private static String mangleUnderscore(String testColumnName, boolean allowLowerCaseSingle) {
+        String[] strings = testColumnName.toLowerCase().split("_");
+        if (!allowLowerCaseSingle) {
+            if (strings[0].length() == 1) {
+                strings[0] = strings[0].toUpperCase();
+            }
+        }
+        for (int i = 1; i < strings.length; i++) {
+            strings[i] = StringUtil.firstLetterToUpperCase(strings[i]);
+        }
+        return StringUtil.join(strings, "");
+    }
 
 }
