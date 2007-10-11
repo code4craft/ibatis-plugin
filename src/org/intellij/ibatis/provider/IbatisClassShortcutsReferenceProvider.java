@@ -76,7 +76,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
                     for (String shortcut : shortcuts) {
                         variants.add(LookupValueFactory.createLookupValue(shortcut, IbatisConstants.INTERNAL_CLASS));
                     }
-                    //filter some unnecessary package name in root path 
+                    //filter some unnecessary package name in root path
                     for (Object className : classNames) {
                         if (className instanceof PsiPackage) {
                             PsiPackage psiPackage = (PsiPackage) className;
