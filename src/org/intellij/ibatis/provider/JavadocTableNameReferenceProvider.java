@@ -83,6 +83,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
      * @param psiElement psiElement
      * @return DataSource Object
      */
+    @Nullable
     public static DataSource getDataSourceForIbatis(PsiElement psiElement) {
         Module module = ModuleUtil.findModuleForPsiElement(psiElement);
         return getDataSourceForIbatis(module);
