@@ -1,8 +1,3 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-// Source File Name:   IbatisBundle.java
-
 package org.intellij.ibatis.util;
 
 import com.intellij.CommonBundle;
@@ -12,6 +7,11 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
+/**
+ * resource bundle in the project
+ *
+ * @author Jacky
+ */
 public class IbatisBundle {
     private static Reference ourBundle;
     protected static final String PATH_TO_BUNDLE = "resource.IbatisBundle";
@@ -19,10 +19,21 @@ public class IbatisBundle {
     private IbatisBundle() {
     }
 
+    /**
+     * get resource bundle value from   resource.IbatisBundle
+     *
+     * @param key    key name
+     * @param params parameters
+     * @return value
+     */
     public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE)String key, Object... params) {
         return CommonBundle.message(getBundle(), key, params);
     }
 
+    /**
+     * get the bundle for resource.IbatisBundle
+     * @return ResourceBundle object
+     */
     private static ResourceBundle getBundle() {
         ResourceBundle bundle = null;
         if (ourBundle != null)
@@ -33,6 +44,5 @@ public class IbatisBundle {
         }
         return bundle;
     }
-
 
 }
