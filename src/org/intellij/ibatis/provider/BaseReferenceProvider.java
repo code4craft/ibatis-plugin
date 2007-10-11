@@ -17,13 +17,13 @@ public class BaseReferenceProvider implements PsiReferenceProvider {
 
     @Deprecated
     @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement, ReferenceType referenceType) {
-        return new PsiReference[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new PsiReference[0];
     }
 
     @NotNull
     @Deprecated
     public PsiReference[] getReferencesByString(String s, PsiElement psiElement, ReferenceType referenceType, int i) {
-        return new PsiReference[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new PsiReference[0];  
     }
 
     public void handleEmptyContext(PsiScopeProcessor psiScopeProcessor, PsiElement psiElement) {
