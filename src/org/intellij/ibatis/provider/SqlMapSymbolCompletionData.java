@@ -1,6 +1,7 @@
 package org.intellij.ibatis.provider;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.filters.TextFilter;
@@ -18,11 +19,12 @@ import java.util.*;
 /**
  * completion data for SQL map symbol
  */
-public class SqlMapSymbolCompletionData extends CompletionData {
+public class SqlMapSymbolCompletionData extends XmlCompletionData {
     public static String OPEN_TAG = "#";
     public static String CLOSE_TAG = "#";
     private static List<String> sentenceNames = new ArrayList<String>();
     private CompletionData systemCompletionData;
+    private XmlCompletionData parentCompletionData;
 
     static {
         sentenceNames.add("select");
@@ -34,8 +36,8 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         sentenceNames.add("sql");
     }
 
-    public SqlMapSymbolCompletionData(CompletionData completionData) {
-        this.systemCompletionData = completionData;
+    public SqlMapSymbolCompletionData(XmlCompletionData parentCompletionData) {
+        this.parentCompletionData = parentCompletionData;
     }
 
     /**
@@ -80,7 +82,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
                 }
             }
         }
-        if (systemCompletionData != null) return systemCompletionData.findVariants(psiElement, completionContext);
+        if(parentCompletionData!=null) return parentCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
     }
 
@@ -150,7 +152,7 @@ public class SqlMapSymbolCompletionData extends CompletionData {
         }
         return nameList;
     }
-
+    
     /**
      * add default symbol
      *
