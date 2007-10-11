@@ -1,40 +1,30 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.CompletionContext;
-import com.intellij.codeInsight.completion.CompletionData;
-import com.intellij.codeInsight.completion.CompletionVariant;
+import com.intellij.codeInsight.completion.*;
+import com.intellij.javaee.dataSource.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlText;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomManager;
-import com.intellij.javaee.dataSource.DataSource;
-import com.intellij.javaee.dataSource.DatabaseTableData;
-import com.intellij.javaee.dataSource.DatabaseTableFieldData;
+import com.intellij.psi.xml.*;
+import com.intellij.util.xml.*;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * completion data for selector symbol
  */
-public class SelectorSymbolCompletionData extends CompletionData {
-    private CompletionData systemCompletionData;
+public class SelectorSymbolCompletionData extends XmlCompletionData {
+    private CompletionData parentCompletionData;
 
-    public SelectorSymbolCompletionData(CompletionData completionData) {
-        this.systemCompletionData = completionData;
+    public SelectorSymbolCompletionData(CompletionData parentCompletionData) {
+        this.parentCompletionData = parentCompletionData;
     }
 
     /**
@@ -85,7 +75,7 @@ public class SelectorSymbolCompletionData extends CompletionData {
                 }
             }
         }
-        if (systemCompletionData != null) return systemCompletionData.findVariants(psiElement, completionContext);
+        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
     }
 
@@ -142,7 +132,7 @@ public class SelectorSymbolCompletionData extends CompletionData {
      */
     @Nullable
     public String getTableName(XmlTag xmlTag) {
-        String sql = getSQL(xmlTag).trim().toLowerCase();
+        String sql = IbatisUtil.getSQLForXmlTag(xmlTag).trim().toLowerCase();
         if (sql.startsWith("insert")) {   // insert
             String tableName = sql.substring(sql.indexOf("into") + 4).trim();
             tableName = tableName.split("\\s+")[0];
@@ -167,36 +157,6 @@ public class SelectorSymbolCompletionData extends CompletionData {
         }
         return null;
     }
-
-    /**
-     * got SQL code in sentence
-     *
-     * @param xmlTag xml tag
-     * @return SQL code in sentence
-     */
-    @SuppressWarnings({"StringConcatenationInsideStringBufferAppend"}) public String getSQL(XmlTag xmlTag) {
-        StringBuilder sql = new StringBuilder();
-        PsiElement[] children = xmlTag.getChildren();
-        for (PsiElement child : children) {
-            if (child instanceof XmlTag) {
-                XmlTag tag = (XmlTag) child;
-                if (tag.getName().equals("include")) {
-                    XmlAttribute refid = tag.getAttribute("refid");
-                    if (refid != null && StringUtil.isNotEmpty(refid.getText())) {
-                        PsiElement psiElement = refid.getValueElement().getReference().resolve();
-                        if (psiElement instanceof XmlAttribute) {
-                            XmlAttribute idAttribute = (XmlAttribute) psiElement;
-                            sql.append(" " + idAttribute.getParent().getValue().getText());
-                        }
-                    }
-                }
-            } else if (child instanceof XmlText) {
-                sql.append(" " + ((XmlText) child).getValue());
-            }
-        }
-        return sql.toString();
-    }
-
 
     /**
      * get sql setence tag for  psiElement
