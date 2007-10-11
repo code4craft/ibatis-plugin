@@ -2,6 +2,7 @@ package org.intellij.ibatis;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -10,6 +11,7 @@ import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.codeInsight.completion.CompletionUtil;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -17,7 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * project component to register all reference provider
- * @author  jacky
+ *
+ * @author jacky
  */
 public class IbatisReferenceProvider implements ProjectComponent {
     private ReferenceProvidersRegistry registry;
@@ -37,6 +40,7 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registry.registerReferenceProvider(new SqlClientElementFilter(), PsiLiteralExpression.class, new StatementIdReferenceProvider());
         registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTagFilter("table"), true, new JavadocTableNameReferenceProvider());
         registry.registerDocTagReferenceProvider(new String[]{"column"}, new JavadocTagFilter("column"), true, new JavadocTableColumnReferenceProvider());
+//        registry.registerReferenceProvider(TrueFilter.INSTANCE, XmlTag.class, new InlineParameterReferenceProvider());
         JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
         IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
         FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
@@ -129,7 +133,9 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"typeHandler"}, jdbcTypeReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"javaType"}, classShortcutsReferenceProvider);
-
+        // CompletionData registration
+        SelectorSymbolCompletionData selectorSymbolCompletionData = new SelectorSymbolCompletionData(new SqlMapSymbolCompletionData(null));
+        CompletionUtil.registerCompletionData(StdFileTypes.XML, selectorSymbolCompletionData);
     }
 
     public void disposeComponent() {
