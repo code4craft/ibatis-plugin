@@ -40,50 +40,60 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
         this.parentCompletionData = parentCompletionData;
     }
 
-    /**
-     * get prefix for psiElement
-     *
-     * @param psiElement   PsiElement object
-     * @param offsetInFile offset in file
-     * @return prefix
-     */
     public String findPrefix(PsiElement psiElement, int offsetInFile) {
-        return psiElement.getText().substring(0, offsetInFile - psiElement.getTextRange().getStartOffset());
+        if (getXmlTagForSQLCompletion(psiElement, psiElement.getContainingFile()) != null) {
+            return psiElement.getText().substring(0, offsetInFile - psiElement.getTextRange().getStartOffset());
+        } else
+            return super.findPrefix(psiElement, offsetInFile);
     }
 
     public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
-        if (psiElement.getParent() instanceof XmlText) {   // text only
-            PsiFile psiFile = completionContext.file;
+        XmlTag tag = getXmlTagForSQLCompletion(psiElement, completionContext.file);
+        if (tag != null) {    //
             String prefix = completionContext.getPrefix();
-            if (psiFile instanceof XmlFile && prefix.startsWith(OPEN_TAG)) {   //xml file and prefix match
-                final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
+            LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
+            CompletionVariant variant = new CompletionVariant(left);
+            variant.includeScopeClass(PsiElement.class, true);
+            variant.addCompletionFilter(TrueFilter.INSTANCE);
+            variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+            if (!prefix.contains(":")) {   //just clear in line parameter name
+                List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
+                for (String parameterName : parameterNames) {
+                    variant.addCompletion(parameterName);
+                }
+            } else //jdbc type will be added
+            {
+                prefix = prefix.substring(0, prefix.indexOf(':'));
+                for (String typeName : JdbcType.TYPES.keySet()) {
+                    variant.addCompletion(prefix + ":" + typeName);
+                }
+            }
+            return new CompletionVariant[]{variant};
+        }
+
+        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
+        return super.findVariants(psiElement, completionContext);
+    }
+
+    /**
+     * get xml tag for code completion
+     *
+     * @param psiElement psiElement
+     * @param psiFile    current file
+     * @return xml tag
+     */
+    @Nullable
+    public static XmlTag getXmlTagForSQLCompletion(PsiElement psiElement, PsiFile psiFile) {
+        if (psiElement.getParent() instanceof XmlText) {   // text only
+            if (psiFile instanceof XmlFile) {
+                XmlFile xmlFile = (XmlFile) psiFile;
+                final DomFileElement fileElement = DomManager.getDomManager(psiFile.getProject()).getFileElement(xmlFile, DomElement.class);
                 if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
-                    XmlTag tag = getParentSentence(psiElement);
-                    if (tag != null) {
-                        LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
-                        CompletionVariant variant = new CompletionVariant(left);
-                        variant.includeScopeClass(PsiElement.class, true);
-                        variant.addCompletionFilter(TrueFilter.INSTANCE);
-                        variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-                        if (!prefix.contains(":")) {   //just clear in line parameter name
-                            List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
-                            for (String parameterName : parameterNames) {
-                                variant.addCompletion(parameterName);
-                            }
-                        } else //jdbc type will be added
-                        {
-                            prefix = prefix.substring(0, prefix.indexOf(':'));
-                            for (String typeName : JdbcType.TYPES.keySet()) {
-                                variant.addCompletion(prefix + ":" + typeName);
-                            }
-                        }
-                        return new CompletionVariant[]{variant};
-                    }
+                    return getParentSentence(psiElement);
                 }
             }
         }
-        if(parentCompletionData!=null) return parentCompletionData.findVariants(psiElement, completionContext);
-        return super.findVariants(psiElement, completionContext);
+        return null;
     }
 
     /**
@@ -103,7 +113,7 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
             symbolNames.add("value");
         }
         for (String symbolName : symbolNames) {
-            nameList.add(OPEN_TAG + symbolName + CLOSE_TAG);
+            nameList.add(prefix + symbolName + CLOSE_TAG);
         }
         return nameList;
     }
@@ -152,7 +162,7 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
         }
         return nameList;
     }
-    
+
     /**
      * add default symbol
      *
