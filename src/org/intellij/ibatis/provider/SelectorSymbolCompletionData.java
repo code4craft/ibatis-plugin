@@ -27,53 +27,39 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
         this.parentCompletionData = parentCompletionData;
     }
 
-    /**
-     * get prefix for psiElement
-     *
-     * @param psiElement   PsiElement object
-     * @param offsetInFile offset in file
-     * @return prefix
-     */
     public String findPrefix(PsiElement psiElement, int offsetInFile) {
-        return psiElement.getText().substring(0, offsetInFile - psiElement.getTextRange().getStartOffset());
+        if (SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, psiElement.getContainingFile()) != null) {
+            return psiElement.getText().substring(0, offsetInFile - psiElement.getTextRange().getStartOffset());
+        } else
+            return super.findPrefix(psiElement, offsetInFile);
     }
 
     public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
-        if (psiElement.getParent() instanceof XmlText) {   // text only
-            PsiFile psiFile = completionContext.file;
-            String prefix = completionContext.getPrefix();
-            if (psiFile instanceof XmlFile) {   //xml file and prefix match
-                final DomFileElement fileElement = DomManager.getDomManager(completionContext.project).getFileElement((XmlFile) completionContext.file, DomElement.class);
-                if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
-                    XmlTag tag = SqlMapSymbolCompletionData.getParentSentence(psiElement);
-                    if (tag != null && !prefix.contains("#")) {   //not symbol
-                        LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
-                        CompletionVariant variant = new CompletionVariant(left);
-                        String previousText = getPreviousText(psiElement);
-                        if (previousText != null && previousText.equalsIgnoreCase("from")) {
-                            DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
-                            if(datasource!=null)
-                            {
-                                List<DatabaseTableData> tables = datasource.getTables();
-                                for (DatabaseTableData table : tables) {
-                                    variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()));
-                                }
-                            }
-                        } else {
-                            List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
-                            if (parameterNames.size() > 0) {
-                                for (String parameterName : parameterNames) {
-                                    variant.addCompletion(parameterName);
-                                }
-                            }
-                        }
-                        variant.includeScopeClass(PsiElement.class, true);
-                        variant.addCompletionFilter(TrueFilter.INSTANCE);
-                        variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-                        return new CompletionVariant[]{variant};
+        XmlTag tag = SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, completionContext.file);
+        if (tag != null && !completionContext.getPrefix().contains("#")) {   //not symbol
+            LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
+            CompletionVariant variant = new CompletionVariant(left);
+            String previousText = getPreviousText(psiElement);
+            if (previousText != null && previousText.equalsIgnoreCase("from")) {
+                DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
+                if (datasource != null) {
+                    List<DatabaseTableData> tables = datasource.getTables();
+                    for (DatabaseTableData table : tables) {
+                        variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()));
+                    }
+                }
+            } else {
+                List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
+                if (parameterNames.size() > 0) {
+                    for (String parameterName : parameterNames) {
+                        variant.addCompletion(parameterName);
                     }
                 }
             }
+            variant.includeScopeClass(PsiElement.class, true);
+            variant.addCompletionFilter(TrueFilter.INSTANCE);
+            variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+            return new CompletionVariant[]{variant};
         }
         if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
