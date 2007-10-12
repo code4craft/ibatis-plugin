@@ -7,8 +7,8 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.4.2</version>
-    <vendor email="linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Jacky Chan</vendor>
+    <version>0.5.0</version>
+    <vendor logo="/icons/logo.png" email="lmeadors@apache.org, linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Larry Meadors, Jacky Chan</vendor>
     <!-- 6833 is 7 M1b -->
     <!-- 7126 is 7 M2  -->
 	<idea-version since-build="7000"/>
@@ -16,7 +16,14 @@
 	<depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
-                <ul>
+                 <ul>  Change List in 0.5.0
+                  <li>Code Completion for in line parameter with Jdbc type support</li>
+                  <li>Code refactor according to IntelliJ DOM</li>
+                  <li>Fix type alias completion in package completion</li>
+                  <li>Configuration UI enhanced</li>
+                  <li>Bug fix</li>
+               </ul>
+                <ul>  Change List in 0.4.2
                   <li>Added reflection-based result map generation</li>
                   <li>Added select generation based on resultClass</li>
                   <li>Code completion for table column and inline parameter in SQL sentence</li>
