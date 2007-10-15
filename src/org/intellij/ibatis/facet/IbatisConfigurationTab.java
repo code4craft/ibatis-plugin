@@ -7,15 +7,17 @@ import com.intellij.javaee.dataSource.DataSource;
 import com.intellij.javaee.dataSource.DataSourceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiPackage;
+import com.intellij.ui.EnumComboBoxModel;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
 
 /**
  * ibatis configuration facet tab
@@ -31,15 +33,26 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	private JButton configureDatasourcesButton;
 	private JTextArea sqlMapTemplate;
 	private JTextArea beanTemplate;
+	private JTextArea selectKeyTemplate;
+	private JComboBox selectKeyType;
+	private JButton resetSQLMapTemplateButton;
+	private JButton resetBeanTemplateButton;
+	private JButton resetSelectKeyTemplateButton;
+	private JButton resetAllDefaultValuesButton;
 	private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 	private Project project;
 
 	public IbatisConfigurationTab(final FacetEditorContext editorContext, final IbatisFacetConfiguration configuration) {
-        this.editorContext = editorContext;
-        this.configuration = configuration;
+
+		this.editorContext = editorContext;
+
+		this.configuration = configuration;
+
 		project = editorContext.getProject();
+
 		fillData();
+
 		selectSqlMapPackage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PackageChooserDialog pcd = new PackageChooserDialog(
@@ -49,16 +62,19 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 				if(null != psiPackage) sqlMapPackageName.setText(psiPackage.getQualifiedName());
 			}
 		});
+
 		sqlMapPackageName.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				configuration.sqlMapPackage = sqlMapPackageName.getText();
 			}
 		});
+
 		beanPackageTextField.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				configuration.beanPackage = beanPackageTextField.getText();
 			}
 		});
+
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PackageChooserDialog pcd = new PackageChooserDialog(
@@ -94,9 +110,61 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 				configuration.sqlMapTemplate = sqlMapTemplate.getText();
 			}
 		});
+
+		selectKeyType.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				configuration.selectKeyType = (SelectKeyType) selectKeyType.getSelectedItem();
+				selectKeyTemplate.setEnabled(configuration.selectKeyType != SelectKeyType.none);
+			}
+		});
+
+		selectKeyTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.selectKeyTemplate = selectKeyTemplate.getText();
+			}
+		});
+
+		resetBeanTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				configuration.resetBeanTemplate();
+			}
+		});
+		resetSQLMapTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				configuration.resetSqlMapTemplate();
+			}
+		});
+		resetSelectKeyTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (
+					confirm(
+						"This will discard your SelectKey template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetSelectKeyTemplate();
+					selectKeyTemplate.setText(configuration.selectKeyTemplate);
+					selectKeyType.setSelectedItem(configuration.selectKeyType);
+				}
+			}
+		});
+		resetAllDefaultValuesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				configuration.resetToDefaultTemplates();
+			}
+		});
 	}
 
-    public void fillData() {
+	private boolean confirm(String message, String title) {
+		return Messages.showYesNoDialog(
+			message,
+			title,
+			Messages.getQuestionIcon()
+		) == 0;
+	}
+
+	public void fillData() {
 		fillDatasourceList();
 
 		sqlmapSuffixTextField.setText(configuration.sqlMapSuffix);
@@ -109,7 +177,10 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 
 		beanTemplate.setText(configuration.beanTemplate);
 		sqlMapTemplate.setText(configuration.sqlMapTemplate);
-		
+		selectKeyType.setModel(new EnumComboBoxModel<SelectKeyType>(SelectKeyType.class));
+		selectKeyType.setSelectedItem(configuration.selectKeyType);
+		selectKeyTemplate.setText(configuration.selectKeyTemplate);
+		selectKeyTemplate.setEnabled(configuration.selectKeyType != SelectKeyType.none);
 	}
 
 	private void fillDatasourceList() {

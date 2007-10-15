@@ -27,6 +27,8 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
     public String beanPackage;
 	public String sqlMapTemplate;
 	public String beanTemplate;
+	public String selectKeyTemplate;
+	public SelectKeyType selectKeyType = SelectKeyType.none;
 
 	public IbatisFacetConfiguration() {
 		resetToDefaultTemplates();
@@ -43,6 +45,13 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
         sqlMapSuffix = JDOMExternalizer.readString(element, "sqlMapSuffix");
         sqlMapPackage = JDOMExternalizer.readString(element, "sqlMapPackage");
         beanPackage = JDOMExternalizer.readString(element, "beanPackage");
+        selectKeyTemplate = JDOMExternalizer.readString(element, "selectKeyTemplate");
+		String t = JDOMExternalizer.readString(element, "selectKeyType");
+		if(null == t || t.trim().length() == 0){
+			selectKeyType = SelectKeyType.none;
+		}else{
+			selectKeyType = SelectKeyType.valueOf(t);
+		}
 	}
 
     public void writeExternal(Element element) throws WriteExternalException {
@@ -50,6 +59,8 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
         JDOMExternalizer.write(element, "sqlMapSuffix", sqlMapSuffix);
         JDOMExternalizer.write(element, "sqlMapPackage", sqlMapPackage);
         JDOMExternalizer.write(element, "beanPackage", beanPackage);
+        JDOMExternalizer.write(element, "selectKeyTemplate", selectKeyTemplate);
+        JDOMExternalizer.write(element, "selectKeyType", selectKeyType.name());
     }
 
     public long getModificationCount() {
@@ -63,6 +74,12 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 	public void resetToDefaultTemplates(){
 		resetSqlMapTemplate();
 		resetBeanTemplate();
+		resetSelectKeyTemplate();
+	}
+
+	public void resetSelectKeyTemplate() {
+		selectKeyTemplate = "";
+		selectKeyType = SelectKeyType.none;
 	}
 
 	public void resetBeanTemplate() {

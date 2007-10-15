@@ -1,11 +1,19 @@
 package org.intellij.ibatis.util;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.*;
 import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.dom.sqlMap.Sql;
+import org.intellij.ibatis.facet.IbatisFacetConfiguration;
+import org.intellij.ibatis.facet.IbatisFacet;
 import org.jetbrains.annotations.NotNull;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.VelocityContext;
+
+import java.io.StringWriter;
 
 /**
  * utility class in iBATIS plug-in
@@ -50,4 +58,33 @@ public class IbatisUtil {
         }
         return sql.toString();
     }
+
+	public static IbatisFacetConfiguration getConfig(PsiElement e){
+		Module module = ModuleUtil.findModuleForPsiElement(e);
+		if (null != module) {
+			IbatisFacet facet = IbatisFacet.getInstance(module);
+			if (facet != null) {
+				return facet.getConfiguration();
+			} else {
+				return null;
+			}
+		}else{
+			return null;
+		}
+	}
+
+	public static String evaluateVelocityTemplate(
+		VelocityContext context,
+		String template
+	) throws Exception {
+		StringWriter sw = new StringWriter();
+		getVelocityEngine().evaluate(context, sw, "iBATIS Plugin", template);
+		return sw.toString();
+	}
+
+	public static VelocityEngine getVelocityEngine() throws Exception {
+		VelocityEngine engine = new VelocityEngine();
+		engine.init();
+		return engine;
+	}
 }

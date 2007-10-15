@@ -1,34 +1,38 @@
 package org.intellij.ibatis.intention;
 
-import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.javaee.dataSource.DatabaseTableData;
+import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.*;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
-import org.intellij.ibatis.provider.TableColumnReferenceProvider;
-import org.intellij.ibatis.dom.sqlMap.ResultMap;
+import org.apache.velocity.VelocityContext;
 import org.intellij.ibatis.dom.sqlMap.Result;
+import org.intellij.ibatis.dom.sqlMap.ResultMap;
+import org.intellij.ibatis.facet.IbatisFacetConfiguration;
+import org.intellij.ibatis.facet.SelectKeyType;
+import org.intellij.ibatis.provider.TableColumnReferenceProvider;
+import org.intellij.ibatis.util.IbatisUtil;
 
 import java.lang.reflect.Field;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 public abstract class GenerateSQLBase extends PsiIntentionBase {
     static Map<Integer, String> jdbcTypeNameMap = new HashMap<Integer, String>();
 
-    static {
+
+	static {
         populateTypeMap();
     }
 
@@ -153,8 +157,60 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         }
     }
 
-    protected void buildInsert(PsiElement element, PsiClass parameterClass) {
-        DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
+
+	protected String getSelectKey(
+		PsiClass parameterClass,
+		IbatisFacetConfiguration conf,
+		List<DatabaseTableFieldData> fieldList
+	) {
+
+		if(!isSelectKeyNeeded(conf)) return "";
+
+		VelocityContext context = new VelocityContext();
+		List<String> keyFieldList = new ArrayList<String>();
+		for(DatabaseTableFieldData field : fieldList){
+			if(field.isPrimary()){
+				String propName = TableColumnReferenceProvider.getPropNameForColumn(parameterClass, field);
+				keyFieldList.add(propName);
+				context.put("keyFieldProp", propName);
+				context.put("keyField", field.getName());
+				System.out.println("keyFieldProp = " + propName);
+			}
+		}
+
+		context.put("keyFieldList", keyFieldList);
+		context.put("fieldList", fieldList);
+		context.put("fullparamClass", parameterClass.getQualifiedName());
+		context.put("paramClass", parameterClass.getName());
+		try {
+			return IbatisUtil.evaluateVelocityTemplate(context, conf.selectKeyTemplate);
+		} catch (Exception e) {
+			Messages.showErrorDialog(
+				"Encountered a problem creating the selectKey element.\n" +
+				"The error message is " + e.getLocalizedMessage() + "\n" +
+				"The select key element will be empty.",
+				"Error"
+			);
+			// hm, crap.
+			return "";
+		}
+	}
+
+	protected boolean isSelectKeyNeeded(IbatisFacetConfiguration conf){
+		return isPostInsertSelectKey(conf) || isPreInsertSelectKey(conf);
+	}
+
+	protected boolean isPostInsertSelectKey(IbatisFacetConfiguration conf){
+		return !(null == conf || null == conf.selectKeyType) && conf.selectKeyType == SelectKeyType.postInsert;
+	}
+
+	protected boolean isPreInsertSelectKey(IbatisFacetConfiguration conf){
+		return !(null == conf || null == conf.selectKeyType) && conf.selectKeyType == SelectKeyType.preInsert;
+	}
+	protected void buildInsert(PsiElement element, PsiClass parameterClass) {
+		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+
+		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
         if (null != tableData) {
             List<DatabaseTableFieldData> fieldList = tableData.getFields();
             // OK, now we have the table meta-data and the class meta-data.
@@ -162,27 +218,103 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
             StringBuilder insertStatement = new StringBuilder("\ninsert into ").append(tableData.getName());
             StringBuilder insertList = new StringBuilder("");
             StringBuilder valueList = new StringBuilder("");
-            for (DatabaseTableFieldData d : fieldList) {
-                String propName = TableColumnReferenceProvider.getPropNameForColumn(parameterClass, d);
-                if (null != propName) {
-                    if (insertList.length() == 0) {
-                        insertList.append(" (");
-                    } else {
-                        insertList.append(", ");
-                    }
-                    if (valueList.length() == 0) {
-                        valueList.append("\nvalues (");
-                    } else {
-                        valueList.append(", ");
-                    }
-                    insertList.append(d.getName());
-                    valueList.append("#").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
-                }
-            }
+			String keyProperty = null;
+			String keyResultType = null;
+			boolean insertKeyField = isPreInsertSelectKey(conf);
+			for (DatabaseTableFieldData d : fieldList) {
+				String propName = TableColumnReferenceProvider.getPropNameForColumn(parameterClass, d);
+				if(d.isPrimary()){
+					keyProperty = propName;
+					keyResultType = d.getType();
+					if(insertKeyField){
+						if (null != propName) {
+							if (insertList.length() == 0) {
+								insertList.append(" (");
+							} else {
+								insertList.append(", ");
+							}
+							if (valueList.length() == 0) {
+								valueList.append("\nvalues (");
+							} else {
+								valueList.append(", ");
+							}
+							insertList.append(d.getName());
+							valueList.append("#").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
+						}
+					}
+				}else{
+					if (null != propName) {
+						if (insertList.length() == 0) {
+							insertList.append(" (");
+						} else {
+							insertList.append(", ");
+						}
+						if (valueList.length() == 0) {
+							valueList.append("\nvalues (");
+						} else {
+							valueList.append(", ");
+						}
+						insertList.append(d.getName());
+						valueList.append("#").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
+					}
+				}
+			}
             if (insertList.length() > 0) {
                 // OK, build the SQL statement...
                 XmlTag xmlTag = (XmlTag) element;
-                xmlTag.getValue().setText(insertStatement.append(insertList).append(") ").append(valueList).append(")").toString());
+				String insertString = insertStatement.append(insertList).append(") ").append(valueList).append(")").toString();
+
+				if(isPreInsertSelectKey(conf)){
+					PsiElement selectKey = xmlTag.createChildTag("selectKey", "", "\n" + getSelectKey(parameterClass, conf, fieldList), false).copy();
+					try {
+						XmlTag selectKeyTag = (XmlTag) selectKey;
+						selectKeyTag.setAttribute("keyProperty", keyProperty);
+						selectKeyTag.setAttribute("type", "pre");
+						selectKeyTag.setAttribute("resultClass", keyResultType);
+						xmlTag.getValue().setText(insertString);
+						xmlTag.add(selectKey);
+						PsiElement[] psiElements = xmlTag.getChildren();
+						PsiElement textElement = null;
+						PsiElement selectKeyElement = null;
+						for (int i=0; i < psiElements.length; i++){
+							PsiElement pe = psiElements[i];
+							if(pe instanceof XmlTag){
+								XmlTag xe = (XmlTag) pe;
+								if("selectKey".equals(xe.getName())){
+									selectKeyElement = psiElements[i];
+									System.out.println("selectKey is " + i);
+								}
+							}
+							if(pe instanceof XmlText){
+								textElement = psiElements[i];
+								System.out.println("text is " + i);
+							}
+						}
+						PsiElement temp;
+						if (textElement != null && selectKeyElement != null) {
+							temp = textElement.copy();
+							textElement.replace(selectKeyElement);
+							selectKeyElement.replace(temp);
+						}
+					} catch (IncorrectOperationException e) {
+						System.out.println("bang");
+					}
+
+				}else if (isPostInsertSelectKey(conf)){
+					PsiElement selectKey = xmlTag.createChildTag("selectKey", "", "\n" + getSelectKey(parameterClass, conf, fieldList), false).copy();
+					try {
+						XmlTag selectKeyTag = (XmlTag) selectKey;
+						selectKeyTag.setAttribute("keyProperty", keyProperty);
+						selectKeyTag.setAttribute("type", "post");
+						selectKeyTag.setAttribute("resultClass", keyResultType);
+						xmlTag.getValue().setText(insertString);
+						xmlTag.add(selectKey);
+					} catch (IncorrectOperationException e) {
+						e.printStackTrace();
+					}
+				}else{
+					xmlTag.getValue().setText(insertString);
+				}
             }
         }
     }
