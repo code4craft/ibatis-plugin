@@ -268,7 +268,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 					PsiElement selectKey = xmlTag.createChildTag("selectKey", "", "\n" + getSelectKey(parameterClass, conf, fieldList), false).copy();
 					try {
 						XmlTag selectKeyTag = (XmlTag) selectKey;
-						selectKeyTag.getAttribute("xmlns").delete();
+						XmlAttribute attribute = selectKeyTag.getAttribute("xmlns");
+						if (attribute != null) {
+							attribute.delete();
+						}
 						selectKeyTag.setAttribute("keyProperty", keyProperty);
 						selectKeyTag.setAttribute("type", "pre");
 						selectKeyTag.setAttribute("resultClass", keyResultType);
@@ -305,7 +308,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 					PsiElement selectKey = xmlTag.createChildTag("selectKey", "", "\n" + getSelectKey(parameterClass, conf, fieldList), false).copy();
 					try {
 						XmlTag selectKeyTag = (XmlTag) selectKey;
-						selectKeyTag.getAttribute("xmlns").delete();
+						XmlAttribute attribute = selectKeyTag.getAttribute("xmlns");
+						if (attribute != null) {
+							attribute.delete();
+						}
 						selectKeyTag.setAttribute("keyProperty", keyProperty);
 						selectKeyTag.setAttribute("type", "post");
 						selectKeyTag.setAttribute("resultClass", keyResultType);
