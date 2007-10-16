@@ -29,6 +29,10 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 	public String beanTemplate;
 	public String selectKeyTemplate;
 	public SelectKeyType selectKeyType = SelectKeyType.none;
+	public String insertTemplate;
+	public String selectTemplate;
+	public String updateTemplate;
+	public String deleteTemplate;
 
 	public IbatisFacetConfiguration() {
 		resetToDefaultTemplates();
@@ -52,6 +56,10 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 		}else{
 			selectKeyType = SelectKeyType.valueOf(t);
 		}
+		insertTemplate = JDOMExternalizer.readString(element, "insertTemplate");
+		selectTemplate = JDOMExternalizer.readString(element, "selectTemplate");
+		updateTemplate = JDOMExternalizer.readString(element, "updateTemplate");
+		deleteTemplate = JDOMExternalizer.readString(element, "deleteTemplate");
 	}
 
     public void writeExternal(Element element) throws WriteExternalException {
@@ -61,6 +69,10 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
         JDOMExternalizer.write(element, "beanPackage", beanPackage);
         JDOMExternalizer.write(element, "selectKeyTemplate", selectKeyTemplate);
         JDOMExternalizer.write(element, "selectKeyType", selectKeyType.name());
+        JDOMExternalizer.write(element, "insertTemplate", insertTemplate);
+        JDOMExternalizer.write(element, "selectTemplate", selectTemplate);
+        JDOMExternalizer.write(element, "updateTemplate", updateTemplate);
+        JDOMExternalizer.write(element, "deleteTemplate", deleteTemplate);
     }
 
     public long getModificationCount() {
@@ -75,6 +87,27 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 		resetSqlMapTemplate();
 		resetBeanTemplate();
 		resetSelectKeyTemplate();
+		resetInsertTemplate();
+		resetSelectTemplate();
+		resetUpdateTemplate();
+		resetDeleteTemplate();
+
+	}
+
+	public void resetDeleteTemplate() {
+		deleteTemplate = "\ndelete from \n$tableName where $where";
+	}
+
+	public void resetUpdateTemplate() {
+		updateTemplate = "\nupdate \n$tableName set $fieldsToUpdate where $where";
+	}
+
+	public void resetSelectTemplate() {
+		selectTemplate = "\nselect $selectList \nfrom $tableName \nwhere $where";
+	}
+
+	public void resetInsertTemplate() {
+		insertTemplate = "\ninsert into \n$tableName ($insertList) \nvalues ($valueList)";
 	}
 
 	public void resetSelectKeyTemplate() {

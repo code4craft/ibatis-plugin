@@ -39,6 +39,14 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	private JButton resetBeanTemplateButton;
 	private JButton resetSelectKeyTemplateButton;
 	private JButton resetAllDefaultValuesButton;
+	private JTextArea insertTemplate;
+	private JButton resetInsertTemplateButton;
+	private JButton resetSelectTemplateButton;
+	private JButton resetUpdateTemplateButton;
+	private JButton resetDeleteTemplateButton;
+	private JTextArea selectTemplate;
+	private JTextArea updateTemplate;
+	private JTextArea deleteTemplate;
 	private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 	private Project project;
@@ -151,7 +159,107 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 		});
 		resetAllDefaultValuesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				configuration.resetToDefaultTemplates();
+				if (
+					confirm(
+						"This will discard your insert template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetToDefaultTemplates();
+
+					beanTemplate.setText(configuration.beanTemplate);
+
+					sqlMapTemplate.setText(configuration.sqlMapTemplate);
+
+					insertTemplate.setText(configuration.insertTemplate);
+
+					selectKeyTemplate.setText(configuration.selectKeyTemplate);
+					selectKeyType.setSelectedItem(configuration.selectKeyType);
+
+					updateTemplate.setText(configuration.updateTemplate);
+
+					deleteTemplate.setText(configuration.deleteTemplate);
+
+				}
+			}
+		});
+		insertTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.insertTemplate = insertTemplate.getText();
+			}
+		});
+
+		selectTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.selectTemplate = selectTemplate.getText();
+			}
+		});
+
+		updateTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.updateTemplate = updateTemplate.getText();
+			}
+		});
+		deleteTemplate.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				configuration.deleteTemplate = deleteTemplate.getText();
+			}
+		});
+		resetInsertTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (
+					confirm(
+						"This will discard your insert template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetInsertTemplate();
+					insertTemplate.setText(configuration.insertTemplate);
+				}
+			}
+		});
+		resetSelectTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (
+					confirm(
+						"This will discard your select template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetSelectTemplate();
+					selectTemplate.setText(configuration.selectTemplate);
+				}
+			}
+		});
+		resetUpdateTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (
+					confirm(
+						"This will discard your update template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetUpdateTemplate();
+					updateTemplate.setText(configuration.updateTemplate);
+				}
+			}
+		});
+		resetDeleteTemplateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (
+					confirm(
+						"This will discard your delete template, and replace\n" +
+						"it with the default value.\n\nAre you sure you want to do this?",
+						"Confirm reset"
+					)
+				) {
+					configuration.resetDeleteTemplate();
+					deleteTemplate.setText(configuration.deleteTemplate);
+				}
 			}
 		});
 	}
@@ -181,6 +289,12 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 		selectKeyType.setSelectedItem(configuration.selectKeyType);
 		selectKeyTemplate.setText(configuration.selectKeyTemplate);
 		selectKeyTemplate.setEnabled(configuration.selectKeyType != SelectKeyType.none);
+
+		insertTemplate.setText(configuration.insertTemplate);
+		selectTemplate.setText(configuration.selectTemplate);
+		updateTemplate.setText(configuration.updateTemplate);
+		deleteTemplate.setText(configuration.deleteTemplate);
+
 	}
 
 	private void fillDatasourceList() {

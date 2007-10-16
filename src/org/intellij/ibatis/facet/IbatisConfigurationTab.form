@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="609" height="441"/>
+      <xy x="20" y="20" width="756" height="595"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -166,7 +166,7 @@
         <children>
           <scrollpane id="9347e">
             <constraints>
-              <tabbedpane title="Bean Template"/>
+              <tabbedpane title="Bean"/>
             </constraints>
             <properties>
               <horizontalScrollBarPolicy value="32"/>
@@ -182,7 +182,7 @@
           </scrollpane>
           <scrollpane id="92c5c">
             <constraints>
-              <tabbedpane title="SQL Map Template"/>
+              <tabbedpane title="SQL Map"/>
             </constraints>
             <properties>
               <horizontalScrollBarPolicy value="32"/>
@@ -198,12 +198,12 @@
           </scrollpane>
           <scrollpane id="387ac">
             <constraints>
-              <tabbedpane title="SelectKey Template"/>
+              <tabbedpane title="Insert / SelectKey"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="f8e1f" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="f8e1f" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints/>
                 <properties/>
@@ -211,13 +211,13 @@
                 <children>
                   <component id="209f8" class="javax.swing.JComboBox" binding="selectKeyType" default-binding="true">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                   </component>
                   <scrollpane id="c3b1a">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -228,11 +228,60 @@
                       </component>
                     </children>
                   </scrollpane>
+                  <component id="ebc9e" class="javax.swing.JTextArea" binding="insertTemplate" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
                 </children>
               </grid>
             </children>
           </scrollpane>
-          <grid id="cb779" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <scrollpane id="5570f">
+            <constraints>
+              <tabbedpane title="Select"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="825f1" class="javax.swing.JTextArea" binding="selectTemplate" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+          <scrollpane id="8a6dd">
+            <constraints>
+              <tabbedpane title="Update"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="dc542" class="javax.swing.JTextArea" binding="updateTemplate" default-binding="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+          <scrollpane id="c11bb">
+            <constraints>
+              <tabbedpane title="Delete"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="4ee73" class="javax.swing.JTextArea" binding="deleteTemplate" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <grid id="cb779" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Reset to Defaults"/>
@@ -258,7 +307,7 @@
               </component>
               <component id="466be" class="javax.swing.JButton" binding="resetSelectKeyTemplateButton" default-binding="true">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Reset SelectKey Template..."/>
@@ -266,7 +315,7 @@
               </component>
               <component id="adf52" class="javax.swing.JButton" binding="resetAllDefaultValuesButton" default-binding="true">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Reset All Templates..."/>
@@ -274,13 +323,53 @@
               </component>
               <vspacer id="22fdd">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
+              <component id="3716b" class="javax.swing.JButton" binding="resetInsertTemplateButton" default-binding="true">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Reset Insert Template..."/>
+                </properties>
+              </component>
+              <component id="dd788" class="javax.swing.JButton" binding="resetSelectTemplateButton" default-binding="true">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Reset Select Template..."/>
+                </properties>
+              </component>
+              <component id="6b043" class="javax.swing.JButton" binding="resetUpdateTemplateButton" default-binding="true">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Reset Update Template..."/>
+                </properties>
+              </component>
+              <component id="32f7f" class="javax.swing.JButton" binding="resetDeleteTemplateButton" default-binding="true">
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Reset Delete Template..."/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
       </tabbedpane>
+      <component id="5de5c" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Templates:"/>
+        </properties>
+      </component>
     </children>
   </grid>
   <inspectionSuppressions>

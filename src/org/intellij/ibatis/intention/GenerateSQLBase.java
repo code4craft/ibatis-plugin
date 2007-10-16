@@ -31,7 +31,6 @@ import java.util.Map;
 public abstract class GenerateSQLBase extends PsiIntentionBase {
     static Map<Integer, String> jdbcTypeNameMap = new HashMap<Integer, String>();
 
-
 	static {
         populateTypeMap();
     }
@@ -96,9 +95,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
             String propName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, d);
             if (null != propName) {
                 if (d.isPrimary()) {
-                    if (where.length() == 0) {
-                        where.append(" where ");
-                    } else {
+                    if (where.length() > 0) {
                         where.append(" and ");
                     }
                     where.append(d.getName()).append(" = #").append(propName).append(":").append(jdbcTypeNameMap.get(d.getJdbcType())).append("#");
@@ -110,18 +107,26 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 
     protected void buildSqlUpdate(PsiElement element, PsiClass parameterClass) {
         // if any parameters are null, just give up.
-        DatabaseTableData tableData = org.intellij.ibatis.provider.TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
+        DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
         if (null == element || null == parameterClass || null == tableData) return;
 
         // Now we have the table meta-data and the class meta-data so
         // we can build our update statement
+		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+		VelocityContext context = new VelocityContext();
+		context.put("tableData", tableData);
 
-        List<DatabaseTableFieldData> fieldList = tableData.getFields();
-        StringBuilder updateStatement = new StringBuilder("\nupdate ").append(tableData.getName()).append(" set ");
+		List<DatabaseTableFieldData> fieldList = tableData.getFields();
+		context.put("fieldList", fieldList);
+		context.put("tableName", tableData.getName());
+//		StringBuilder updateStatement = new StringBuilder("\nupdate ").append(tableData.getName()).append(" set ");
         StringBuilder fieldsToUpdate = new StringBuilder("");
-        String where = buildWhere(fieldList, parameterClass);
+		context.put("fieldsToUpdate", fieldsToUpdate);
+		
+		String where = buildWhere(fieldList, parameterClass);
+		context.put("where", where);
 
-        for (DatabaseTableFieldData field : fieldList) {
+		for (DatabaseTableFieldData field : fieldList) {
             String propName = TableColumnReferenceProvider.getPropNameForColumn(parameterClass, field);
             if (null != propName) {
                 if (fieldsToUpdate.length() > 0) {
@@ -133,30 +138,44 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         if (fieldsToUpdate.length() > 0) {
             // OK, build the SQL statement...
             XmlTag xmlTag = (XmlTag) element;
-            xmlTag.getValue().setText(updateStatement.append(fieldsToUpdate).append(where).toString());
-        }
+			try {
+				xmlTag.getValue().setText(IbatisUtil.evaluateVelocityTemplate(context, conf.updateTemplate));
+			} catch (Exception e) {
+				// bummer. bad template == no statement.
+			}
+		}
     }
 
     protected void buildDelete(PsiElement element, PsiClass parameterClass) {
         if (null != parameterClass) {
-            DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
-            if (null != tableData) {
+			IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+			VelocityContext context = new VelocityContext();
+			DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
+			context.put("tableData", tableData);
+			if (null != tableData) {
                 List<DatabaseTableFieldData> fieldList = tableData.getFields();
+				context.put("fieldList", fieldList);
 
-                // OK, now we have the table meta-data and the class meta-data.
+				// OK, now we have the table meta-data and the class meta-data.
                 // now we can build our delete statement
-                StringBuilder deleteStatement = new StringBuilder("\ndelete from ").append(tableData.getName());
-                String where = buildWhere(fieldList, parameterClass);
+				String tableName = tableData.getName();
+				context.put("tableName", tableName);
 
-                if (where.length() > 0) {
+                String where = buildWhere(fieldList, parameterClass);
+				context.put("where", where);
+
+				if (where.length() > 0) {
                     // OK, build the SQL statement...
                     XmlTag xmlTag = (XmlTag) element;
-                    xmlTag.getValue().setText(deleteStatement.append(where).toString());
-                }
+					try {
+						xmlTag.getValue().setText(IbatisUtil.evaluateVelocityTemplate(context, conf.deleteTemplate));
+					} catch (Exception e) {
+						// bad template? nevermind.
+					}
+				}
             }
         }
     }
-
 
 	protected String getSelectKey(
 		PsiClass parameterClass,
@@ -207,20 +226,28 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 	protected boolean isPreInsertSelectKey(IbatisFacetConfiguration conf){
 		return !(null == conf || null == conf.selectKeyType) && conf.selectKeyType == SelectKeyType.preInsert;
 	}
+
 	protected void buildInsert(PsiElement element, PsiClass parameterClass) {
+		VelocityContext context = new VelocityContext();
 		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
 
 		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
-        if (null != tableData) {
+		context.put("tableData", tableData);
+		
+		if (null != tableData) {
             List<DatabaseTableFieldData> fieldList = tableData.getFields();
             // OK, now we have the table meta-data and the class meta-data.
             // now we can build our insert statement
-            StringBuilder insertStatement = new StringBuilder("\ninsert into ").append(tableData.getName());
+			String tableName = tableData.getName();
+			context.put("tableName", tableName);
             StringBuilder insertList = new StringBuilder("");
             StringBuilder valueList = new StringBuilder("");
 			String keyProperty = null;
 			String keyResultType = null;
 			boolean insertKeyField = isPreInsertSelectKey(conf);
+
+			context.put("insertKeyField", insertKeyField);
+
 			for (DatabaseTableFieldData d : fieldList) {
 				String propName = TableColumnReferenceProvider.getPropNameForColumn(parameterClass, d);
 				if(d.isPrimary()){
@@ -228,14 +255,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 					keyResultType = d.getType();
 					if(insertKeyField){
 						if (null != propName) {
-							if (insertList.length() == 0) {
-								insertList.append(" (");
-							} else {
+							if (insertList.length() > 0) {
 								insertList.append(", ");
 							}
-							if (valueList.length() == 0) {
-								valueList.append("\nvalues (");
-							} else {
+							if (valueList.length() > 0) {
 								valueList.append(", ");
 							}
 							insertList.append(d.getName());
@@ -244,14 +267,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 					}
 				}else{
 					if (null != propName) {
-						if (insertList.length() == 0) {
-							insertList.append(" (");
-						} else {
+						if (insertList.length() > 0) {
 							insertList.append(", ");
 						}
-						if (valueList.length() == 0) {
-							valueList.append("\nvalues (");
-						} else {
+						if (valueList.length() > 0) {
 							valueList.append(", ");
 						}
 						insertList.append(d.getName());
@@ -259,10 +278,20 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 					}
 				}
 			}
-            if (insertList.length() > 0) {
+
+			context.put("valueList", valueList);
+			context.put("insertList", insertList);
+
+			if (insertList.length() > 0) {
                 // OK, build the SQL statement...
                 XmlTag xmlTag = (XmlTag) element;
-				String insertString = insertStatement.append(insertList).append(") ").append(valueList).append(")").toString();
+				String insertString;
+				try {
+					insertString = IbatisUtil.evaluateVelocityTemplate(context, conf.insertTemplate);
+				} catch (Exception e) {
+					// dang, kaboom
+					return;
+				}
 
 				if(isPreInsertSelectKey(conf)){
 					PsiElement selectKey = xmlTag.createChildTag("selectKey", "", "\n" + getSelectKey(parameterClass, conf, fieldList), false).copy();
@@ -328,11 +357,20 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
     }
 
     protected void buildSelect(PsiElement element, PsiClass resultClass) {
+
         XmlTag xmlTag = (XmlTag) element;
-        DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(resultClass);
-        if (tableData == null) return;
+
+		VelocityContext context = new VelocityContext();
+
+		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(resultClass);
+		context.put("tableData", tableData);
+
+		if (tableData == null) return;
+
         List<DatabaseTableFieldData> fieldList = tableData.getFields();
-        StringBuilder selectList = new StringBuilder("");
+		context.put("fieldList", fieldList);
+
+		StringBuilder selectList = new StringBuilder("");
         for (DatabaseTableFieldData d : fieldList) {
             String propName = TableColumnReferenceProvider.getPropNameForColumn(resultClass, d);
             if (null != propName) {
@@ -340,12 +378,28 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
                 selectList.append(d.getName()).append(" as \"").append(propName).append("\"");
             }
         }
-        selectList.insert(0, "\nselect ");
-        selectList.append("\nfrom ").append(tableData.getName());
-        selectList.append("\n").append(buildWhere(fieldList, resultClass));
-        String tmp = selectList.toString();
-        xmlTag.getValue().setText(tmp);
-    }
+		context.put("selectList", selectList);
+
+		String tableName = tableData.getName();
+		context.put("tableName", tableName);
+
+		String where = buildWhere(fieldList, resultClass);
+		context.put("where", where);
+
+		String selectStatement;
+
+		String template = IbatisUtil.getConfig(element).selectTemplate;
+
+		try {
+			selectStatement = IbatisUtil.evaluateVelocityTemplate(context, template);
+		} catch (Exception e) {
+			// hm, pooched it, punt
+			return;
+		}
+
+		xmlTag.getValue().setText(selectStatement);
+
+	}
 
     @SuppressWarnings({"ReturnOfNull"})
     protected PsiElement getXmlAttributeAsElement(XmlTag xmlTag, String attributeName) {
@@ -408,4 +462,5 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
             xmlTag.getValue().setText("\nselect " + selectList + " from\n");
 			}
 	}
+
 }
