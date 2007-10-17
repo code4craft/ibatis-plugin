@@ -49,7 +49,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         super(new JavaClassReferenceProvider());
     }
 
-    private static Map<String, PsiClass> getTypeAlias(PsiElement psiElement) {
+    public static Map<String, PsiClass> getTypeAlias(PsiElement psiElement) {
         IbatisManager manager = IbatisManager.getInstance();
         return manager.getAllTypeAlias(psiElement);
     }

@@ -1,20 +1,30 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.codeInsight.completion.CompletionContext;
+import com.intellij.codeInsight.completion.CompletionData;
+import com.intellij.codeInsight.completion.CompletionVariant;
+import com.intellij.codeInsight.completion.XmlCompletionData;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.model.JdbcType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
 
 /**
  * completion data for SQL map symbol
@@ -71,11 +81,42 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
             return new CompletionVariant[]{variant};
         }
 
-        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
-        return super.findVariants(psiElement, completionContext);
+
+		CompletionVariant[] variants;
+
+		if (parentCompletionData != null) {
+			variants = parentCompletionData.findVariants(psiElement, completionContext);
+		}else{
+			variants = super.findVariants(psiElement, completionContext);
+		}
+
+		if(variants != null && variants.length > 0){
+			if(psiElement instanceof XmlToken){
+				XmlToken xt = (XmlToken) psiElement;
+				XmlAttribute attrib = (XmlAttribute) xt.getParent().getParent();
+				if(attribNameGetsTypeAliasValues(attrib.getName())){
+					String value = attrib.getValue().trim();
+					value = value.substring(0, value.length() - "IntellijIdeaRulezzz".length());
+					System.out.println("value: " + value);
+					Map<String,PsiClass> typeAliasMap = IbatisClassShortcutsReferenceProvider.getTypeAlias(psiElement);
+					for(String name : typeAliasMap.keySet()){
+						if(name.startsWith(value)){
+							variants[0].addCompletion(name);
+						}
+					}
+				}
+			}
+		}
+		return variants;
     }
 
-    /**
+	private boolean attribNameGetsTypeAliasValues(String name) {
+		if(name.equalsIgnoreCase("resultClass")) return true;
+		if(name.equalsIgnoreCase("parameterClass")) return true;
+		return false;
+	}
+
+	/**
      * get xml tag for code completion
      *
      * @param psiElement psiElement

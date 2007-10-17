@@ -23,6 +23,12 @@ public class IbatisFacet extends Facet<IbatisFacetConfiguration> {
 
   @Nullable
   public static IbatisFacet getInstance(Module module) {
-    return FacetManager.getInstance(module).getFacetByType(FACET_TYPE_ID);
+	  if(module == null) return null;
+	  FacetManager facetManager = FacetManager.getInstance(module);
+	  if (null != facetManager) {
+		  return facetManager.getFacetByType(FACET_TYPE_ID);
+	  } else {
+		  return null;
+	  }
   }
 }
