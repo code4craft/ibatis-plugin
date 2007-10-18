@@ -47,6 +47,7 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 	private JTextArea selectTemplate;
 	private JTextArea updateTemplate;
 	private JTextArea deleteTemplate;
+	private JCheckBox generateDefaultCRUDOperationsCheckBox;
 	private FacetEditorContext editorContext;
     private IbatisFacetConfiguration configuration;
 	private Project project;
@@ -262,6 +263,11 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 				}
 			}
 		});
+		generateDefaultCRUDOperationsCheckBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				configuration.generateCrudOperations = generateDefaultCRUDOperationsCheckBox.isSelected();
+			}
+		});
 	}
 
 	private boolean confirm(String message, String title) {
@@ -294,6 +300,8 @@ public class IbatisConfigurationTab extends FacetEditorTab {
 		selectTemplate.setText(configuration.selectTemplate);
 		updateTemplate.setText(configuration.updateTemplate);
 		deleteTemplate.setText(configuration.deleteTemplate);
+
+		generateDefaultCRUDOperationsCheckBox.setSelected(configuration.generateCrudOperations);
 
 	}
 

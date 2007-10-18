@@ -16,6 +16,7 @@ import com.intellij.util.xml.DomManager;
 import org.apache.velocity.VelocityContext;
 import org.intellij.ibatis.dom.sqlMap.Result;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
+import org.intellij.ibatis.dom.sqlMap.ParameterMap;
 import org.intellij.ibatis.facet.IbatisFacetConfiguration;
 import org.intellij.ibatis.facet.SelectKeyType;
 import org.intellij.ibatis.provider.TableColumnReferenceProvider;
@@ -113,6 +114,9 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         // Now we have the table meta-data and the class meta-data so
         // we can build our update statement
 		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+		if(conf == null){
+			conf = IbatisUtil.getConfig(parameterClass);
+		}
 		VelocityContext context = new VelocityContext();
 		context.put("tableData", tableData);
 
@@ -149,6 +153,9 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
     protected void buildDelete(PsiElement element, PsiClass parameterClass) {
         if (null != parameterClass) {
 			IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+			if(conf == null){
+				conf = IbatisUtil.getConfig(parameterClass);
+			}
 			VelocityContext context = new VelocityContext();
 			DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
 			context.put("tableData", tableData);
@@ -230,6 +237,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 	protected void buildInsert(PsiElement element, PsiClass parameterClass) {
 		VelocityContext context = new VelocityContext();
 		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+
+		if(null == conf){
+			conf = IbatisUtil.getConfig(parameterClass);
+		}
 
 		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
 		context.put("tableData", tableData);
@@ -357,7 +368,10 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
     }
 
     protected void buildSelect(PsiElement element, PsiClass resultClass) {
-
+		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+		if(null == conf){
+			conf = IbatisUtil.getConfig(resultClass);
+		}
         XmlTag xmlTag = (XmlTag) element;
 
 		VelocityContext context = new VelocityContext();
@@ -388,7 +402,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 
 		String selectStatement;
 
-		String template = IbatisUtil.getConfig(element).selectTemplate;
+		String template = conf.selectTemplate;
 
 		try {
 			selectStatement = IbatisUtil.evaluateVelocityTemplate(context, template);
@@ -463,4 +477,57 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 			}
 	}
 
+	protected void createInsertTagContents(Project project, PsiElement insertElement) {
+		// this will be the parameterClass or parameterMap attribute
+		XmlAttribute attribute;
+
+		// see if it's got a parameter map
+		attribute = ((XmlTag) insertElement).getAttribute("parameterMap");
+		if (null != attribute) {
+			XmlAttributeValue xmlAttributeValue = attribute.getValueElement();
+			if (null != xmlAttributeValue) {
+				PsiReference psiReference = xmlAttributeValue.getReference();
+				if (null != psiReference) {
+					PsiElement psiElement = psiReference.resolve();
+					if (psiElement != null && psiElement instanceof XmlAttribute) {
+						XmlTag paramMapTag = ((XmlAttribute) psiElement).getParent();
+						DomElement paramMapTemp = DomManager.getDomManager(project).getDomElement(paramMapTag);
+						if(paramMapTemp != null && paramMapTemp instanceof ParameterMap){
+							// todo: handle this
+							//ParameterMap pm = (ParameterMap) paramMapTemp;
+						}
+					}
+				}
+			}
+		}
+
+		// see if it's a parameter class
+		attribute = ((XmlTag) insertElement).getAttribute("parameterClass");
+		if (null != attribute) {
+			// it has a parameter class
+
+			// this is the value of the attribute
+			XmlAttributeValue xmlAttributeValue = attribute.getValueElement();
+			if (null != xmlAttributeValue) {
+				PsiReference psiReference = xmlAttributeValue.getReference();
+				if (null != psiReference) {
+					PsiElement psiElement = psiReference.resolve();
+					if(psiElement instanceof XmlTag){
+						// it's a type alias
+						XmlTag typeAliasTag = (XmlTag) psiElement;
+						DomElement typeAliasTemp = DomManager.getDomManager(project).getDomElement(typeAliasTag);
+						if (typeAliasTemp != null && typeAliasTemp instanceof org.intellij.ibatis.dom.sqlMap.TypeAlias) {
+							org.intellij.ibatis.dom.sqlMap.TypeAlias ta = (org.intellij.ibatis.dom.sqlMap.TypeAlias) typeAliasTemp;
+							buildInsert(insertElement, ta.getType().getValue());
+						} else if (typeAliasTemp != null && typeAliasTemp instanceof org.intellij.ibatis.dom.configuration.TypeAlias) {
+							org.intellij.ibatis.dom.configuration.TypeAlias ta = (org.intellij.ibatis.dom.configuration.TypeAlias) typeAliasTemp;
+							buildInsert(insertElement, ta.getType().getValue());
+						}
+					}else if(psiElement instanceof PsiClass){
+						buildInsert(insertElement, (PsiClass) psiElement);
+					}
+				}
+			}
+		}
+	}
 }
