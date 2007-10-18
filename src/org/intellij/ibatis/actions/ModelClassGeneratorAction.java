@@ -9,29 +9,38 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.util.ClassUtil;
+import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.intellij.ibatis.IbatisConfigurationModel;
+import org.intellij.ibatis.IbatisManager;
+import org.intellij.ibatis.IbatisProjectComponent;
+import org.intellij.ibatis.dom.configuration.SqlMapConfig;
 import org.intellij.ibatis.facet.IbatisFacet;
 import org.intellij.ibatis.facet.IbatisFacetConfiguration;
+import org.intellij.ibatis.intention.GenerateSQLForCrudAction;
 import org.intellij.ibatis.provider.JavadocTableNameReferenceProvider;
 import org.intellij.ibatis.util.IbatisConstants;
+import org.intellij.ibatis.util.IbatisUtil;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
 /**
  * model class generate according to table name
@@ -244,35 +253,14 @@ public class ModelClassGeneratorAction extends AnAction {
 			this.tableData = tableData;
 			this.beanName = beanName;
 			this.config = config;
-
-			VelocityEngine ve = new VelocityEngine();
-			Properties props = new Properties();
-			props.setProperty(VelocityEngine.RESOURCE_LOADER, "classpath");
-			props.setProperty(
-					"classpath." + VelocityEngine.RESOURCE_LOADER + ".class",
-					ClasspathResourceLoader.class.getName()
-			);
-			try {
-				ve.init(props);
-				System.out.println("Velocity started OK.");
-			} catch (Exception e) {
-				Messages.showDialog(
-					project,
-					"There was an error setting up velocity for bean creation, so I'm giving up.",
-					"Uh-oh.",
-					new String[]{"Darn it."},
-					0,
-					Messages.getErrorIcon());
-				throw e;
-			}
 		}
 
 		@SuppressWarnings({"ConstantConditions"})
 		public void run() {
 			try {
 				String className = getModelClassName(beanName);
-				PsiFile psiFile = psiDirectoryBean.findFile(className + ".java");
-				if (psiFile == null) {  //文件不存在
+				PsiFile beanFile = psiDirectoryBean.findFile(className + ".java");
+				if (beanFile == null) {  //文件不存在
 					VelocityContext context = new VelocityContext();
 					context.put("package", psiDirectoryBean.getPackage().getQualifiedName());
 					context.put("name", className);
@@ -286,8 +274,9 @@ public class ModelClassGeneratorAction extends AnAction {
 					VelocityEngine engine = new VelocityEngine();
 					engine.init();
 					engine.evaluate(context, writer, "iBATIS", new StringReader(config.beanTemplate));
-					psiFile = psiDirectoryBean.createFile(className + ".java");
-					FileContentUtil.setFileText(project, psiFile.getVirtualFile(), writer.toString());
+					beanFile = psiDirectoryBean.createFile(className + ".java");
+					FileContentUtil.setFileText(project, beanFile.getVirtualFile(), writer.toString());
+
 					String sqlMapFileName = className + config.sqlMapSuffix;
 					PsiFile sqlMapFile = psiDirectorySqlMap.findFile(sqlMapFileName);
 					if (sqlMapFile == null) {
@@ -300,10 +289,68 @@ public class ModelClassGeneratorAction extends AnAction {
 						FileContentUtil.setFileText(
 							project,
 							sqlMapFile.getVirtualFile(),
-							sw.toString());
+							sw.toString()
+						);
+
 					}
+
+					if (config.injectCreatedSqlMap) {
+						final PsiFile sqlMapFile1 = sqlMapFile;
+						CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+							public void run() {
+								Module module = ModuleUtil.findModuleForPsiElement(psiDirectoryBean);
+								IbatisConfigurationModel configurationModel = null;
+								if (module != null) {
+									configurationModel = IbatisManager.getInstance().getConfigurationModel(module);
+								}
+								if (configurationModel != null) {
+									SqlMapConfig sqlMapConfig = configurationModel.getMergedModel();
+									sqlMapConfig.addSqlMap().getResource().setValue(sqlMapFile1);
+								}
+							}
+						}, "", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+					}
+
+					if(config.generateCrudOperations){
+						for(PsiElement e : sqlMapFile.getChildren()){
+							if(e instanceof XmlDocument){
+								final XmlDocument xd = (XmlDocument) e;
+								// what is the model class here?
+								final PsiClass psiClass = ClassUtil.findPsiClass(PsiManager.getInstance(project), psiDirectoryBean.getPackage().getQualifiedName() + "." + className);
+								CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+									public void run() {
+										GenerateSQLForCrudAction.generateCrudOperations(xd.getRootTag(), IbatisUtil.getConfig(psiDirectorySqlMap), psiClass);
+									}
+								}, "", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+							}
+						}
+					}
+					final PsiFile beanFile1 = beanFile;
+					final PsiFile sqlMapFile2 = psiDirectorySqlMap.findFile(sqlMapFileName);
+					CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+						public void run() {
+							try {
+								CodeStyleManager csm = CodeStyleManager.getInstance(project);
+								csm.reformat(beanFile1);
+								csm.optimizeImports(beanFile1);
+								csm.reformat(sqlMapFile2);
+								if(config.injectCreatedSqlMap){
+									// reformat the config file, too
+									IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(project);
+									Module module = ModuleUtil.findModuleForPsiElement(psiDirectorySqlMap);
+
+									Set<XmlFile> files = projectComponent.getConfigurationModelFactory().getAllSqlMapConfigurationFile(module);
+									for(XmlFile configFile : files){
+										csm.reformat(configFile);
+									}
+								}
+							} catch (IncorrectOperationException e) {
+								e.printStackTrace();
+							}
+						}
+					}, "", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
 				}
-				FileEditorManager.getInstance(project).openFile(psiFile.getVirtualFile(), true);
+//				FileEditorManager.getInstance(project).openFile(beanFile.getVirtualFile(), true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -33,7 +33,8 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 	public String selectTemplate;
 	public String updateTemplate;
 	public String deleteTemplate;
-	public Boolean generateCrudOperations = Boolean.FALSE;
+	public boolean generateCrudOperations = false;
+	public boolean injectCreatedSqlMap = false;
 
 	public IbatisFacetConfiguration() {
 		resetToDefaultTemplates();
@@ -57,16 +58,12 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
 		}else{
 			selectKeyType = SelectKeyType.valueOf(temp);
 		}
-		temp = JDOMExternalizer.readString(element, "generateCrudOperations");
-		if(null == temp || temp.trim().length() == 0){
-			generateCrudOperations = Boolean.FALSE;
-		}else{
-			generateCrudOperations = Boolean.valueOf(temp);
-		}
 		insertTemplate = JDOMExternalizer.readString(element, "insertTemplate");
 		selectTemplate = JDOMExternalizer.readString(element, "selectTemplate");
 		updateTemplate = JDOMExternalizer.readString(element, "updateTemplate");
 		deleteTemplate = JDOMExternalizer.readString(element, "deleteTemplate");
+		injectCreatedSqlMap = JDOMExternalizer.readBoolean(element, "injectCreatedSqlMap");
+		generateCrudOperations = JDOMExternalizer.readBoolean(element, "generateCrudOperations");
 	}
 
     public void writeExternal(Element element) throws WriteExternalException {
@@ -81,7 +78,8 @@ public class IbatisFacetConfiguration implements FacetConfiguration, Modificatio
         JDOMExternalizer.write(element, "updateTemplate", updateTemplate);
         JDOMExternalizer.write(element, "deleteTemplate", deleteTemplate);
         JDOMExternalizer.write(element, "generateCrudOperations", generateCrudOperations);
-    }
+        JDOMExternalizer.write(element, "injectCreatedSqlMap", injectCreatedSqlMap);
+	}
 
     public long getModificationCount() {
         return myModificationCount;

@@ -89,7 +89,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         return false;
     }
 
-    protected String buildWhere(List<DatabaseTableFieldData> fieldList, PsiClass psiClass) {
+    protected static String buildWhere(List<DatabaseTableFieldData> fieldList, PsiClass psiClass) {
         StringBuilder where = new StringBuilder("");
 
         for (DatabaseTableFieldData d : fieldList) {
@@ -106,7 +106,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         return where.toString();
     }
 
-    protected void buildSqlUpdate(PsiElement element, PsiClass parameterClass) {
+    protected static void buildSqlUpdate(PsiElement element, PsiClass parameterClass) {
         // if any parameters are null, just give up.
         DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
         if (null == element || null == parameterClass || null == tableData) return;
@@ -150,7 +150,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 		}
     }
 
-    protected void buildDelete(PsiElement element, PsiClass parameterClass) {
+    protected static void buildDelete(PsiElement element, PsiClass parameterClass) {
         if (null != parameterClass) {
 			IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
 			if(conf == null){
@@ -184,7 +184,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
         }
     }
 
-	protected String getSelectKey(
+	protected static String getSelectKey(
 		PsiClass parameterClass,
 		IbatisFacetConfiguration conf,
 		List<DatabaseTableFieldData> fieldList
@@ -222,29 +222,24 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 		}
 	}
 
-	protected boolean isSelectKeyNeeded(IbatisFacetConfiguration conf){
+	protected static boolean isSelectKeyNeeded(IbatisFacetConfiguration conf){
 		return isPostInsertSelectKey(conf) || isPreInsertSelectKey(conf);
 	}
 
-	protected boolean isPostInsertSelectKey(IbatisFacetConfiguration conf){
+	protected static boolean isPostInsertSelectKey(IbatisFacetConfiguration conf){
 		return !(null == conf || null == conf.selectKeyType) && conf.selectKeyType == SelectKeyType.postInsert;
 	}
 
-	protected boolean isPreInsertSelectKey(IbatisFacetConfiguration conf){
+	protected static boolean isPreInsertSelectKey(IbatisFacetConfiguration conf){
 		return !(null == conf || null == conf.selectKeyType) && conf.selectKeyType == SelectKeyType.preInsert;
 	}
 
-	protected void buildInsert(PsiElement element, PsiClass parameterClass) {
+	protected static void buildInsert(PsiElement element, PsiClass parameterClass, IbatisFacetConfiguration conf) {
 		VelocityContext context = new VelocityContext();
-		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
-
-		if(null == conf){
-			conf = IbatisUtil.getConfig(parameterClass);
-		}
 
 		DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
 		context.put("tableData", tableData);
-		
+
 		if (null != tableData) {
             List<DatabaseTableFieldData> fieldList = tableData.getFields();
             // OK, now we have the table meta-data and the class meta-data.
@@ -365,9 +360,20 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 				}
             }
         }
-    }
+	}
 
-    protected void buildSelect(PsiElement element, PsiClass resultClass) {
+	protected static void buildInsert(PsiElement element, PsiClass parameterClass) {
+		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
+
+		if(null == conf){
+			conf = IbatisUtil.getConfig(parameterClass);
+		}
+
+		if(null != conf) buildInsert(element, parameterClass, conf);
+
+	}
+
+    protected static void buildSelect(PsiElement element, PsiClass resultClass) {
 		IbatisFacetConfiguration conf = IbatisUtil.getConfig(element);
 		if(null == conf){
 			conf = IbatisUtil.getConfig(resultClass);

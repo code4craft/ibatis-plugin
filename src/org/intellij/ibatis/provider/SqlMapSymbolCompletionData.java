@@ -93,15 +93,17 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
 		if(variants != null && variants.length > 0){
 			if(psiElement instanceof XmlToken){
 				XmlToken xt = (XmlToken) psiElement;
-				XmlAttribute attrib = (XmlAttribute) xt.getParent().getParent();
-				if(attribNameGetsTypeAliasValues(attrib.getName())){
-					String value = attrib.getValue().trim();
-					value = value.substring(0, value.length() - "IntellijIdeaRulezzz".length());
-					System.out.println("value: " + value);
-					Map<String,PsiClass> typeAliasMap = IbatisClassShortcutsReferenceProvider.getTypeAlias(psiElement);
-					for(String name : typeAliasMap.keySet()){
-						if(name.startsWith(value)){
-							variants[0].addCompletion(name);
+				if(xt.getParent().getParent() instanceof XmlAttribute){
+					XmlAttribute attrib = (XmlAttribute) xt.getParent().getParent();
+					if(attribNameGetsTypeAliasValues(attrib.getName())){
+						String value = attrib.getValue().trim();
+						value = value.substring(0, value.length() - "IntellijIdeaRulezzz".length());
+						System.out.println("value: " + value);
+						Map<String,PsiClass> typeAliasMap = IbatisClassShortcutsReferenceProvider.getTypeAlias(psiElement);
+						for(String name : typeAliasMap.keySet()){
+							if(name.startsWith(value)){
+								variants[0].addCompletion(name);
+							}
 						}
 					}
 				}

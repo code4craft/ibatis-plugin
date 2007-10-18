@@ -1,16 +1,18 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.javaee.dataSource.*;
+import com.intellij.codeInsight.completion.CompletionContext;
+import com.intellij.codeInsight.completion.CompletionData;
+import com.intellij.codeInsight.completion.CompletionVariant;
+import com.intellij.codeInsight.completion.XmlCompletionData;
+import com.intellij.javaee.dataSource.DataSource;
+import com.intellij.javaee.dataSource.DatabaseTableData;
+import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.*;
-import com.intellij.util.xml.*;
-import org.intellij.ibatis.dom.sqlMap.SqlMap;
+import com.intellij.psi.xml.XmlTag;
 import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
             CompletionVariant variant = new CompletionVariant(left);
             String previousText = getPreviousText(psiElement);
-            if (previousText != null && previousText.equalsIgnoreCase("from")) {
+            if (previousText != null && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join"))) {
                 DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
                 if (datasource != null) {
                     List<DatabaseTableData> tables = datasource.getTables();
