@@ -80,45 +80,11 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
             }
             return new CompletionVariant[]{variant};
         }
-
-
-		CompletionVariant[] variants;
-
-		if (parentCompletionData != null) {
-			variants = parentCompletionData.findVariants(psiElement, completionContext);
-		}else{
-			variants = super.findVariants(psiElement, completionContext);
-		}
-
-		if(variants != null && variants.length > 0){
-			if(psiElement instanceof XmlToken){
-				XmlToken xt = (XmlToken) psiElement;
-				if(xt.getParent().getParent() instanceof XmlAttribute){
-					XmlAttribute attrib = (XmlAttribute) xt.getParent().getParent();
-					if(attribNameGetsTypeAliasValues(attrib.getName())){
-						String value = attrib.getValue().trim();
-						value = value.substring(0, value.length() - "IntellijIdeaRulezzz".length());
-						System.out.println("value: " + value);
-						Map<String,PsiClass> typeAliasMap = IbatisClassShortcutsReferenceProvider.getTypeAlias(psiElement);
-						for(String name : typeAliasMap.keySet()){
-							if(name.startsWith(value)){
-								variants[0].addCompletion(name);
-							}
-						}
-					}
-				}
-			}
-		}
-		return variants;
+        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
+        return super.findVariants(psiElement, completionContext);
     }
 
-	private boolean attribNameGetsTypeAliasValues(String name) {
-		if(name.equalsIgnoreCase("resultClass")) return true;
-		if(name.equalsIgnoreCase("parameterClass")) return true;
-		return false;
-	}
-
-	/**
+    /**
      * get xml tag for code completion
      *
      * @param psiElement psiElement
