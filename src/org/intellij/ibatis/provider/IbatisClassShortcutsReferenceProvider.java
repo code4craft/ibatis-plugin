@@ -72,9 +72,12 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
                 variants.addAll(classNames);
                 if (!getCanonicalText().contains(".")) {  //not internal type alias
                     Set<String> shortcuts = classShortcuts.keySet();
-                    Set<String> typeAlias = getTypeAlias(getElement()).keySet();
+                    Set<String> typeAliasList = getTypeAlias(getElement()).keySet();
                     for (String shortcut : shortcuts) {
                         variants.add(LookupValueFactory.createLookupValue(shortcut, IbatisConstants.INTERNAL_CLASS));
+                    }
+                    for (String typeAlias : typeAliasList) {
+                          variants.add(LookupValueFactory.createLookupValue(typeAlias, IbatisConstants.TYPE_ALIAS));
                     }
                     //filter some unnecessary package name in root path
                     for (Object className : classNames) {
@@ -87,7 +90,6 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
                         }
                     }
                 }
-
                 return variants.toArray();
             }
 
