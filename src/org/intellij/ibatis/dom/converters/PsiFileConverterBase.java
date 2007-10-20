@@ -1,30 +1,22 @@
 package org.intellij.ibatis.dom.converters;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ProcessorRegistry;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSetBase;
+import com.intellij.psi.infos.CandidateInfo;
 import com.intellij.psi.scope.PsiConflictResolver;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.OrderedSet;
-import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.CustomReferenceConverter;
-import com.intellij.util.xml.GenericDomValue;
-import com.intellij.util.xml.ResolvingConverter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.util.xml.*;
+import org.jetbrains.annotations.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * resolve psi file in a module
@@ -95,7 +87,7 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
                 return addDefaultRoots(result, context);
             }
 
-            protected PsiScopeProcessor createProcessor(List candidateInfos, List<Class> classes, List<PsiConflictResolver> psiConflictResolvers) throws ProcessorRegistry.IncompatibleReferenceTypeException {
+            protected PsiScopeProcessor createProcessor(final List<CandidateInfo> candidateInfos, List<Class> classes, List<PsiConflictResolver> psiConflictResolvers) throws ProcessorRegistry.IncompatibleReferenceTypeException {
                 final PsiScopeProcessor baseProcessor = super.createProcessor(candidateInfos, classes, psiConflictResolvers);
                 return new PsiScopeProcessor() {
                     public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
