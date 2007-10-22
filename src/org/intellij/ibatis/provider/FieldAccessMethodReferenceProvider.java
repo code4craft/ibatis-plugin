@@ -173,7 +173,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      * @param methodName getter method name
      * @return PsiClass
      */
-    public static PsiClass findGetterMethodReturnType(PsiClass psiClass, String methodName) {
+    @Nullable public static PsiClass findGetterMethodReturnType(PsiClass psiClass, String methodName) {
         PsiMethod[] methods = psiClass.findMethodsByName(methodName, true);
         //getter method find for current
         if (methods.length > 0) {
@@ -197,21 +197,23 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      */
     public static Map<String, String> getAllSetterMethods(PsiClass psiClass, String currentMethodName) {
         Map<String, String> methodNames = new HashMap<String, String>();
-        PsiMethod[] psiMethods = null;
+        PsiMethod[] psiMethods;
         String prefix = "";
         //flat field
         if (!currentMethodName.contains(".")) {
             psiMethods = psiClass.getAllMethods();
         } else {
-            prefix = currentMethodName.substring(0, currentMethodName.lastIndexOf('.'));
-            String getterMethod = "get" + StringUtil.capitalize(prefix);
-            PsiClass psiFieldClass = findGetterMethodReturnType(psiClass, getterMethod);
-            if (psiFieldClass != null) {
-                psiMethods = psiFieldClass.getAllMethods();
-                prefix = prefix + ".";
+            String[] path = (currentMethodName+" ").split("\\.");   //space added to avoid "." ended property
+            PsiClass tempClass=psiClass;
+            for (int i = 0; i < path.length - 1; i++) {
+                String getterMethod = "get" + StringUtil.capitalize(path[i]);
+                tempClass = findGetterMethodReturnType(tempClass, getterMethod);
+                if(tempClass==null) break;
+                prefix = prefix + path[i] + ".";
             }
+            psiMethods=tempClass!=null?tempClass.getAllMethods():null;
         }
-        if (psiMethods != null && psiMethods.length > 0) {
+        if (psiMethods!=null&&psiMethods.length > 0) {
             for (PsiMethod psiMethod : psiMethods) {
                 String methodName = psiMethod.getName();
                 if (methodName.startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
@@ -231,6 +233,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      * @param currentMethodName current methodName for children
      * @return get method list without prefix
      */
+    @SuppressWarnings({"ConstantConditions"}) @NotNull
     public static Map<String, String> getAllGetterMethods(PsiClass psiClass, String currentMethodName) {
         Map<String, String> methodNames = new HashMap<String, String>();
         PsiMethod[] psiMethods = null;
@@ -239,12 +242,13 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         if (!currentMethodName.contains(".")) {
             psiMethods = psiClass.getAllMethods();
         } else {
-            prefix = currentMethodName.substring(0, currentMethodName.lastIndexOf('.'));
-            String getterMethod = "get" + StringUtil.capitalize(prefix);
-            PsiClass psiFieldClass = findGetterMethodReturnType(psiClass, getterMethod);
-            if (psiFieldClass != null) {
-                psiMethods = psiFieldClass.getAllMethods();
-                prefix = prefix + ".";
+            String[] path = (currentMethodName+" ").split("\\.");   //space added to avoid "." ended property
+            PsiClass tempClass=psiClass;
+            for (int i = 0; i < path.length - 1; i++) {
+                String getterMethod = "get" + StringUtil.capitalize(path[i]);
+                tempClass = findGetterMethodReturnType(tempClass, getterMethod);
+                if(tempClass==null) break;
+                prefix = prefix + path[i] + ".";
             }
         }
         if (psiMethods != null && psiMethods.length > 0) {
@@ -287,7 +291,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
      *
      * @param xmlTag            tag for xml attribute
      * @param xmlAttributeValue xml attribute value
-     * @return
+     * @return psiClass
      */
     public PsiClass getPsiClassForMap(XmlTag xmlTag, XmlAttributeValue xmlAttributeValue) {
         XmlTag parentTag = xmlTag.getParentTag();   //resultMap or parameterMap element
