@@ -36,12 +36,11 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                             return null;
                         }
                         PsiClass referencedClass = psiClass;
-                        String referencePath = getCanonicalText();
-                        String methodName = "set" + StringUtil.capitalize(referencePath);
-                        if (referencePath.contains(".")) {
-                            String fieldName = referencePath.substring(0, referencePath.lastIndexOf('.'));
-                            methodName = "set" + StringUtil.capitalize(referencePath.substring(referencePath.lastIndexOf('.') + 1));
-                            referencedClass = findGetterMethodReturnType(psiClass, "get" + StringUtil.capitalize(fieldName));
+                        String[] referencePath = getCanonicalText().split("\\.");
+                        String methodName = "set" + StringUtil.capitalize(referencePath[referencePath.length-1]);
+                        for(int i=0;i<referencePath.length-1;i++)  {
+                            referencedClass = findGetterMethodReturnType(referencedClass, "get" + StringUtil.capitalize(referencePath[i]));
+                            if(referencedClass==null) break;
                         }
                         if (referencedClass != null) {
                             PsiMethod[] methods = referencedClass.findMethodsByName(methodName, true);
