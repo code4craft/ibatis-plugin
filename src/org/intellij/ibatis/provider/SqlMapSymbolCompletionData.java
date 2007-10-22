@@ -5,10 +5,8 @@ import com.intellij.codeInsight.completion.CompletionData;
 import com.intellij.codeInsight.completion.CompletionVariant;
 import com.intellij.codeInsight.completion.XmlCompletionData;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
@@ -67,9 +65,24 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
             variant.addCompletionFilter(TrueFilter.INSTANCE);
             variant.setInsertHandler(new SqlMapSymbolnsertHandler());
             if (!prefix.contains(":")) {   //just clear in line parameter name
-                List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
-                for (String parameterName : parameterNames) {
-                    variant.addCompletion(parameterName);
+                if (!prefix.contains(".")) {  //root field
+                    List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
+                    for (String parameterName : parameterNames) {
+                        variant.addCompletion(parameterName);
+                    }
+                } else //recursion field
+                {
+                    String parameterClass = tag.getAttributeValue("parameterClass");
+                    if (IbatisClassShortcutsReferenceProvider.isDomain(parameterClass))  //domain class
+                    {
+                        PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, parameterClass);
+                        if (psiClass != null) { //find 
+                            Map<String, String> methodMap = FieldAccessMethodReferenceProvider.getAllSetterMethods(psiClass, prefix.replace("#",""));
+                            for (Map.Entry<String, String> entry : methodMap.entrySet()) {
+                                variant.addCompletion("#"+entry.getKey());
+                            }
+                        }
+                    }
                 }
             } else //jdbc type will be added
             {
@@ -115,9 +128,8 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
     public List<String> getParameterNamesForXmlTag(XmlTag xmlTag, String prefix) {
         List<String> nameList = new ArrayList<String>();
         String parameterClass = xmlTag.getAttributeValue("parameterClass");
-        XmlAttribute parameterMap = xmlTag.getAttribute("parameterMap");
         List<String> symbolNames = getAllSymbolsInXmlTag(xmlTag);
-        if (parameterClass == null && parameterMap == null)  //if parameterClass and parameterMap absent, use #value# as default
+        if (parameterClass == null)  //if parameterClass and parameterMap absent, use #value# as default
         {
             symbolNames.add("value");
         }
