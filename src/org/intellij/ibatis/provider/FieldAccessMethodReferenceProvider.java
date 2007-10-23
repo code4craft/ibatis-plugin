@@ -37,10 +37,10 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                         }
                         PsiClass referencedClass = psiClass;
                         String[] referencePath = getCanonicalText().split("\\.");
-                        String methodName = "set" + StringUtil.capitalize(referencePath[referencePath.length-1]);
-                        for(int i=0;i<referencePath.length-1;i++)  {
+                        String methodName = "set" + StringUtil.capitalize(referencePath[referencePath.length - 1]);
+                        for (int i = 0; i < referencePath.length - 1; i++) {
                             referencedClass = findGetterMethodReturnType(referencedClass, "get" + StringUtil.capitalize(referencePath[i]));
-                            if(referencedClass==null) break;
+                            if (referencedClass == null) break;
                         }
                         if (referencedClass != null) {
                             PsiMethod[] methods = referencedClass.findMethodsByName(methodName, true);
@@ -202,17 +202,17 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         if (!currentMethodName.contains(".")) {
             psiMethods = psiClass.getAllMethods();
         } else {
-            String[] path = (currentMethodName+" ").split("\\.");   //space added to avoid "." ended property
-            PsiClass tempClass=psiClass;
+            String[] path = (currentMethodName + " ").split("\\.");   //space added to avoid "." ended property
+            PsiClass tempClass = psiClass;
             for (int i = 0; i < path.length - 1; i++) {
                 String getterMethod = "get" + StringUtil.capitalize(path[i]);
                 tempClass = findGetterMethodReturnType(tempClass, getterMethod);
-                if(tempClass==null) break;
+                if (tempClass == null) break;
                 prefix = prefix + path[i] + ".";
             }
-            psiMethods=tempClass!=null?tempClass.getAllMethods():null;
+            psiMethods = tempClass != null ? tempClass.getAllMethods() : null;
         }
-        if (psiMethods!=null&&psiMethods.length > 0) {
+        if (psiMethods != null && psiMethods.length > 0) {
             for (PsiMethod psiMethod : psiMethods) {
                 String methodName = psiMethod.getName();
                 if (methodName.startsWith("set") && psiMethod.getParameterList().getParametersCount() == 1) {
@@ -241,12 +241,12 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         if (!currentMethodName.contains(".")) {
             psiMethods = psiClass.getAllMethods();
         } else {
-            String[] path = (currentMethodName+" ").split("\\.");   //space added to avoid "." ended property
-            PsiClass tempClass=psiClass;
+            String[] path = (currentMethodName + " ").split("\\.");   //space added to avoid "." ended property
+            PsiClass tempClass = psiClass;
             for (int i = 0; i < path.length - 1; i++) {
                 String getterMethod = "get" + StringUtil.capitalize(path[i]);
                 tempClass = findGetterMethodReturnType(tempClass, getterMethod);
-                if(tempClass==null) break;
+                if (tempClass == null) break;
                 prefix = prefix + path[i] + ".";
             }
         }
@@ -269,12 +269,22 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         return methodNames;
     }
 
+    /**
+     * get the psi class for dynamic property
+     *
+     * @param xmlTag   xml tag
+     * @param xmlAttributeValue xml attribute value
+     * @return psi class
+     */
     public PsiClass getPsiClassForDynamicProperty(XmlTag xmlTag, XmlAttributeValue xmlAttributeValue) {
         XmlTag parentTag = xmlTag.getParentTag();
         if (parentTag != null) {
             if (parentTag.getAttribute("parameterClass") != null) {
                 String className = parentTag.getAttributeValue("parameterClass");
                 return IbatisClassShortcutsReferenceProvider.getPsiClass(xmlAttributeValue, className);
+            } else if (parentTag.getAttribute("parameterMap") != null) {
+                String parameterMapId = parentTag.getAttributeValue("parameterMap");
+                return IbatisManager.getInstance().getAllParameterMap(xmlAttributeValue).get(parameterMapId);
             } else {
                 return getPsiClassForDynamicProperty(parentTag, xmlAttributeValue);
             }
