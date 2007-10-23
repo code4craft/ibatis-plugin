@@ -53,10 +53,11 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 }
             } else { //selector completion
                 String prefix = completionContext.getPrefix();
-                List<String> parameterNames = getSelectorSymbolsForXmlTag(tag, prefix.contains(".") ? prefix.substring(0, prefix.indexOf(".")) : null);   //table alias used
+                String tableAlias = prefix.contains(".") ? prefix.substring(0, prefix.indexOf(".")) : null;
+                List<String> parameterNames = getSelectorSymbolsForXmlTag(tag, tableAlias);   //table alias used
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
-                        variant.addCompletion(parameterName);
+                        variant.addCompletion((tableAlias==null?"":tableAlias+".")+parameterName);
                     }
                 }
             }
@@ -126,8 +127,8 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
     public String getTableName(XmlTag xmlTag, String tableAlias) {
         String sql = IbatisUtil.getSQLForXmlTag(xmlTag).trim().toLowerCase();
         if (StringUtil.isNotEmpty(tableAlias)) {
-            String pattern = "\\w+\\s+(as\\s+)?" + tableAlias;
-            List<String> items = IbatisUtil.grep(sql, pattern);
+            String pattern = "\\w+\\s+as\\s+" + tableAlias+"\\W";
+            List<String> items = IbatisUtil.grep(sql+" ", pattern); //to make \W work in anywhere
             if (items.size() > 0) {  //find table alias
                 return items.get(0).split("\\s+")[0];
             } else //set table alias as name
