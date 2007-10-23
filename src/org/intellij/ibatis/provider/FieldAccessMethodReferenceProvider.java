@@ -275,9 +275,6 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             if (parentTag.getAttribute("parameterClass") != null) {
                 String className = parentTag.getAttributeValue("parameterClass");
                 return IbatisClassShortcutsReferenceProvider.getPsiClass(xmlAttributeValue, className);
-            } else if (parentTag.getAttribute("parameterMap") != null) {
-                String parameterMapId = parentTag.getAttributeValue("parameterMap");
-                return IbatisManager.getInstance().getAllParameterMap(xmlAttributeValue).get(parameterMapId);
             } else {
                 return getPsiClassForDynamicProperty(parentTag, xmlAttributeValue);
             }
