@@ -62,8 +62,8 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      *
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
-     * @param select      current select
-     * @param holder      domelement annotation holder
+     * @param resultMap  resultMap
+     * @param holder      dom element annotation holder
      */
     protected void checkResultMap(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, ResultMap resultMap, final DomElementAnnotationHolder holder) {
     }
@@ -74,7 +74,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param select      current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkSelect(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Select select, final DomElementAnnotationHolder holder) {
     }
@@ -85,7 +85,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param update      current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkUpdate(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Update update, final DomElementAnnotationHolder holder) {
     }
@@ -97,7 +97,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param delete      current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkDelete(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Delete delete, final DomElementAnnotationHolder holder) {
     }
@@ -109,7 +109,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param insert      current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkInsert(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Insert insert, final DomElementAnnotationHolder holder) {
     }
@@ -120,7 +120,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param statement   current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkStatement(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Statement statement, final DomElementAnnotationHolder holder) {
     }
@@ -131,7 +131,7 @@ public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param procedure   current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkProcedure(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Procedure procedure, final DomElementAnnotationHolder holder) {
     }
