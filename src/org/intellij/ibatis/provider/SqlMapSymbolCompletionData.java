@@ -77,18 +77,23 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
                     {
                         PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, parameterClass);
                         if (psiClass != null) { //find 
-                            Map<String, String> methodMap = FieldAccessMethodReferenceProvider.getAllSetterMethods(psiClass, prefix.replace("#",""));
+                            Map<String, String> methodMap = FieldAccessMethodReferenceProvider.getAllSetterMethods(psiClass, prefix.replace("#", ""));
                             for (Map.Entry<String, String> entry : methodMap.entrySet()) {
-                                variant.addCompletion("#"+entry.getKey());
+                                variant.addCompletion("#" + entry.getKey());
                             }
                         }
                     }
                 }
             } else //jdbc type will be added
             {
-                prefix = prefix.substring(0, prefix.indexOf(':'));
-                for (String typeName : JdbcType.TYPES.keySet()) {
-                    variant.addCompletion(prefix + ":" + typeName);
+                if ((prefix + " ").split(":").length == 2) {    //only one ':' included
+                    prefix = prefix.substring(0, prefix.indexOf(':'));
+                    for (String typeName : JdbcType.TYPES.keySet()) {
+                        variant.addCompletion(prefix + ":" + typeName);
+                    }
+                } else //two ':' include
+                {
+
                 }
             }
             return new CompletionVariant[]{variant};
