@@ -1,8 +1,9 @@
 package org.intellij.ibatis;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -11,7 +12,6 @@ import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.codeInsight.completion.CompletionUtil;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
