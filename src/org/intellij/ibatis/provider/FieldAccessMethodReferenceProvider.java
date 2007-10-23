@@ -56,7 +56,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
                             ((XmlAttribute) xmlAttributeValue.getParent()).setValue(StringUtil.decapitalize(newElementName.replace("set", "")));
                         } else //deep field
                         {
-                            String field1 = referencePath.substring(0, referencePath.indexOf("."));
+                            String field1 = referencePath.substring(0, referencePath.lastIndexOf("."));
                             String newReferencePath;
                             if (psiClass.findMethodsByName("set" + StringUtil.capitalize(field1), true).length > 0) {   //field2 changed
                                 newReferencePath = field1 + "." + newFieldName;
