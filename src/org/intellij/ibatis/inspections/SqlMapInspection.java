@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * sql map base isnpection
+ * sql map base inspection
  */
 public abstract class SqlMapInspection extends BasicDomElementsInspection<SqlMap> {
     public SqlMapInspection() {
