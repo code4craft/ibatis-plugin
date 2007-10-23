@@ -167,25 +167,6 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
                 }
             }
         }
-        XmlAttribute parameterMap = xmlTag.getAttribute("parameterMap");
-        if (parameterMap != null && StringUtil.isNotEmpty(parameterMap.getValue())) {
-            //noinspection ConstantConditions
-            PsiReference psiReference = parameterMap.getValueElement().getReference();
-            if (psiReference != null) {
-                PsiElement psiElement = psiReference.resolve();
-                if (psiElement != null && psiElement instanceof XmlAttribute) {
-                    XmlTag parameterMapTag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
-                    if (parameterMapTag != null) {
-                        XmlTag[] parameterTags = parameterMapTag.findSubTags("parameter");
-                        for (XmlTag parameterTag : parameterTags) {
-                            String property = parameterTag.getAttributeValue("property");
-                            if (StringUtil.isNotEmpty(property))
-                                nameList.add(property);
-                        }
-                    }
-                }
-            }
-        }
         return nameList;
     }
 
