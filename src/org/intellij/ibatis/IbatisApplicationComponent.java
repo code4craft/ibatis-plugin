@@ -1,25 +1,16 @@
 package org.intellij.ibatis;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.ide.IconProvider;
 import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.PsiElement;
 import org.intellij.ibatis.facet.IbatisFacetType;
-import org.intellij.ibatis.inspections.NullSettedToPrimaryTypeInspection;
-import org.intellij.ibatis.inspections.ResultMapInSelectInspection;
-import org.intellij.ibatis.inspections.SqlMapFileInConfigurationInspection;
-import org.intellij.ibatis.inspections.SymbolInSQLInspection;
-import org.intellij.ibatis.provider.SelectorSymbolCompletionData;
-import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
+import org.intellij.ibatis.inspections.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 
@@ -79,6 +70,8 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @return inspection class array
      */
     public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapFileInConfigurationInspection.class, NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class, SymbolInSQLInspection.class};
+        return new Class[]{SqlMapFileInConfigurationInspection.class,
+                NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class,
+                SymbolInSQLInspection.class, ParameterMapInStatementInspection.class};
     }
 }
