@@ -109,15 +109,15 @@ public class SymbolInSQLInspection extends SqlMapInspection {
                     String parameterName = word.replaceAll("#", "");
                     if (parameterName.contains(":")) {   //parameter:jdbctype:value
                         parameterName = parameterName.substring(0, parameterName.indexOf(":"));
-                        inlineParameters.add(parameterName);
                     }
+                    inlineParameters.add(parameterName);
                 }
             }
         }
         //domain class validation
         if (IbatisClassShortcutsReferenceProvider.isDomain(parameterClass.getName())) {
             for (String inlineParameter : inlineParameters) {
-                if (isFieldOfPsiClass(parameterClass, inlineParameter.split("\\."))) {
+                if (!isFieldOfPsiClass(parameterClass, inlineParameter.split("\\."))) { //not a valid field for domain class
                     holder.createProblem(domElement, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.error", inlineParameter));
                 }
             }
