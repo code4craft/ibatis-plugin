@@ -23,10 +23,9 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
         if (parent == null || !(parent instanceof PsiMethodCallExpression)) {
             return PsiReference.EMPTY_ARRAY;
         }
-        PsiMethod psiMethod = ((PsiMethodCallExpression) parent).resolveMethod();
-        if (psiMethod == null) return PsiReference.EMPTY_ARRAY;
-        String methodName = psiMethod.getName().toLowerCase();
-
+        //method name validation simply, filter for detailed validation 
+        String[] path = ((PsiMethodCallExpression) parent).getMethodExpression().getText().split("\\.");
+        String methodName = path[path.length - 1].trim();
         if (!methodName.matches(SqlClientElementFilter.operationPattern)) return PsiReference.EMPTY_ARRAY;
         return new PsiReference[]{new StatementIdReference(methodName, (PsiLiteralExpression) psiElement, false)};
     }
