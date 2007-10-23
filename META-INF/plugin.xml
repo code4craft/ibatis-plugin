@@ -20,7 +20,7 @@
                   <li>Code completion for inline parameter enhanced</li>
                   <li>Code complotion for SQL selector enhanced by table alias supported</li>
                   <li>Inspection for inline parameter enhanced</li>
-                  <li>Bug fix</li>
+                  <li>Bug fix for statement id completion</li>
              </ul>
              <ul>  Change List in 0.5.1
                   <li>Bug fix for type alias code completion</li>
