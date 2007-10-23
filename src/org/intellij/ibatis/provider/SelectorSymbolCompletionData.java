@@ -42,6 +42,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
             CompletionVariant variant = new CompletionVariant(left);
             String previousText = getPreviousText(psiElement);
+            //table name completion
             if (previousText != null && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join"))) {
                 DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
                 if (datasource != null) {
@@ -50,8 +51,9 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                         variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()));
                     }
                 }
-            } else {
-                List<String> parameterNames = getSelectorSymbolsForXmlTag(tag);
+            } else { //selector completion
+                String prefix = completionContext.getPrefix();
+                List<String> parameterNames = getSelectorSymbolsForXmlTag(tag, prefix.contains(".") ? prefix.substring(0, prefix.indexOf(".")) : null);   //table alias used
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
                         variant.addCompletion(parameterName);
@@ -83,12 +85,13 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
     /**
      * get parameter name list
      *
-     * @param xmlTag xmlTag
+     * @param xmlTag     xmlTag
+     * @param tableAlias table alias
      * @return name list
      */
-    public List<String> getSelectorSymbolsForXmlTag(XmlTag xmlTag) {
+    public List<String> getSelectorSymbolsForXmlTag(XmlTag xmlTag, String tableAlias) {
         List<String> nameList = new ArrayList<String>();
-        String tableName = getTableName(xmlTag);
+        String tableName = getTableName(xmlTag, tableAlias);
         if (tableName != null) {
             DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(xmlTag);
             if (dataSource != null) {
@@ -115,12 +118,23 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
     /**
      * get table name in SQL Map tag
      *
-     * @param xmlTag xml tag
+     * @param xmlTag     xml tag
+     * @param tableAlias table alias
      * @return table name in SQL sentence
      */
     @Nullable
-    public String getTableName(XmlTag xmlTag) {
+    public String getTableName(XmlTag xmlTag, String tableAlias) {
         String sql = IbatisUtil.getSQLForXmlTag(xmlTag).trim().toLowerCase();
+        if (StringUtil.isNotEmpty(tableAlias)) {
+            String pattern = "\\w+\\s+(as\\s+)?" + tableAlias;
+            List<String> items = IbatisUtil.grep(sql, pattern);
+            if (items.size() > 0) {  //find table alias
+                return items.get(0).split("\\s+")[0];
+            } else //set table alias as name
+            {
+                return tableAlias;
+            }
+        }
         if (sql.startsWith("insert")) {   // insert
             String tableName = sql.substring(sql.indexOf("into") + 4).trim();
             tableName = tableName.split("\\s+")[0];
@@ -134,13 +148,10 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 tableName = tableName.substring(0, tableName.indexOf("."));
             return tableName;
         } else {  //select and delete
-            String[] parts = sql.split("from\\s+");
-            if (parts.length > 1) {
-                String tableName = parts[1].trim();
-                tableName = tableName.split("\\s+")[0];
-                if (tableName.contains("."))
-                    tableName = tableName.substring(0, tableName.indexOf("."));
-                return tableName;
+            String pattern = "from\\s+\\w+";
+             List<String> items = IbatisUtil.grep(sql, pattern);
+            if (items.size() > 0) {
+                return items.get(0).split("\\s+")[1];
             }
         }
         return null;
