@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="ibatis">
-  <template name="ibb" value="$client$.execute(new SqlMapClientCallback() {&#10;     public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {&#10;        executor.startBatch();&#10;        //code here&#10;        executor.executeBatch();&#10;        return null;&#10;     }&#10;});" description="Excute batch statements in iBATIS" toReformat="true" toShortenFQNames="true">
+  <template name="ibb" value="$client$.execute(new SqlMapClientCallback() {&#10;     public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {&#10;        executor.startBatch();&#10;        //code here&#10;        $END$&#10;        executor.executeBatch();&#10;        return null;&#10;     }&#10;});" description="Excute batch statements in iBATIS" toReformat="true" toShortenFQNames="true">
     <variable name="client" expression="variableOfType(&quot;org.springframework.orm.ibatis.SqlMapClientTemplate&quot;)" defaultValue="&quot;getSqlMapClientTemplate()&quot;" alwaysStopAt="false" />
     <context>
       <option name="JAVA_CODE" value="true" />
@@ -28,7 +28,7 @@
       <option name="OTHER" value="false" />
     </context>
   </template>
-  <template name="ibe" value="$client$.execute(new SqlMapClientCallback() {&#10;     public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {&#10;        //code here&#10;        return null;&#10;     }&#10;});" description="Excute multi statements in iBATIS" toReformat="true" toShortenFQNames="true">
+  <template name="ibe" value="$client$.execute(new SqlMapClientCallback() {&#10;     public Object doInSqlMapClient(SqlMapExecutor executor) throws SQLException {&#10;        //code here&#10;        $END$&#10;        return null;&#10;     }&#10;});" description="Excute multi statements in iBATIS" toReformat="true" toShortenFQNames="true">
     <variable name="client" expression="variableOfType(&quot;org.springframework.orm.ibatis.SqlMapClientTemplate&quot;)" defaultValue="&quot;getSqlMapClientTemplate()&quot;" alwaysStopAt="false" />
     <context>
       <option name="JAVA_CODE" value="true" />
@@ -119,4 +119,3 @@
     </context>
   </template>
 </templateSet>
-
