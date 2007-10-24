@@ -65,5 +65,6 @@ public class IbatisProjectComponent implements ProjectComponent {
         IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForUpdateAction(), "iBATIS");
         IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForDeleteAction(), "iBATIS");
         IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForCrudAction(), "iBATIS");
+        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateStatementXmlCodeAction(), "iBATIS");
     }
 }
