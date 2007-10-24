@@ -130,9 +130,9 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
             final TemplateSettings templateSettings = TemplateSettings.getInstance();
             final Document doc = parser.build(inputStream);
             final Element root = doc.getRootElement();
-            for (Object o : root.getChildren()) {
-                if (o instanceof Element) {
-                    final Template template = readExternal((Element) o, templateName);
+            for (Object element : root.getChildren()) {
+                if (element instanceof Element) {
+                    final Template template = readExternal((Element) element, templateName);
                     final String key = template.getKey();
                     // if template with the same key is already loaded, ignore it  TODO: rewrite, when API will be improved!
                     if (key != null && templateSettings.getTemplate(key) == null) {
