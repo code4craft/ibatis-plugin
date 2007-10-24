@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="ibatis">
+  <template name="ii" value="$client$.insert(&quot;$statement$&quot;,$param$);" description="insert in iBATIS" toReformat="false" toShortenFQNames="true">
+    <variable name="client" expression="variableOfType(&quot;org.springframework.orm.ibatis.SqlMapClientTemplate&quot;)" defaultValue="&quot;getSqlMapClientTemplate()&quot;" alwaysStopAt="false" />
+    <variable name="statement" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <variable name="param" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+      <option name="XML" value="false" />
+      <option name="HTML" value="false" />
+      <option name="JSP" value="false" />
+      <option name="COMPLETION" value="false" />
+      <option name="OTHER" value="false" />
+    </context>
+  </template>
+  <template name="io" value="($type$)$client$.queryForObject(&quot;$statement$&quot;,$param$);" description="query in iBATIS" toReformat="false" toShortenFQNames="true">
+    <variable name="type" expression="expectedType()" defaultValue="" alwaysStopAt="false" />
+    <variable name="client" expression="variableOfType(&quot;org.springframework.orm.ibatis.SqlMapClientTemplate&quot;)" defaultValue="&quot;getSqlMapClientTemplate()&quot;" alwaysStopAt="false" />
+    <variable name="statement" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <variable name="param" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+      <option name="XML" value="false" />
+      <option name="HTML" value="false" />
+      <option name="JSP" value="false" />
+      <option name="COMPLETION" value="false" />
+      <option name="OTHER" value="false" />
+    </context>
+  </template>
+</templateSet>
+
