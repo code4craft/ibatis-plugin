@@ -22,6 +22,7 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
         {
             PsiLiteralExpression expression = (PsiLiteralExpression) element;
             PsiMethodCallExpression methodCallExpression = (PsiMethodCallExpression) element.getParent().getParent();
+            //todo collect the information for statement xml code creation
         }
     }
 
