@@ -146,6 +146,7 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param xmlTag xml tag
      * @return xml text
      */
+    @SuppressWarnings({"ConstantConditions"})
     public static String getAllTextInTag(XmlTag xmlTag) {
         StringBuilder sql = new StringBuilder();
         PsiElement[] children = xmlTag.getChildren();
@@ -158,14 +159,14 @@ public class SymbolInSQLInspection extends SqlMapInspection {
                         PsiElement psiElement = refid.getValueElement().getReference().resolve();
                         if (psiElement instanceof XmlAttribute) {
                             XmlAttribute idAttribute = (XmlAttribute) psiElement;
-                            sql.append(" " + idAttribute.getParent().getValue().getText());
+                            sql.append(" ").append(idAttribute.getParent().getValue().getText());
                         }
                     }
                 } else {
                     sql.append(getAllTextInTag(tag));
                 }
             } else if (child instanceof XmlText) {
-                sql.append(" " + ((XmlText) child).getValue());
+                sql.append(" ").append(((XmlText) child).getValue());
             }
         }
         return sql.toString();
