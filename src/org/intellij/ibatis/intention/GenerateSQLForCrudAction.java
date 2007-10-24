@@ -16,11 +16,7 @@ import org.intellij.ibatis.facet.IbatisFacetConfiguration;
 import org.intellij.ibatis.util.IbatisUtil;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lmeadors
- * Date: Oct 17, 2007
- * Time: 10:13:49 PM
- * To change this template use File | Settings | File Templates.
+ * generate SQL for CRUD
  */
 public class GenerateSQLForCrudAction extends GenerateSQLBase{
 	protected void invoke(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
