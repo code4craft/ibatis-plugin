@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.intellij.ibatis.provider.SqlClientElementFilter;
 
 /**
  * generate statement xml code according to sql map client invocation when statement id absent
@@ -20,11 +21,19 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
 
     protected boolean isAvailable(Project project, Editor editor, PsiFile file, @NotNull PsiElement element) {
         if (element instanceof PsiLiteralExpression) {
+            PsiLiteralExpression expression = (PsiLiteralExpression) element;
             PsiElement parent = element.getParent().getParent();
-            if (parent == null || !(parent instanceof PsiMethodCallExpression)) {
-                //method name validation simply, filter for detailed validation
-                String[] path = ((PsiMethodCallExpression) parent).getMethodExpression().getText().split("\\.");
+            if (parent instanceof PsiMethodCallExpression) {
+                //method name validation simply
+                PsiReferenceExpression methodExpression = ((PsiMethodCallExpression) parent).getMethodExpression();
+                String[] path = methodExpression.getText().split("\\.");
                 String methodName = path[path.length - 1].trim();
+                if (methodName.matches(SqlClientElementFilter.operationPattern)) {
+                    PsiReference psiReference = expression.getReference();
+                    if (psiReference != null && psiReference.resolve() == null) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
