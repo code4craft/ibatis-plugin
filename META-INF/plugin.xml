@@ -22,6 +22,7 @@
                   <li>Inspection for inline parameter enhanced</li>
                   <li>Bug fix for statement id completion</li>
                   <li>Inspection for parameterMap added</li>
+                  <li>Live Template added, please reference user guide</li>
              </ul>
              <ul>  Change List in 0.5.1
                   <li>Bug fix for type alias code completion</li>
