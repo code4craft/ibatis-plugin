@@ -32,7 +32,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             if (psiClass != null)
                 psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
                     @Nullable public PsiElement resolve() {
-                        if (!IbatisClassShortcutsReferenceProvider.isDomain(psiClass.getName())) {
+                        if (!IbatisClassShortcutsReferenceProvider.isDomain(psiClass.getName())) {    //none domain class, validate is not necessary, such as hashmap
                             return null;
                         }
                         PsiClass referencedClass = psiClass;
