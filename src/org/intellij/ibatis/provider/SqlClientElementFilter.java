@@ -13,7 +13,7 @@ import org.intellij.ibatis.util.IbatisUtil;
  * sql map client method call filter
  */
 public class SqlClientElementFilter implements ElementFilter {
-    public static String operationPattern = "(execute)?((query[(For)|(With)]\\w*)|insert|update|delete)";
+    public static String operationPattern = "(execute)?((query[(for)|(with)]\\w*)|insert|update|delete)";
 
     public boolean isAcceptable(Object o, PsiElement psiElement) {
         PsiLiteralExpression literalExpression = (PsiLiteralExpression) psiElement;
