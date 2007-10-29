@@ -25,7 +25,7 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
         }
         //method name validation simply, filter for detailed validation 
         String[] path = ((PsiMethodCallExpression) parent).getMethodExpression().getText().split("\\.");
-        String methodName = path[path.length - 1].trim();
+        String methodName = path[path.length - 1].trim().toLowerCase();
         if (!methodName.matches(SqlClientElementFilter.operationPattern)) return PsiReference.EMPTY_ARRAY;
         return new PsiReference[]{new StatementIdReference(methodName, (PsiLiteralExpression) psiElement, false)};
     }
