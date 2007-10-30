@@ -7,8 +7,8 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.5.2</version>
-    <vendor logo="/icons/logo.png" email="lmeadors@apache.org, linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Larry Meadors, Jacky Chan</vendor>
+    <version>0.6.0</version>
+    <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Larry Meadors; Jacky Chan</vendor>
     <!-- 6833 is 7 M1b -->
     <!-- 7126 is 7 M2  -->
 	<idea-version since-build="7000"/>
@@ -16,6 +16,12 @@
 	<depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
+             <ul>  Change List in 0.6.0
+                  <li>Intention action to create statement xml code for TDDers</li>
+                  <li>Bug fix for Map validate</li>
+                  <li>Bug fix for inline parameter inspection</li>
+                  <li>Other bug fix</li>
+             </ul>
              <ul>  Change List in 0.5.2
                   <li>Code completion for inline parameter enhanced</li>
                   <li>Code complotion for SQL selector enhanced by table alias supported</li>
