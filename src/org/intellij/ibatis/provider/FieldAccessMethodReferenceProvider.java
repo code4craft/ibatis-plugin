@@ -2,20 +2,17 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.*;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * filed access method reference  provider
@@ -178,11 +175,8 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
         if (methods.length > 0) {
             PsiMethod psiGetterMethod = methods[0];
             PsiType returnType = psiGetterMethod.getReturnType();
-            if (returnType instanceof PsiClassType) {
-                PsiClass psiFieldClass = ((PsiClassType) returnType).resolve();
-                if (psiFieldClass != null)
-                    return psiFieldClass;
-            }
+            if (returnType != null)
+                return IbatisClassShortcutsReferenceProvider.getPsiClass(psiClass, returnType.getCanonicalText());
         }
         return null;
     }
@@ -272,7 +266,7 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
     /**
      * get the psi class for dynamic property
      *
-     * @param xmlTag   xml tag
+     * @param xmlTag            xml tag
      * @param xmlAttributeValue xml attribute value
      * @return psi class
      */
