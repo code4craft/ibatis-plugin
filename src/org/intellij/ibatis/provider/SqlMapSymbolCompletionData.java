@@ -59,44 +59,47 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
         XmlTag tag = getXmlTagForSQLCompletion(psiElement, completionContext.file);
         if (tag != null) {    //
             String prefix = completionContext.getPrefix();
-            LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
-            CompletionVariant variant = new CompletionVariant(left);
-            variant.includeScopeClass(PsiElement.class, true);
-            variant.addCompletionFilter(TrueFilter.INSTANCE);
-            variant.setInsertHandler(new SqlMapSymbolnsertHandler());
-            if (!prefix.contains(":")) {   //just clear in line parameter name
-                if (!prefix.contains(".")) {  //root field
-                    List<String> parameterNames = getParameterNamesForXmlTag(tag, OPEN_TAG);
-                    for (String parameterName : parameterNames) {
-                        variant.addCompletion(parameterName);
-                    }
-                } else //recursion field
-                {
-                    String parameterClass = tag.getAttributeValue("parameterClass");
-                    if (IbatisClassShortcutsReferenceProvider.isDomain(parameterClass))  //domain class
+            String prefix2 = prefix.substring(0, prefix.indexOf("#") + 1);
+            if (prefix.contains("#")) {  //# is necessary
+                LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
+                CompletionVariant variant = new CompletionVariant(left);
+                variant.includeScopeClass(PsiElement.class, true);
+                variant.addCompletionFilter(TrueFilter.INSTANCE);
+                variant.setInsertHandler(new SqlMapSymbolnsertHandler());
+                if (!prefix.contains(":")) {   //just clear in line parameter name
+                    if (!prefix.contains(".")) {  //root field
+                        List<String> parameterNames = getParameterNamesForXmlTag(tag, prefix2);
+                        for (String parameterName : parameterNames) {
+                            variant.addCompletion(parameterName);
+                        }
+                    } else //recursion field
                     {
-                        PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, parameterClass);
-                        if (psiClass != null) { //find 
-                            Map<String, String> methodMap = FieldAccessMethodReferenceProvider.getAllSetterMethods(psiClass, prefix.replace("#", ""));
-                            for (Map.Entry<String, String> entry : methodMap.entrySet()) {
-                                variant.addCompletion("#" + entry.getKey());
+                        String parameterClass = tag.getAttributeValue("parameterClass");
+                        if (IbatisClassShortcutsReferenceProvider.isDomain(parameterClass))  //domain class
+                        {
+                            PsiClass psiClass = IbatisClassShortcutsReferenceProvider.getPsiClass(psiElement, parameterClass);
+                            if (psiClass != null) { //find
+                                Map<String, String> methodMap = FieldAccessMethodReferenceProvider.getAllSetterMethods(psiClass, prefix.replace("#", ""));
+                                for (Map.Entry<String, String> entry : methodMap.entrySet()) {
+                                    variant.addCompletion(prefix2 + entry.getKey());
+                                }
                             }
                         }
                     }
-                }
-            } else //jdbc type will be added
-            {
-                if ((prefix + " ").split(":").length == 2) {    //only one ':' included
-                    prefix = prefix.substring(0, prefix.indexOf(':'));
-                    for (String typeName : JdbcType.TYPES.keySet()) {
-                        variant.addCompletion(prefix + ":" + typeName);
-                    }
-                } else //two ':' include
+                } else //jdbc type will be added
                 {
+                    if ((prefix + " ").split(":").length == 2) {    //only one ':' included
+                        prefix = prefix.substring(0, prefix.indexOf(':'));
+                        for (String typeName : JdbcType.TYPES.keySet()) {
+                            variant.addCompletion(prefix + ":" + typeName);
+                        }
+                    } else //two ':' include
+                    {
 
+                    }
                 }
+                return new CompletionVariant[]{variant};
             }
-            return new CompletionVariant[]{variant};
         }
         if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
         return super.findVariants(psiElement, completionContext);
