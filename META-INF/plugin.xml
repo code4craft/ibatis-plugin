@@ -3,7 +3,7 @@
     <name>iBATIS Plugin</name>
     <description><![CDATA[
     <html>
-        The plugin for IntelliJ IDEA to accelerate iBATIS developement.
+        The plugin for IntelliJ IDEA to accelerate iBATIS development.
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
@@ -24,7 +24,7 @@
              </ul>
              <ul>  Change List in 0.5.2
                   <li>Code completion for inline parameter enhanced</li>
-                  <li>Code complotion for SQL selector enhanced by table alias supported</li>
+                  <li>Code completion for SQL selector enhanced by table alias supported</li>
                   <li>Inspection for inline parameter enhanced</li>
                   <li>Bug fix for statement id completion</li>
                   <li>Inspection for parameterMap added</li>
