@@ -55,9 +55,11 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 String prefix = completionContext.getPrefix();
                 String tableAlias = prefix.contains(".") ? prefix.substring(0, prefix.indexOf(".")) : null;
                 List<String> parameterNames = getSelectorSymbolsForXmlTag(tag, tableAlias);   //table alias used
+                String bracket = "";
+                if (prefix.startsWith("(")) bracket = "(";
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
-                        variant.addCompletion((tableAlias==null?"":tableAlias+".")+parameterName);
+                        variant.addCompletion(bracket+(tableAlias == null ? "" : tableAlias + ".") + parameterName);
                     }
                 }
             }
@@ -127,8 +129,8 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
     public String getTableName(XmlTag xmlTag, String tableAlias) {
         String sql = IbatisUtil.getSQLForXmlTag(xmlTag).trim().toLowerCase();
         if (StringUtil.isNotEmpty(tableAlias)) {
-            String pattern = "\\w+\\s+as\\s+" + tableAlias+"\\W";
-            List<String> items = IbatisUtil.grep(sql+" ", pattern); //to make \W work in anywhere
+            String pattern = "\\w+\\s+as\\s+" + tableAlias + "\\W";
+            List<String> items = IbatisUtil.grep(sql + " ", pattern); //to make \W work in anywhere
             if (items.size() > 0) {  //find table alias
                 return items.get(0).split("\\s+")[0];
             } else //set table alias as name
@@ -150,7 +152,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             return tableName;
         } else {  //select and delete
             String pattern = "from\\s+\\w+";
-             List<String> items = IbatisUtil.grep(sql, pattern);
+            List<String> items = IbatisUtil.grep(sql, pattern);
             if (items.size() > 0) {
                 return items.get(0).split("\\s+")[1];
             }
