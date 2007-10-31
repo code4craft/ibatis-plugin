@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * base statement in SQL Map file
  */
-public interface BaseStatement extends CommonDomModelElement {
+public interface BaseStatement extends CommonDomModelElement, GenericDomValue<String> {
     /**
      * get the id for statement
      *
