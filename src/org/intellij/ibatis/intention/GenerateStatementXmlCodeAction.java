@@ -186,11 +186,8 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
             }
         }
         //default content
-        XmlTag tag = statement.getXmlTag();
-        if (tag != null) {
-            tag.getValue().setText("\n");
-        }
-        return tag;
+       statement.setStringValue("\n");
+        return statement.getXmlTag();
     }
 
     /**
