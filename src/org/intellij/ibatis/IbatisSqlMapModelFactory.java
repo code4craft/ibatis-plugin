@@ -9,6 +9,7 @@ import com.intellij.util.xml.model.DomModelFactory;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.impl.IbatisSqlMapModelImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlM
         super(SqlMap.class, domManager.createModelMerger(), domManager.getProject(), "spring");
     }
 
-    public IbatisSqlMapModel getModel(@NotNull PsiElement context) {
+    @Nullable public IbatisSqlMapModel getModel(@NotNull PsiElement context) {
         final PsiFile psiFile = context.getContainingFile();
         if (psiFile instanceof XmlFile) {
             return getModelByConfigFile((XmlFile) psiFile);
