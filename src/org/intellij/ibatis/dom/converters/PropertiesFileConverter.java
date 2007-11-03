@@ -13,7 +13,7 @@ public class PropertiesFileConverter extends PsiFileConverterBase {
     /**
      * validate file can be accepted
      *
-     * @param file psi file
+     * @param psiFile psi file
      * @return accept mark
      */
     protected boolean isFileAccepted(final PsiFile psiFile) {
