@@ -69,7 +69,7 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
                         }
                     }
                 } catch (Throwable e) {
-
+                     e.printStackTrace();
                 }
             }
         }
