@@ -19,7 +19,7 @@
     <change-notes>
         <![CDATA[
            <ul>  Change List in 0.6.1
-                  <li>Copy SQL code from statement feature added</li>
+                  <li>Copy SQL code in statement feature added</li>
                   <li>Bug fix for inline parameter</li>
              </ul>
              <ul>  Change List in 0.6.0
