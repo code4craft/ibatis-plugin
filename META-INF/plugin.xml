@@ -8,14 +8,20 @@
     </html>
     ]]></description>
     <version>0.6.0</version>
-    <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com" url="http://code.google.com/p/ibatis-plugin">Larry Meadors; Jacky Chan</vendor>
+    <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
+            url="http://code.google.com/p/ibatis-plugin">Larry Meadors; Jacky Chan
+    </vendor>
     <!-- 6833 is 7 M1b -->
     <!-- 7126 is 7 M2  -->
-	<idea-version since-build="7000"/>
+    <idea-version since-build="7000"/>
 
-	<depends>com.intellij.javaee</depends>
+    <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
+           <ul>  Change List in 0.6.1
+                  <li>Copy SQL code from statement feature added</li>
+                  <li>Bug fix for inline parameter</li>
+             </ul>
              <ul>  Change List in 0.6.0
                   <li>Intention action to create statement xml code for TDDers</li>
                   <li>Bug fix for Map validate</li>
@@ -78,6 +84,10 @@
                 class="org.intellij.ibatis.actions.ModelClassGeneratorAction" text="Model Class Generation"
                 description="Generate model class acccording to table name in the database" icon="/icons/logo.png">
             <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewAnnotationType"/>
+        </action>
+        <action id="CopySQLCodeAction" class="org.intellij.ibatis.actions.CopySQLCodeAction" text="Copy SQL code"
+                description="Copy SQL code  in current statement" icon="/icons/logo.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
         </action>
     </actions>
 </idea-plugin>
