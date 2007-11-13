@@ -7,7 +7,7 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">Larry Meadors; Jacky Chan
     </vendor>
@@ -88,6 +88,10 @@
         <action id="CopySQLCodeAction" class="org.intellij.ibatis.actions.CopySQLCodeAction" text="Copy SQL code"
                 description="Copy SQL code  in current statement" icon="/icons/logo.png">
             <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
+        </action>
+        <action id="SQLPreviewAction" class="org.intellij.ibatis.actions.SQLPreviewAction" text="SQL Code Preview"  icon="/icons/logo.png"
+                description="SQL Code Preview">
+              <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
         </action>
     </actions>
 </idea-plugin>
