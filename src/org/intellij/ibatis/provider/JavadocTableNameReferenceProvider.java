@@ -1,16 +1,13 @@
 package org.intellij.ibatis.provider;
 
 import com.intellij.codeInsight.lookup.LookupValueFactory;
-import com.intellij.javaee.dataSource.DataSource;
-import com.intellij.javaee.dataSource.DataSourceManager;
-import com.intellij.javaee.dataSource.DatabaseTableData;
+import com.intellij.javaee.dataSource.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.ibatis.facet.IbatisFacet;
@@ -99,6 +96,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
         IbatisFacet ibatisFacet = IbatisFacet.getInstance(module);
         if (ibatisFacet == null) return null;
         String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
+        if(StringUtil.isEmpty(selectedDataSourceName))  return null;
         DataSourceManager dataSourceManager = DataSourceManager.getInstance(module.getProject());
         return dataSourceManager.getDataSourceByName(selectedDataSourceName);
     }
