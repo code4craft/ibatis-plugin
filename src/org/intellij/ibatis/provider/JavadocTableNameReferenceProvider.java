@@ -43,10 +43,12 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
             public String getCanonicalText() {
                 return docTag.getText().trim();
             }
+
             @Nullable
             public PsiElement handleElementRename(String s) throws IncorrectOperationException {
                 return null;
             }
+
             @Nullable
             public PsiElement bindToElement(@NotNull PsiElement psiElement) throws IncorrectOperationException {
                 return null;
@@ -94,11 +96,16 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
      */
     @Nullable public static DataSource getDataSourceForIbatis(Module module) {
         IbatisFacet ibatisFacet = IbatisFacet.getInstance(module);
-        if (ibatisFacet == null) return null;
-        String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
-        if(StringUtil.isEmpty(selectedDataSourceName))  return null;
-        DataSourceManager dataSourceManager = DataSourceManager.getInstance(module.getProject());
-        return dataSourceManager.getDataSourceByName(selectedDataSourceName);
+        if (ibatisFacet != null) {
+            String selectedDataSourceName = ibatisFacet.getConfiguration().dataSourceName;
+            if (!StringUtil.isEmpty(selectedDataSourceName)) {
+                DataSourceManager dataSourceManager = DataSourceManager.getInstance(module.getProject());
+                if (dataSourceManager != null) {
+                    return dataSourceManager.getDataSourceByName(selectedDataSourceName);
+                }
+            }
+        }
+        return null;
     }
 
 }
