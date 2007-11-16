@@ -48,7 +48,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 if (datasource != null) {
                     List<DatabaseTableData> tables = datasource.getTables();
                     for (DatabaseTableData table : tables) {
-                        variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()));
+                        variant.addCompletion(IbatisUtil.getTableNameWithoutSchema(table.getName()).toLowerCase());
                     }
                 }
             } else { //selector completion
@@ -59,7 +59,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 if (prefix.startsWith("(")) bracket = "(";
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
-                        variant.addCompletion(bracket+(tableAlias == null ? "" : tableAlias + ".") + parameterName);
+                        variant.addCompletion(bracket+(tableAlias == null ? "" : tableAlias + ".") + parameterName.toLowerCase());
                     }
                 }
             }
