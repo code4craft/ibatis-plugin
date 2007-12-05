@@ -1,12 +1,7 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.CompletionContext;
-import com.intellij.codeInsight.completion.CompletionData;
-import com.intellij.codeInsight.completion.CompletionVariant;
-import com.intellij.codeInsight.completion.XmlCompletionData;
-import com.intellij.javaee.dataSource.DataSource;
-import com.intellij.javaee.dataSource.DatabaseTableData;
-import com.intellij.javaee.dataSource.DatabaseTableFieldData;
+import com.intellij.codeInsight.completion.*;
+import com.intellij.javaee.dataSource.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.filters.TrueFilter;
@@ -43,7 +38,8 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             CompletionVariant variant = new CompletionVariant(left);
             String previousText = getPreviousText(psiElement);
             //table name completion
-            if (previousText != null && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join"))) {
+            if (previousText != null && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join")
+                      || previousText.equalsIgnoreCase("into") || previousText.equalsIgnoreCase("update"))) {
                 DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
                 if (datasource != null) {
                     List<DatabaseTableData> tables = datasource.getTables();
@@ -59,7 +55,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                 if (prefix.startsWith("(")) bracket = "(";
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
-                        variant.addCompletion(bracket+(tableAlias == null ? "" : tableAlias + ".") + parameterName.toLowerCase());
+                        variant.addCompletion(bracket + (tableAlias == null ? "" : tableAlias + ".") + parameterName.toLowerCase());
                     }
                 }
             }
