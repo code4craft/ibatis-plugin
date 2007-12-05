@@ -5,6 +5,14 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomManager;
+import org.intellij.ibatis.dom.sqlMap.BaseStatement;
+import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
+import org.intellij.ibatis.util.IbatisUtil;
 
 /**
  * SQL code preview action
@@ -12,12 +20,41 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
  * @author jacky
  */
 public class SQLPreviewAction extends AnAction {
+    /**
+     * display preview popup menu
+     *
+     * @param e event
+     */
     public void actionPerformed(AnActionEvent e) {
-        //todo
-        showPopup(e.getData(DataKeys.PROJECT), e.getData(DataKeys.EDITOR), "search");
+        PsiFile psiFile = e.getData(DataKeys.PSI_FILE);
+        Editor editor = e.getData(DataKeys.EDITOR);
+        if ((psiFile != null && psiFile instanceof XmlFile) && editor != null) {
+            PsiElement psiElement = psiFile.findElementAt(editor.getCaretModel().getOffset());
+            if (psiElement != null) {
+                XmlTag xmlTag = SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, psiFile);
+                if (xmlTag != null) {
+                    DomElement domElement = DomManager.getDomManager(e.getData(DataKeys.PROJECT)).getDomElement(xmlTag);
+                    if (domElement != null && domElement instanceof BaseStatement) {
+                        BaseStatement baseStatement = (BaseStatement) domElement;
+                        PsiClass parameterClass = baseStatement.getParameterClass().getValue();
+                        String SQLCode = IbatisUtil.getSQLForXmlTag(xmlTag);
+                        showPopup(e.getData(DataKeys.PROJECT), e.getData(DataKeys.EDITOR), xmlTag.getAttributeValue("id"), SQLCode.trim());
+                    }
+                }
+            }
+        }
+
     }
 
-    private void showPopup(Project project, Editor editor, String searchText) {
+    /**
+     * show popup menu
+     *
+     * @param project    project
+     * @param editor     editor
+     * @param title      title
+     * @param searchText search text
+     */
+    private void showPopup(Project project, Editor editor, String title, String searchText) {
         SQLPopupView popupView = new SQLPopupView(searchText);
         JBPopup jbPopup = JBPopupFactory.getInstance()
                 .createComponentPopupBuilder(popupView.mainPanel, popupView.mainPanel)
@@ -25,10 +62,33 @@ public class SQLPreviewAction extends AnAction {
                 .setRequestFocus(true)
                 .setResizable(true)
                 .setMovable(true)
-                .setTitle("SQL code preview")
+                .setTitle(title)
                 .createPopup();
         jbPopup.showInBestPositionFor(editor);
     }
 
+    /**
+     * validate action available
+     *
+     * @param e event
+     */
+    @Override public void update(AnActionEvent e) {
+        super.update(e);
+        PsiFile psiFile = e.getData(DataKeys.PSI_FILE);
+        Editor editor = e.getData(DataKeys.EDITOR);
+        if ((psiFile != null && psiFile instanceof XmlFile) && editor != null) {
+            PsiElement psiElement = psiFile.findElementAt(editor.getCaretModel().getOffset());
+            if (psiElement != null) {
+                XmlTag tag = SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, psiFile);
+                if (tag != null) {
+                    e.getPresentation().setEnabled(true);
+                    e.getPresentation().setVisible(true);
+                    return;
+                }
+            }
+        }
+        e.getPresentation().setEnabled(false);
+        e.getPresentation().setVisible(false);
+    }
 
 }
