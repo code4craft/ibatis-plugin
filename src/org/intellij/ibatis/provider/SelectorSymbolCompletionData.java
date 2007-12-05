@@ -36,10 +36,11 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
         if (tag != null && !completionContext.getPrefix().contains("#")) {   //not symbol
             LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
             CompletionVariant variant = new CompletionVariant(left);
+            String prefix = completionContext.getPrefix();
             String previousText = getPreviousText(psiElement);
             //table name completion
-            if (previousText != null && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join")
-                      || previousText.equalsIgnoreCase("into") || previousText.equalsIgnoreCase("update"))) {
+            if (previousText != null && !prefix.contains("(") && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join")
+                    || previousText.equalsIgnoreCase("into") || previousText.equalsIgnoreCase("update"))) {
                 DataSource datasource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(psiElement);
                 if (datasource != null) {
                     List<DatabaseTableData> tables = datasource.getTables();
@@ -48,11 +49,12 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                     }
                 }
             } else { //selector completion
-                String prefix = completionContext.getPrefix();
                 String tableAlias = prefix.contains(".") ? prefix.substring(0, prefix.indexOf(".")) : null;
                 List<String> parameterNames = getSelectorSymbolsForXmlTag(tag, tableAlias);   //table alias used
                 String bracket = "";
-                if (prefix.startsWith("(")) bracket = "(";
+                if (prefix.contains("(")) {
+                    bracket = prefix.substring(0, prefix.indexOf("(") + 1);
+                }
                 if (parameterNames.size() > 0) {
                     for (String parameterName : parameterNames) {
                         variant.addCompletion(bracket + (tableAlias == null ? "" : tableAlias + ".") + parameterName.toLowerCase());
@@ -92,6 +94,9 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
         List<String> nameList = new ArrayList<String>();
         String tableName = getTableName(xmlTag, tableAlias);
         if (tableName != null) {
+            if (tableName.contains("(")) {
+                tableName = tableName.substring(0, tableName.indexOf("("));
+            }
             DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(xmlTag);
             if (dataSource != null) {
                 DatabaseTableData table = null;
