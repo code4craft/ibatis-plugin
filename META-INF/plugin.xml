@@ -21,6 +21,7 @@
         <![CDATA[
               <ul>  Change List in 0.6.2
                   <li>Code completion for SQL edit enhanced</li>
+                  <li>SQL code preview(draft)</li>
                   <li>Minor bug fixed</li>
              </ul>
               <ul>  Change List in 0.6.1
