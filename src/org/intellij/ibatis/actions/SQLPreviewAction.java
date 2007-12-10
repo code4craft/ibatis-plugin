@@ -11,8 +11,11 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.intellij.ibatis.dom.sqlMap.BaseStatement;
+import org.intellij.ibatis.inspections.SymbolInSQLInspection;
 import org.intellij.ibatis.provider.SqlMapSymbolCompletionData;
 import org.intellij.ibatis.util.IbatisUtil;
+
+import java.util.Set;
 
 /**
  * SQL code preview action
@@ -37,8 +40,9 @@ public class SQLPreviewAction extends AnAction {
                     if (domElement != null && domElement instanceof BaseStatement) {
                         BaseStatement baseStatement = (BaseStatement) domElement;
                         PsiClass parameterClass = baseStatement.getParameterClass().getValue();
+                        Set<String> parameters = SymbolInSQLInspection.getAllParameterInTag(baseStatement.getXmlTag());
                         String SQLCode = IbatisUtil.getSQLForXmlTag(xmlTag);
-                        showPopup(e.getData(DataKeys.PROJECT), e.getData(DataKeys.EDITOR), xmlTag.getAttributeValue("id"), SQLCode.trim());
+                        showPopup(e.getData(DataKeys.PROJECT), e.getData(DataKeys.EDITOR), xmlTag.getAttributeValue("id"), SQLCode.trim(), parameterClass, parameters);
                     }
                 }
             }
@@ -49,13 +53,15 @@ public class SQLPreviewAction extends AnAction {
     /**
      * show popup menu
      *
-     * @param project    project
-     * @param editor     editor
-     * @param title      title
-     * @param searchText search text
+     * @param project        project
+     * @param editor         editor
+     * @param title          title
+     * @param SQLCode        search text
+     * @param parameterClass parameter class
+     * @param parameters     parameter names
      */
-    private void showPopup(Project project, Editor editor, String title, String searchText) {
-        SQLPopupView popupView = new SQLPopupView(searchText);
+    private void showPopup(Project project, Editor editor, String title, String SQLCode, PsiClass parameterClass, Set<String> parameters) {
+        SQLPopupView popupView = new SQLPopupView(parameterClass, parameters, SQLCode);
         JBPopup jbPopup = JBPopupFactory.getInstance()
                 .createComponentPopupBuilder(popupView.mainPanel, popupView.mainPanel)
                 .setDimensionServiceKey(project, "ibatis-sql-preview", false)
