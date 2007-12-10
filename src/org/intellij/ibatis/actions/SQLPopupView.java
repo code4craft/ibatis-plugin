@@ -34,6 +34,7 @@ public class SQLPopupView {
             ParametersTableModel tableModel = new ParametersTableModel();
             for (String parameter : parameters) {
                 tableModel.add(parameter, "string", "");
+                updateParameterValue(parameter,"");
             }
             paramsTable.setModel(tableModel);
             textPane.setText(sqlCode);
