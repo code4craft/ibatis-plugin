@@ -7,9 +7,10 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
-            url="http://code.google.com/p/ibatis-plugin">Larry Meadors; Jacky Chan
+            url="http://code.google.com/p/ibatis-plugin">
+        Larry Meadors; Jacky Chan
     </vendor>
     <!-- 6833 is 7 M1b -->
     <!-- 7126 is 7 M2  -->
@@ -18,7 +19,11 @@
     <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
-           <ul>  Change List in 0.6.1
+              <ul>  Change List in 0.6.2
+                  <li>Code completion for SQL edit enhanced</li>
+                  <li>Minor bug fixed</li>
+             </ul>
+              <ul>  Change List in 0.6.1
                   <li>Copy SQL code in statement feature added</li>
                   <li>Bug fix for inline parameter</li>
              </ul>
