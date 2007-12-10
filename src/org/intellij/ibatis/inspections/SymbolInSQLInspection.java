@@ -171,4 +171,28 @@ public class SymbolInSQLInspection extends SqlMapInspection {
         }
         return sql.toString();
     }
+
+    /**
+     * get all parameter in xml tag
+     *
+     * @param xmlTag xml tag
+     * @return parameter name list
+     */
+    public static Set<String> getAllParameterInTag(XmlTag xmlTag) {
+        Set<String> inlineParameters = new HashSet<String>();
+        String[] words = getAllTextInTag(xmlTag).trim().split("\\s+");
+        if (words != null) {
+            for (String word : words) {
+                if (word.startsWith("#") && word.endsWith("#"))  // symbol
+                {
+                    String parameterName = word.replaceAll("#", "");
+                    if (parameterName.contains(":")) {   //parameter:jdbctype:value
+                        parameterName = parameterName.substring(0, parameterName.indexOf(":"));
+                    }
+                    inlineParameters.add(parameterName);
+                }
+            }
+        }
+        return inlineParameters;
+    }
 }
