@@ -92,7 +92,9 @@ public class SqlMapStructureViewTreeElement extends DomStructureTreeElement {
     @Nullable
     public String getLocationString() {
         final DomElement element = getElement();
-        if (element instanceof BaseStatement) {
+        if (element instanceof SqlMap) {
+            return ((SqlMap) element).getNamesapce().getStringValue();
+        } else if (element instanceof BaseStatement) {
             return ((BaseStatement) element).getId().getValue();
         } else if (element instanceof Parameter) {
             return ((Parameter) element).getProperty().getValue();
