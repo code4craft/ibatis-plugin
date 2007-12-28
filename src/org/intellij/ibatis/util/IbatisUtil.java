@@ -50,9 +50,8 @@ public class IbatisUtil {
                     XmlAttribute refid = tag.getAttribute("refid");
                     if (refid != null && StringUtil.isNotEmpty(refid.getText())) {
                         PsiElement psiElement = refid.getValueElement().getReference().resolve();
-                        if (psiElement != null && psiElement instanceof XmlAttribute) {
-                            XmlAttribute idAttribute = (XmlAttribute) psiElement;
-                            Sql sqlDom = (Sql) DomManager.getDomManager(psiElement.getProject()).getDomElement(idAttribute.getParent());
+                        if (psiElement != null && psiElement instanceof XmlTag) {
+                            Sql sqlDom = (Sql) DomManager.getDomManager(psiElement.getProject()).getDomElement((XmlTag) psiElement);
                             if (sqlDom != null)
                                 sql.append(" ").append(sqlDom.getSQL());
                         }
