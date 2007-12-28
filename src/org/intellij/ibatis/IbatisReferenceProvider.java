@@ -111,12 +111,6 @@ public class IbatisReferenceProvider implements ProjectComponent {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"parameterMap"}, parameterMapReferenceProvider);
         //statement self reference for id
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "sql", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "update", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "delete", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "insert", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "statement", new String[]{"id"}, statementSelfReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"id"}, statementSelfReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "resultMap", new String[]{"id"}, statementSelfReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameterMap", new String[]{"id"}, statementSelfReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "cacheModel", new String[]{"id"}, statementSelfReferenceProvider);
