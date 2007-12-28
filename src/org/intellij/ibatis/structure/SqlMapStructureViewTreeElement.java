@@ -1,6 +1,7 @@
 package org.intellij.ibatis.structure;
 
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.Function;
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.structure.DomStructureTreeElement;
@@ -57,6 +58,14 @@ public class SqlMapStructureViewTreeElement extends DomStructureTreeElement {
             return IbatisConstants.SQLMAP_PROCEDURE;
         } else if (element instanceof Insert) {
             return IbatisConstants.SQLMAP_INSERT;
+        } else if (element instanceof ParameterMap) {
+            return IconLoader.findIcon("/nodes/parameter.png");
+        } else if (element instanceof ResultMap) {
+            return IconLoader.findIcon("/debugger/value.png");
+        } else if (element instanceof CacheModel) {
+            return IconLoader.findIcon("/javaee/persistenceEntity.png");
+        } else if (element instanceof Sql) {
+            return IconLoader.findIcon("/hierarchy/callee.png");
         }
         return null;
     }
@@ -93,7 +102,7 @@ public class SqlMapStructureViewTreeElement extends DomStructureTreeElement {
     public String getLocationString() {
         final DomElement element = getElement();
         if (element instanceof SqlMap) {
-            return ((SqlMap) element).getNamesapce().getStringValue();
+            return ((SqlMap) element).getNamespace().getStringValue();
         } else if (element instanceof BaseStatement) {
             return ((BaseStatement) element).getId().getValue();
         } else if (element instanceof Parameter) {
