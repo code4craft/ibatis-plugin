@@ -13,33 +13,34 @@ import java.util.Set;
 
 /**
  * cache model reference provider
+ *
+ * @author linux_china@hotmail.com
  */
 public class CacheModelReferenceProvider extends BaseReferenceProvider {
-  @NotNull
-  public PsiReference[] getReferencesByElement(PsiElement psiElement) {
-    XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
-    XmlAttributeValuePsiReference psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
-      public boolean isSoft() {
-        return false;
-      }
+    @NotNull
+    public PsiReference[] getReferencesByElement(PsiElement psiElement) {
+        XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
+        XmlAttributeValuePsiReference psiReference = new XmlAttributeValuePsiReference(xmlAttributeValue) {
+            public boolean isSoft() {
+                return false;
+            }
 
-      @Nullable
-      public PsiElement resolve() {
-        String cacheModelId = getReferenceId(getElement());
+            @Nullable
+            public PsiElement resolve() {
+                String cacheModelId = getReferenceId(getElement());
+                IbatisManager manager = IbatisManager.getInstance();
+                Map<String, CacheModel> allResultMap = manager.getAllCacheModel(getElement());
+                CacheModel cacheModel = allResultMap.get(cacheModelId);
+                return cacheModel == null ? null : cacheModel.getXmlTag();
+            }
 
-        IbatisManager manager = IbatisManager.getInstance();
-        Map<String, CacheModel> allResultMap = manager.getAllCacheModel(getElement());
-        CacheModel cacheModel = allResultMap.get(cacheModelId);
-        return cacheModel == null ? null : cacheModel.getId().getXmlAttribute();
-      }
-
-      public Object[] getVariants() {
-        Set<String> cacheModelList = IbatisManager.getInstance().getAllCacheModel(getElement()).keySet();
-        return cacheModelList.toArray();
-      }
-    };
-    return new PsiReference[]{psiReference};
-  }
+            public Object[] getVariants() {
+                Set<String> cacheModelList = IbatisManager.getInstance().getAllCacheModel(getElement()).keySet();
+                return cacheModelList.toArray();
+            }
+        };
+        return new PsiReference[]{psiReference};
+    }
 
 
 }
