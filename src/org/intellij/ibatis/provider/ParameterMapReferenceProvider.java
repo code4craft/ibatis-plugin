@@ -26,8 +26,7 @@ public class ParameterMapReferenceProvider extends BaseReferenceProvider {
 //                String resultMapId = getCanonicalText()
                 String resultMapId = getReferenceId(getElement());
                 Map<String, XmlTag> allResultMap = IbatisManager.getInstance().getAllParameterMap2(getElement());
-                XmlTag tag = allResultMap.get(resultMapId);
-                return tag==null?null:tag.getAttribute("id");
+                return allResultMap.get(resultMapId);
             }
 
             public Object[] getVariants() {
