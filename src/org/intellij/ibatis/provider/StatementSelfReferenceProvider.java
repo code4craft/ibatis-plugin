@@ -23,7 +23,7 @@ public class StatementSelfReferenceProvider extends BaseReferenceProvider {
             }
 
             @Override public boolean isSoft() {
-                return false;
+                return true;
             }
         }};
     }
