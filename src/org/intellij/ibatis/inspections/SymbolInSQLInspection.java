@@ -157,9 +157,9 @@ public class SymbolInSQLInspection extends SqlMapInspection {
                     XmlAttribute refid = tag.getAttribute("refid");
                     if (refid != null && StringUtil.isNotEmpty(refid.getText())) {
                         PsiElement psiElement = refid.getValueElement().getReference().resolve();
-                        if (psiElement instanceof XmlAttribute) {
-                            XmlAttribute idAttribute = (XmlAttribute) psiElement;
-                            sql.append(" ").append(idAttribute.getParent().getValue().getText());
+                        if (psiElement instanceof XmlTag) {
+                            XmlTag target = (XmlTag) psiElement;
+                            sql.append(" ").append(target.getText());
                         }
                     }
                 } else {
