@@ -1,5 +1,7 @@
 package org.intellij.ibatis;
 
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.impl.*;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.ide.IconProvider;
@@ -8,19 +10,22 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.psi.PsiElement;
-import com.intellij.codeInsight.template.impl.*;
-import com.intellij.codeInsight.template.Template;
+import com.intellij.psi.filters.ElementFilter;
+import com.intellij.psi.meta.MetaDataRegistrar;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.xml.*;
+import org.intellij.ibatis.dom.sqlMap.BaseStatement;
 import org.intellij.ibatis.facet.IbatisFacetType;
 import org.intellij.ibatis.inspections.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
-import org.jetbrains.annotations.*;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-import org.jdom.*;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * iBATIS application component, include inspection, IconProvider
@@ -52,6 +57,23 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
         initLiveTemplates();
+        MetaDataRegistrar.getInstance().registerMetaData(new ElementFilter() {
+            public boolean isAcceptable(Object element, PsiElement context) {
+                if (element instanceof XmlTag) {
+                    final XmlTag tag = (XmlTag) element;
+                    final DomElement domElement = DomManager.getDomManager(tag.getProject()).getDomElement(tag);
+                    if (!(domElement instanceof BaseStatement)) return false;
+                    BaseStatement statement = (BaseStatement) domElement;
+                    if (statement.getId().getStringValue() != null)
+                        return true;
+                }
+                return false;
+            }
+
+            public boolean isClassAcceptable(Class hintClass) {
+                return XmlTag.class.isAssignableFrom(hintClass);
+            }
+        }, StatementMetaData.class);
     }
 
     public void disposeComponent() {
@@ -178,4 +200,34 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         }
         return template;
     }
+
+    /**
+     * statement meta data
+     */
+    public static class StatementMetaData extends DomMetaData<BaseStatement> {
+        /**
+         * get name element
+         *
+         * @param element element
+         * @return dom value
+         */
+        @Nullable
+        protected GenericDomValue getNameElement(final BaseStatement element) {
+            final GenericAttributeValue<String> id = element.getId();
+            if (id.getXmlElement() != null) {
+                return id;
+            }
+            return null;
+        }
+
+        /**
+         * get display name for usage find
+         *
+         * @return
+         */
+        public String getTypeName() {
+            return getElement().getXmlElementName() + " Id: ";
+        }
+    }
+
 }
