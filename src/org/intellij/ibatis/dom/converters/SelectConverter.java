@@ -50,7 +50,7 @@ public class SelectConverter extends Converter<Select> implements CustomReferenc
                 String resultMapId = getCanonicalText();
                 Map<String, Select> allResultMap = IbatisManager.getInstance().getAllSelect(getElement());
                 Select select = allResultMap.get(resultMapId);
-                return select == null ? null : select.getId().getXmlAttribute();
+                return select == null ? null : select.getXmlTag();
             }
         }};
     }
