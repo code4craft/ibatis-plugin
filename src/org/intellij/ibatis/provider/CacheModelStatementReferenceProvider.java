@@ -33,29 +33,25 @@ public class CacheModelStatementReferenceProvider extends BaseReferenceProvider 
 
             @Nullable public PsiElement resolve() {
             String statementId = getReferenceId(getElement());
-
               Map<String, Delete> allDelete = IbatisManager.getInstance().getAllDelete(getElement());
               Delete delete = allDelete.get(statementId);
               if(delete != null) {
-                return delete.getId().getXmlAttribute();
+                return delete.getXmlTag();
               }
-
               Map<String, Update> allUpdate = IbatisManager.getInstance().getAllUpdate(getElement());
               Update update = allUpdate.get(statementId);
               if(update != null) {
-                return update.getId().getXmlAttribute();
+                return update.getXmlTag();
               }
-
               Map<String, Insert> allInsert = IbatisManager.getInstance().getAllInsert(getElement());
               Insert insert = allInsert.get(statementId);
               if(insert != null) {
-                return insert.getId().getXmlAttribute();
+                return insert.getXmlTag();
               }
-
               Map<String, Procedure> allProcedure = IbatisManager.getInstance().getAllProcedure(getElement());
               Procedure procedure = allProcedure.get(statementId);
               if(procedure != null) {
-                return procedure.getId().getXmlAttribute();
+                return procedure.getXmlTag();
               }
                 return null;
             }
