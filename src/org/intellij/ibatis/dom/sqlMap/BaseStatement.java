@@ -3,8 +3,7 @@ package org.intellij.ibatis.dom.sqlMap;
 import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
-import org.intellij.ibatis.dom.converters.IbatisClassConverter;
-import org.intellij.ibatis.dom.converters.ParameterMapConverter;
+import org.intellij.ibatis.dom.converters.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,6 +15,9 @@ public interface BaseStatement extends CommonDomModelElement, GenericDomValue<St
      *
      * @return statement id
      */
+    @Referencing(value = StatementIdConverter.class, soft = true)
+    @NotNull
+    @Required(value = false, nonEmpty = true)
     @Attribute("id")
     public GenericAttributeValue<String> getId();
 
