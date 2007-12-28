@@ -46,7 +46,6 @@ public class StatementIdReferenceProvider extends BaseReferenceProvider {
                 Insert insert = manager.getAllInsert(getElement()).get(statementId);
                 return insert == null ? null : insert.getXmlTag();
             } else if (methodName.contains("update")) {//updaet可以调用delete和procedure
-
                 Update update = manager.getAllUpdate(getElement()).get(statementId);
                 if (update != null) {
                     return update.getXmlTag();
