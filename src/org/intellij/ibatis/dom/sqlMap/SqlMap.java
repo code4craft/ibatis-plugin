@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface SqlMap extends CommonDomModelRootElement {
     @Nullable
-    public GenericAttributeValue<String> getNamesapce();
+    public GenericAttributeValue<String> getNamespace();
 
     @SubTagList("typeAlias")
     public List<TypeAlias> getTypeAlias();
