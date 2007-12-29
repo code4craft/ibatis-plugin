@@ -46,7 +46,7 @@ public class XmlAttributeValuePsiReference implements PsiReference {
             XmlAttribute attribute = (XmlAttribute) getElement().getParent();
             tag.setAttribute(attribute.getName(), newElementName);
         }
-        return null;
+        return getElement();
     }
 
     public PsiElement bindToElement(PsiElement element) throws IncorrectOperationException {
