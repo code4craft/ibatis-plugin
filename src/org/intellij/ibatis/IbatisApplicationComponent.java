@@ -117,6 +117,23 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
                 return XmlTag.class.isAssignableFrom(hintClass);
             }
         }, SqlMetaData.class);
+        MetaDataRegistrar.getInstance().registerMetaData(new ElementFilter() {
+            public boolean isAcceptable(Object element, PsiElement context) {
+                if (element instanceof XmlTag) {
+                    final XmlTag tag = (XmlTag) element;
+                    final DomElement domElement = DomManager.getDomManager(tag.getProject()).getDomElement(tag);
+                    if (!(domElement instanceof CacheModel)) return false;
+                    CacheModel cacheModel = (CacheModel) domElement;
+                    if (cacheModel.getId().getStringValue() != null)
+                        return true;
+                }
+                return false;
+            }
+
+            public boolean isClassAcceptable(Class hintClass) {
+                return XmlTag.class.isAssignableFrom(hintClass);
+            }
+        }, CacheModelMetaData.class);
     }
 
     public void disposeComponent() {
