@@ -6,6 +6,8 @@ import com.intellij.util.xml.*;
 import org.intellij.ibatis.dom.converters.*;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
 /**
  * base statement in SQL Map file
  */
@@ -46,4 +48,10 @@ public interface BaseStatement extends CommonDomModelElement, GenericDomValue<St
      */
     @NotNull public String getSQL();
 
+    /**
+     * get icon flag
+     * @param flag falg
+     * @return flag
+     */
+    public Icon getIcon(int flag);
 }
