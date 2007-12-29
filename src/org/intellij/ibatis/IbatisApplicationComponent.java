@@ -13,10 +13,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.meta.MetaDataRegistrar;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.xml.*;
-import org.intellij.ibatis.dom.sqlMap.BaseStatement;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomManager;
+import org.intellij.ibatis.dom.sqlMap.*;
 import org.intellij.ibatis.facet.IbatisFacetType;
 import org.intellij.ibatis.inspections.*;
+import org.intellij.ibatis.usages.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jdom.Document;
@@ -48,15 +50,22 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     private static final String IBATIS_LIVE_TEMPLATE_NAME = "ibatis";
     private static final String TEMPLATES_FILE = "/org/intellij/ibatis/livetemplates/ibatis.xml";
 
-    public IbatisApplicationComponent() {
-    }
-
+    /**
+     * initialize component
+     */
     public void initComponent() {
         registerDTDs(IbatisConstants.CONFIGURATION_DTDS);
         registerDTDs(IbatisConstants.SQLMAP_DTDS);
         registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
         initLiveTemplates();
+        initMetaData();
+    }
+
+    /**
+     * initialize meta data
+     */
+    private void initMetaData() {
         MetaDataRegistrar.getInstance().registerMetaData(new ElementFilter() {
             public boolean isAcceptable(Object element, PsiElement context) {
                 if (element instanceof XmlTag) {
@@ -74,6 +83,40 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
                 return XmlTag.class.isAssignableFrom(hintClass);
             }
         }, StatementMetaData.class);
+        MetaDataRegistrar.getInstance().registerMetaData(new ElementFilter() {
+            public boolean isAcceptable(Object element, PsiElement context) {
+                if (element instanceof XmlTag) {
+                    final XmlTag tag = (XmlTag) element;
+                    final DomElement domElement = DomManager.getDomManager(tag.getProject()).getDomElement(tag);
+                    if (!(domElement instanceof ResultMap)) return false;
+                    ResultMap resultMap = (ResultMap) domElement;
+                    if (resultMap.getId().getStringValue() != null)
+                        return true;
+                }
+                return false;
+            }
+
+            public boolean isClassAcceptable(Class hintClass) {
+                return XmlTag.class.isAssignableFrom(hintClass);
+            }
+        }, ResultMapMetaData.class);
+        MetaDataRegistrar.getInstance().registerMetaData(new ElementFilter() {
+            public boolean isAcceptable(Object element, PsiElement context) {
+                if (element instanceof XmlTag) {
+                    final XmlTag tag = (XmlTag) element;
+                    final DomElement domElement = DomManager.getDomManager(tag.getProject()).getDomElement(tag);
+                    if (!(domElement instanceof Sql)) return false;
+                    Sql sql = (Sql) domElement;
+                    if (sql.getId().getStringValue() != null)
+                        return true;
+                }
+                return false;
+            }
+
+            public boolean isClassAcceptable(Class hintClass) {
+                return XmlTag.class.isAssignableFrom(hintClass);
+            }
+        }, SqlMetaData.class);
     }
 
     public void disposeComponent() {
@@ -201,33 +244,5 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         return template;
     }
 
-    /**
-     * statement meta data
-     */
-    public static class StatementMetaData extends DomMetaData<BaseStatement> {
-        /**
-         * get name element
-         *
-         * @param element element
-         * @return dom value
-         */
-        @Nullable
-        protected GenericDomValue getNameElement(final BaseStatement element) {
-            final GenericAttributeValue<String> id = element.getId();
-            if (id.getXmlElement() != null) {
-                return id;
-            }
-            return null;
-        }
-
-        /**
-         * get display name for usage find
-         *
-         * @return
-         */
-        public String getTypeName() {
-            return getElement().getXmlElementName() + " Id: ";
-        }
-    }
 
 }
