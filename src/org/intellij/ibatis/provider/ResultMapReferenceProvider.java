@@ -2,8 +2,9 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.*;
+import com.intellij.util.IncorrectOperationException;
 import org.intellij.ibatis.IbatisManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,7 @@ public class ResultMapReferenceProvider extends BaseReferenceProvider {
                 Set<String> resultMapList = IbatisManager.getInstance().getAllResultMap2(getElement()).keySet();
                 return resultMapList.toArray();
             }
+
         };
         return new PsiReference[]{psiReference};
     }
