@@ -4,9 +4,7 @@ import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.*;
-import com.intellij.util.IncorrectOperationException;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.xml.*;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.sqlMap.Select;
@@ -53,21 +51,6 @@ public class SelectConverter extends Converter<Select> implements CustomReferenc
                 Map<String, Select> allResultMap = IbatisManager.getInstance().getAllSelect(getElement());
                 Select select = allResultMap.get(resultMapId);
                 return select == null ? null : select.getXmlTag();
-            }
-
-            /**
-             * handler rename rename
-             * @param newElementName     new element name
-             * @return empty element
-             * @throws com.intellij.util.IncorrectOperationException    exception
-             */
-            @Override public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-                XmlTag tag = PsiTreeUtil.getParentOfType(getElement(), XmlTag.class);
-                if (tag != null) {
-                    XmlAttribute attribute = (XmlAttribute) getElement().getParent();
-                    tag.setAttribute(attribute.getName(), newElementName);
-                }
-                return null;
             }
         }};
     }
