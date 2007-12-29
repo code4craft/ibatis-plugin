@@ -3,8 +3,14 @@
     <name>iBATIS Plugin</name>
     <description><![CDATA[
     <html>
-        The plugin for IntelliJ IDEA to accelerate iBATIS development.
-        Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
+       The plugin for IntelliJ IDEA to accelerate iBATIS development with following features:
+        <ul>
+           <li>Code completion and navigation</li>
+           <li>Find usage and rename refactor</li>
+           <li>Inspection</li>
+           <li>Other features</li>
+        </ul>
+        Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for user guide.
     </html>
     ]]></description>
     <version>0.8</version>
