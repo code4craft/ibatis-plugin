@@ -7,7 +7,7 @@
         Please visit <a href="http://code.google.com/p/ibatis-plugin">http://code.google.com/p/ibatis-plugin</a> for detail.
     </html>
     ]]></description>
-    <version>0.6.3</version>
+    <version>0.8</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -19,6 +19,11 @@
     <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
+             <ul>  Change List in 0.8
+                  <li>Find usages and rename refactor for statement id, resultMap, sql and cacheModel</li>
+                  <li>Reference provider changed a lot</li>
+                  <li>New year arrived with 0.8 version :) </li>
+             </ul>
              <ul>  Change List in 0.6.3
                   <li>iBATIS config and SQL Map file structure view implemented</li>
                   <li>Minor bug fixed</li>
