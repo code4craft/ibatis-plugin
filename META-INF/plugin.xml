@@ -8,6 +8,8 @@
            <li>Code completion and navigation</li>
            <li>Find usage and rename refactor</li>
            <li>Inspection</li>
+           <li>Code generation</li>
+           <li>Database integration</li>
            <li>Other features</li>
         </ul>
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
