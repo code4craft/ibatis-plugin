@@ -46,18 +46,8 @@ public class SqlMapStructureViewTreeElement extends DomStructureTreeElement {
             return IbatisConstants.IBATIS_LOGO;
         } else if (element instanceof TypeAlias) {
             return IbatisConstants.TYPE_ALIAS;
-        } else if (element instanceof Select) {
-            return IbatisConstants.SQLMAP_SELECT;
-        } else if (element instanceof Delete) {
-            return IbatisConstants.SQLMAP_DELETE;
-        } else if (element instanceof Update) {
-            return IbatisConstants.SQLMAP_UPDATE;
-        } else if (element instanceof Statement) {
-            return IbatisConstants.SQLMAP_STATEMENT;
-        } else if (element instanceof Procedure) {
-            return IbatisConstants.SQLMAP_PROCEDURE;
-        } else if (element instanceof Insert) {
-            return IbatisConstants.SQLMAP_INSERT;
+        } else if (element instanceof BaseStatement) {
+            return ((BaseStatement) element).getIcon(0);
         } else if (element instanceof ParameterMap) {
             return IconLoader.findIcon("/nodes/parameter.png");
         } else if (element instanceof ResultMap) {
