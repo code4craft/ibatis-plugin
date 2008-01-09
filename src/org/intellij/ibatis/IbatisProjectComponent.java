@@ -18,53 +18,57 @@ import org.jetbrains.annotations.NotNull;
  * @author Jacky
  */
 public class IbatisProjectComponent implements ProjectComponent {
-    private IbatisConfigurationModelFactory configurationModelFactory;
-    private IbatisSqlMapModelFactory sqlMapModelFactory;
+  private IbatisConfigurationModelFactory configurationModelFactory;
+  private IbatisSqlMapModelFactory sqlMapModelFactory;
 
-    public IbatisProjectComponent(DomManager domManager) {
-        configurationModelFactory = new IbatisConfigurationModelFactory(domManager);
-        sqlMapModelFactory = new IbatisSqlMapModelFactory(domManager);
-    }
+  public IbatisProjectComponent(DomManager domManager) {
+    configurationModelFactory = new IbatisConfigurationModelFactory(domManager);
+    sqlMapModelFactory = new IbatisSqlMapModelFactory(domManager);
+  }
 
-    public static IbatisProjectComponent getInstance(Project project) {
-        return project.getComponent(IbatisProjectComponent.class);
-    }
+  public static IbatisProjectComponent getInstance(Project project) {
+    return project.getComponent(IbatisProjectComponent.class);
+  }
 
-    public void initComponent() {
-    }
+  public void initComponent() {
+  }
 
-    public void disposeComponent() {
-    }
+  public void disposeComponent() {
+  }
 
-    @NotNull public String getComponentName() {
-        return "iBATIS Project Component";
-    }
+  @NotNull
+  public String getComponentName() {
+    return "iBATIS Project Component";
+  }
 
-    public void projectOpened() {
-        registerIntentionActions();
-    }
+  public void projectOpened() {
+    registerIntentionActions();
+  }
 
-    public void projectClosed() {
-    }
+  public void projectClosed() {
+  }
 
-    public IbatisConfigurationModelFactory getConfigurationModelFactory() {
-        return configurationModelFactory;
-    }
+  public IbatisConfigurationModelFactory getConfigurationModelFactory() {
+    return configurationModelFactory;
+  }
 
-    public IbatisSqlMapModelFactory getSqlMapModelFactory() {
-        return sqlMapModelFactory;
-    }
+  public IbatisSqlMapModelFactory getSqlMapModelFactory() {
+    return sqlMapModelFactory;
+  }
 
-    /**
-     * register intention actions for project
-     */
-    private void registerIntentionActions() {
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateResultsForResultMapAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForSelectAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForInsertAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForUpdateAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForDeleteAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateSQLForCrudAction(), "iBATIS");
-        IntentionManager.getInstance().registerIntentionAndMetaData(new GenerateStatementXmlCodeAction(), "iBATIS");
-    }
+  /**
+   * register intention actions for project
+   */
+  private void registerIntentionActions() {
+    IntentionManager manager = IntentionManager.getInstance();
+
+    manager.registerIntentionAndMetaData(new GenerateResultsForResultMapAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateParametersForParameterMapAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateSQLForSelectAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateSQLForInsertAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateSQLForUpdateAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateSQLForDeleteAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateSQLForCrudAction(), "iBATIS");
+    manager.registerIntentionAndMetaData(new GenerateStatementXmlCodeAction(), "iBATIS");
+  }
 }
