@@ -69,7 +69,7 @@ public class GenerateParametersForParameterMapAction extends PsiIntentionBase {
                   } else {
                     builder.append(" column=\"").append(propertyName).append("\"");
                   }*/
-                  if (psiType.equals(PsiType.BOOLEAN)) {
+                  if (PsiType.BOOLEAN.equals(psiType)) {
                     builder.append(" nullValue=\"false\"");
                   } else if (psiType instanceof PsiPrimitiveType) {
                     builder.append(" nullValue=\"0\"");
