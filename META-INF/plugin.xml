@@ -15,7 +15,7 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.8</version>
+    <version>0.8.1</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -27,6 +27,11 @@
     <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
+             <ul>  Change List in 0.8.1
+                  <li>Parameter auto generation implemented </li>
+                  <li>Inspection for select without result class or map</li>
+                  <li>Minor bugs fixed </li>
+             </ul>
              <ul>  Change List in 0.8
                   <li>Find usages and rename refactor for statement id, resultMap, sql and cacheModel</li>
                   <li>Reference provider changed a lot</li>
