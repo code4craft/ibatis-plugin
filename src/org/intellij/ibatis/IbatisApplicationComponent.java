@@ -1,7 +1,9 @@
 package org.intellij.ibatis;
 
 import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.impl.*;
+import com.intellij.codeInsight.template.impl.TemplateContext;
+import com.intellij.codeInsight.template.impl.TemplateImpl;
+import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.ide.IconProvider;
@@ -15,16 +17,24 @@ import com.intellij.psi.meta.MetaDataRegistrar;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
-import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.dom.sqlMap.BaseStatement;
+import org.intellij.ibatis.dom.sqlMap.CacheModel;
+import org.intellij.ibatis.dom.sqlMap.ResultMap;
+import org.intellij.ibatis.dom.sqlMap.Sql;
 import org.intellij.ibatis.facet.IbatisFacetType;
 import org.intellij.ibatis.inspections.*;
-import org.intellij.ibatis.usages.*;
+import org.intellij.ibatis.usages.CacheModelMetaData;
+import org.intellij.ibatis.usages.ResultMapMetaData;
+import org.intellij.ibatis.usages.SqlMetaData;
+import org.intellij.ibatis.usages.StatementMetaData;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.InputStream;
@@ -37,15 +47,33 @@ import java.io.InputStream;
 public class IbatisApplicationComponent implements ApplicationComponent, InspectionToolProvider, IconProvider {
 
     //live template related
-    private static final @NonNls String NAME = "name";
-    private static final @NonNls String VALUE = "value";
-    private static final @NonNls String DESCRIPTION = "description";
-    private static final @NonNls String TO_REFORMAT = "toReformat";
-    private static final @NonNls String TO_SHORTEN_FQ_NAMES = "toShortenFQNames";
-    private static final @NonNls String VARIABLE = "variable";
-    private static final @NonNls String EXPRESSION = "expression";
-    private static final @NonNls String DEFAULT_VALUE = "defaultValue";
-    private static final @NonNls String ALWAYS_STOP_AT = "alwaysStopAt";
+    private static final
+    @NonNls
+    String NAME = "name";
+    private static final
+    @NonNls
+    String VALUE = "value";
+    private static final
+    @NonNls
+    String DESCRIPTION = "description";
+    private static final
+    @NonNls
+    String TO_REFORMAT = "toReformat";
+    private static final
+    @NonNls
+    String TO_SHORTEN_FQ_NAMES = "toShortenFQNames";
+    private static final
+    @NonNls
+    String VARIABLE = "variable";
+    private static final
+    @NonNls
+    String EXPRESSION = "expression";
+    private static final
+    @NonNls
+    String DEFAULT_VALUE = "defaultValue";
+    private static final
+    @NonNls
+    String ALWAYS_STOP_AT = "alwaysStopAt";
     private static final String CONTEXT = "context";
     private static final String IBATIS_LIVE_TEMPLATE_NAME = "ibatis";
     private static final String TEMPLATES_FILE = "/org/intellij/ibatis/livetemplates/ibatis.xml";
@@ -139,7 +167,8 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     public void disposeComponent() {
     }
 
-    @NotNull public String getComponentName() {
+    @NotNull
+    public String getComponentName() {
         return IbatisBundle.message("ibatis.application.component.name");
     }
 
@@ -165,7 +194,8 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @param i          i
      * @return icon for special psiFile
      */
-    @Nullable public Icon getIcon(@NotNull PsiElement psiElement, int i) {
+    @Nullable
+    public Icon getIcon(@NotNull PsiElement psiElement, int i) {
         return null;
     }
 
@@ -177,7 +207,8 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     public Class[] getInspectionClasses() {
         return new Class[]{SqlMapFileInConfigurationInspection.class,
                 NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class,
-                SymbolInSQLInspection.class, ParameterMapInStatementInspection.class};
+                SymbolInSQLInspection.class, ParameterMapInStatementInspection.class,
+                SelectResultClassAbsentInspection.class};
     }
 
     /**
@@ -234,7 +265,8 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * @param templateName Template name
      * @return Template from element
      */
-    @NotNull protected Template readExternal(@NotNull final Element element, final String templateName) {
+    @NotNull
+    protected Template readExternal(@NotNull final Element element, final String templateName) {
         final String name = element.getAttributeValue(NAME);
         final String value = element.getAttributeValue(VALUE);
         final TemplateImpl template = new TemplateImpl(name, value, templateName);
