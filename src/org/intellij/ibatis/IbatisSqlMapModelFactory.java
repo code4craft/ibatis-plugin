@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.DomModelFactory;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.impl.IbatisSqlMapModelImpl;
@@ -44,10 +45,10 @@ public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlM
             }
         }
         return models;
-    }
+    }                           
 
-    protected IbatisSqlMapModel createCombinedModel(Set<XmlFile> xmlFiles, SqlMap sqlMap, IbatisSqlMapModel ibatisSqlMapModel, Module module) {
-        return new IbatisSqlMapModelImpl(sqlMap, xmlFiles);
+    protected IbatisSqlMapModel createCombinedModel(Set<XmlFile> xmlFiles, DomFileElement<SqlMap> sqlMapDomFileElement, IbatisSqlMapModel ibatisSqlMapModel, Module module) {
+       return new IbatisSqlMapModelImpl(sqlMapDomFileElement.getRootElement(), xmlFiles);
     }
 
 }

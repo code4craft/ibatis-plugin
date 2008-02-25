@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * iBATIS configuration model factory
  *
- * @author Jacky
+ * @author Jacky                                      
  */
 public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfig, IbatisConfigurationModel, PsiElement> {
     private  Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
@@ -70,7 +70,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         return CONFIGURATION_FILES;
     }
 
-    protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> xmlFiles, SqlMapConfig sqlMapConfig, IbatisConfigurationModel ibatisConfigurationModel, Module module) {
-       return new IbatisConfigurationModelImpl(sqlMapConfig, xmlFiles);
+    protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> xmlFiles, DomFileElement<SqlMapConfig> sqlMapConfigDomFileElement, IbatisConfigurationModel ibatisConfigurationModel, Module module) {
+       return new IbatisConfigurationModelImpl(sqlMapConfigDomFileElement.getRootElement(), xmlFiles);
     }
 }
