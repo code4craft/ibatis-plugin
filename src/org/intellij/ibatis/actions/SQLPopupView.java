@@ -2,7 +2,9 @@ package org.intellij.ibatis.actions;
 
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiType;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -17,7 +19,8 @@ public class SQLPopupView {
     private JTextPane textPane;
     public JPanel mainPanel;
     public JTable paramsTable;
-    private String sqlCode;
+    private String rawSqlCode;
+    private Map<String, String> inlineParameters = new HashMap<String, String>();
     private PsiClass parameterClass;
 
     /**
@@ -25,19 +28,19 @@ public class SQLPopupView {
      *
      * @param parameterClass parameter class
      * @param parameters     parameter list
-     * @param sqlCode        SQL code
+     * @param rawSqlCode     SQL code
      */
-    public SQLPopupView(PsiClass parameterClass, Set<String> parameters, String sqlCode) {
-        this.sqlCode = sqlCode;
+    public SQLPopupView(PsiClass parameterClass, Set<String> parameters, String rawSqlCode) {
+        this.rawSqlCode = rawSqlCode;
         this.parameterClass = parameterClass;
         try {
             ParametersTableModel tableModel = new ParametersTableModel();
             for (String parameter : parameters) {
                 tableModel.add(parameter, "string", "");
-                updateParameterValue(parameter,"");
+                updateParameterValue(parameter, "");
             }
             paramsTable.setModel(tableModel);
-            textPane.setText(sqlCode);
+            textPane.setText(rawSqlCode);
             textPane.setBackground(HintUtil.INFORMATION_COLOR);
         }
         catch (Exception e) {
@@ -59,8 +62,21 @@ public class SQLPopupView {
                 value = "\"" + value + "\"";
             }
         }
-        sqlCode = sqlCode.replaceAll("#" + name + "([^#]*)#", value);
-        textPane.setText(sqlCode);
+        inlineParameters.put(name, value);
+        textPane.setText(getClearSQLCode());
+    }
+
+    /**
+     * get clear SQL Code
+     *
+     * @return clear SQL Code
+     */
+    private String getClearSQLCode() {
+        String clearSQLCode = rawSqlCode;
+        for (Map.Entry<String, String> entry : inlineParameters.entrySet()) {
+            clearSQLCode = clearSQLCode.replaceAll("#" + entry.getKey() + "([^#]*)#", entry.getValue());
+        }
+        return clearSQLCode;
     }
 
     /**
