@@ -24,6 +24,14 @@ public class SQLPopupView {
     private PsiClass parameterClass;
 
     /**
+     * default construction
+     */
+    public SQLPopupView() {
+        paramsTable.setAutoscrolls(true);
+        textPane.setAutoscrolls(true);
+    }
+
+    /**
      * construct parameter table and SQL panel
      *
      * @param parameterClass parameter class
