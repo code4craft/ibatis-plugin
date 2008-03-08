@@ -15,7 +15,7 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.8.1</version>
+    <version>0.8.2</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -27,6 +27,11 @@
     <depends>com.intellij.javaee</depends>
     <change-notes>
         <![CDATA[
+            <ul>  Change List in 0.8.2
+                  <li>Generate Select sentence for resultMap implemented </li>
+                  <li>Bug fix for SQL code preview</li>
+                  <li>User guide updated</li>
+             </ul>
              <ul>  Change List in 0.8.1
                   <li>Parameter auto generation implemented </li>
                   <li>Inspection for select without result class or map</li>
@@ -121,6 +126,10 @@
         </action>
         <action id="SQLPreviewAction" class="org.intellij.ibatis.actions.SQLPreviewAction" text="SQL Code Preview"  icon="/icons/logo.png"
                 description="SQL Code Preview">
+              <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
+        </action>
+        <action id="GenerateSQLForResultMapAction" class="org.intellij.ibatis.actions.GenerateSQLForResultMapAction" text="Select SQL for resultMap"  icon="/icons/logo.png"
+                description="Generate Select SQL for resultMap ">
               <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
         </action>
     </actions>
