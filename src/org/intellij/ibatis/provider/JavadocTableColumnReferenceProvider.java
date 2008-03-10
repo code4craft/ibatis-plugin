@@ -63,10 +63,11 @@ public class JavadocTableColumnReferenceProvider extends BaseReferenceProvider {
                     DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(psiClass);
                     if (tableData != null) {
                         for (DatabaseTableFieldData field : tableData.getFields()) {
+                            String fieldName = field.getName().toLowerCase();
                             if (field.isPrimary()) {       //pk
-                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_PK_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
+                                variants.add(LookupValueFactory.createLookupValueWithHint(fieldName, IbatisConstants.DATABASE_PK_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
                             } else {   //common column
-                                variants.add(LookupValueFactory.createLookupValueWithHint(field.getName(), IbatisConstants.DATABASE_COMMON_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
+                                variants.add(LookupValueFactory.createLookupValueWithHint(fieldName, IbatisConstants.DATABASE_COMMON_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
                             }
                         }
                     }
