@@ -4,7 +4,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlText;
 import com.intellij.util.xml.DomManager;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -40,7 +42,9 @@ public class IbatisUtil {
      * @param xmlTag xml tag
      * @return SQL in xml tag
      */
-    @SuppressWarnings({"ConstantConditions"}) @NotNull public static String getSQLForXmlTag(XmlTag xmlTag) {
+    @SuppressWarnings({"ConstantConditions"})
+    @NotNull
+    public static String getSQLForXmlTag(XmlTag xmlTag) {
         StringBuilder sql = new StringBuilder();
         PsiElement[] children = xmlTag.getChildren();
         for (PsiElement child : children) {
@@ -87,7 +91,8 @@ public class IbatisUtil {
      * @param elements element list
      * @return iBATIS configuration
      */
-    @Nullable public static IbatisFacetConfiguration getConfig(PsiElement... elements) {
+    @Nullable
+    public static IbatisFacetConfiguration getConfig(PsiElement... elements) {
         if (null == elements || elements.length == 0) {
             return null;
         }
@@ -130,5 +135,45 @@ public class IbatisUtil {
         VelocityEngine engine = new VelocityEngine();
         engine.init();
         return engine;
+    }
+
+    /**
+     * convert to underscore string, just like personId to person_id
+     *
+     * @param name string
+     * @return converted string
+     */
+    public static String convertToUnderscore(String name) {
+        StringBuilder builder = new StringBuilder();
+        char[] characters = name.toCharArray();
+        for (int i = 0; i < characters.length; i++) {
+            char character = characters[i];
+            String temp = String.valueOf(character).toLowerCase();
+            if (character >= 'A' && i > 0) {
+                builder.append("_");
+            }
+            builder.append(temp);
+        }
+        return builder.toString();
+    }
+
+    /**
+     * convert to  underscore to capital style
+     *
+     * @param name name
+     * @return converted string
+     */
+    public static String convertToCapital(String name) {
+        StringBuilder builder = new StringBuilder();
+        String[] parts = name.split("_");
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            if (i > 0) {
+                builder.append(StringUtil.capitalize(part));
+            } else {
+                builder.append(StringUtil.decapitalize(part));
+            }
+        }
+        return builder.toString();
     }
 }
