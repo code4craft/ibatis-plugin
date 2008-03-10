@@ -67,7 +67,7 @@ public class SQLPopupView {
         if (methodNames.length > 0l) {
             PsiType returnType = methodNames[0].getReturnType();
             if (returnType != null && "string".equalsIgnoreCase(returnType.getPresentableText())) {
-                value = "\"" + value + "\"";
+                value = "'" + value + "'";
             }
         }
         inlineParameters.put(name, value);
