@@ -12,6 +12,7 @@ import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import org.intellij.ibatis.dom.sqlMap.ResultMap;
 import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.provider.TableColumnReferenceProvider;
+import org.intellij.ibatis.util.IbatisUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -78,7 +79,7 @@ public class GenerateResultsForResultMapAction extends PsiIntentionBase {
                                         String propertyName = StringUtil.decapitalize(psiMethod.getName().replace("set", ""));
                                         StringBuilder builder = new StringBuilder();
                                         builder.append("<result property=\"").append(propertyName).append("\"");
-                                        builder.append(" column=\"").append(propertyName).append("\"");
+                                        builder.append(" column=\"").append(IbatisUtil.convertToUnderscore(propertyName)).append("\"");
                                         if (psiType.equals(PsiType.BOOLEAN)) {
                                             builder.append(" nullValue=\"false\"");
                                         } else if (psiType instanceof PsiPrimitiveType) {
