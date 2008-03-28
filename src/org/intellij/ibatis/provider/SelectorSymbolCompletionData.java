@@ -1,7 +1,12 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.javaee.dataSource.*;
+import com.intellij.codeInsight.completion.CompletionContext;
+import com.intellij.codeInsight.completion.CompletionData;
+import com.intellij.codeInsight.completion.CompletionVariant;
+import com.intellij.codeInsight.completion.XmlCompletionData;
+import com.intellij.javaee.dataSource.DataSource;
+import com.intellij.javaee.dataSource.DatabaseTableData;
+import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.filters.TrueFilter;
@@ -133,7 +138,11 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             String pattern = "\\b\\w+\\s+(as\\s+)?" + tableAlias + "(,)?\\s+";
             List<String> items = IbatisUtil.grep(sql + " ", pattern); //to make \W work in anywhere
             if (items.size() > 0) {  //find table alias
-                return items.get(0).split("\\s+")[0];
+                for (String item : items) {
+                    if (!item.contains("select ") && !item.contains("delete ") && !item.contains("update ")) {
+                        return item.trim().split("\\s+")[0];
+                    }
+                }
             } else //set table alias as name
             {
                 return tableAlias;
