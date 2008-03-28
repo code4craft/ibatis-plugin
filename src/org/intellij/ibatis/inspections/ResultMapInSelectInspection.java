@@ -1,9 +1,6 @@
 package org.intellij.ibatis.inspections;
 
-import Zql.ZQuery;
-import Zql.ZSelectItem;
-import Zql.ZStatement;
-import Zql.ZqlParser;
+import Zql.*;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import org.intellij.ibatis.IbatisSqlMapModel;
@@ -68,8 +65,8 @@ public class ResultMapInSelectInspection extends SqlMapInspection {
                             }
                         }
                     }
-                } catch (Throwable e) {
-                     
+                } catch (ParseException e) {
+                         e.printStackTrace();
                 }
             }
         }
