@@ -128,6 +128,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             PsiClass referencedClass = psiClass;
             String referencePath = getCanonicalText().replace("IntellijIdeaRulezzz ", "");
             String methodName = "get" + StringUtil.capitalize(referencePath);
+              if(methodName.contains("Vip")) {
+                  System.out.println("vip");
+              }
             if (referencePath.contains(".")) {
               String fieldName = referencePath.substring(0, referencePath.lastIndexOf('.'));
               methodName = "get" + StringUtil.capitalize(referencePath.substring(referencePath.lastIndexOf('.') + 1));
@@ -135,6 +138,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             }
             if (referencedClass != null) {
               PsiMethod[] methods = referencedClass.findMethodsByName(methodName, true);
+                if(methods.length ==0) {
+                   methods=  referencedClass.findMethodsByName("is"+methodName.substring(3), true);
+                }
               if (methods.length > 0) return methods[0];
             }
             return null;
@@ -199,6 +205,9 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
   @Nullable
   public static PsiClass findGetterMethodReturnType(PsiClass psiClass, String methodName) {
     PsiMethod[] methods = psiClass.findMethodsByName(methodName, true);
+      if(methods.length == 0) {
+          methods = psiClass.findMethodsByName("is"+methodName.substring(3), true);
+      }
     //getter method find for current
     if (methods.length > 0) {
       PsiMethod psiGetterMethod = methods[0];
