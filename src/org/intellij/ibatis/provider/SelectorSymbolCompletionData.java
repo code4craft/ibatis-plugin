@@ -130,7 +130,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
     public String getTableName(XmlTag xmlTag, String tableAlias) {
         String sql = IbatisUtil.getSQLForXmlTag(xmlTag).trim().toLowerCase();
         if (StringUtil.isNotEmpty(tableAlias)) {
-            String pattern = "\\b\\w+\\s+(as\\s+)?" + tableAlias + "(,)?\\b";
+            String pattern = "\\b\\w+\\s+(as\\s+)?" + tableAlias + "(,)?\\s+";
             List<String> items = IbatisUtil.grep(sql + " ", pattern); //to make \W work in anywhere
             if (items.size() > 0) {  //find table alias
                 return items.get(0).split("\\s+")[0];
