@@ -38,7 +38,7 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param sqlMapModel sqlMapModel
      * @param sqlMap      current sqlMap
      * @param insert      current select
-     * @param holder      domelement annotation holder
+     * @param holder      dom element annotation holder
      */
     protected void checkInsert(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Insert insert, DomElementAnnotationHolder holder) {
         List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(insert.getXmlTag());
