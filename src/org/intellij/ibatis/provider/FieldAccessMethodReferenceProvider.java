@@ -128,9 +128,6 @@ public class FieldAccessMethodReferenceProvider extends BaseReferenceProvider {
             PsiClass referencedClass = psiClass;
             String referencePath = getCanonicalText().replace("IntellijIdeaRulezzz ", "");
             String methodName = "get" + StringUtil.capitalize(referencePath);
-              if(methodName.contains("Vip")) {
-                  System.out.println("vip");
-              }
             if (referencePath.contains(".")) {
               String fieldName = referencePath.substring(0, referencePath.lastIndexOf('.'));
               methodName = "get" + StringUtil.capitalize(referencePath.substring(referencePath.lastIndexOf('.') + 1));
