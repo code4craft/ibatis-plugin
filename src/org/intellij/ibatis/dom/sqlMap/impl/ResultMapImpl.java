@@ -12,6 +12,7 @@ import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * resultMap element implementation
@@ -24,7 +25,8 @@ public abstract class ResultMapImpl extends BaseImpl implements ResultMap {
      * @return Result List
      */
     @NotNull public List<Result> getAllResults() {
-        List<Result> results = getResults();
+        List<Result> results = new ArrayList<Result>();
+        results.addAll(getResults());
         ResultMap extendedMap = getExtends().getValue();
         if (extendedMap != null) {
             results.addAll(extendedMap.getAllResults());
