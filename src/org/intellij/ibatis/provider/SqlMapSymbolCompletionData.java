@@ -31,7 +31,6 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
     public static String OPEN_TAG = "#";
     public static String CLOSE_TAG = "#";
     private static List<String> sentenceNames = new ArrayList<String>();
-    private CompletionData systemCompletionData;
     private XmlCompletionData parentCompletionData;
 
     static {
@@ -55,10 +54,11 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
             return super.findPrefix(psiElement, offsetInFile);
     }
 
-    public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
-        XmlTag tag = getXmlTagForSQLCompletion(psiElement, completionContext.file);
+    @Override
+    public CompletionVariant[] findVariants(PsiElement psiElement, PsiFile psiFile) {
+        XmlTag tag = getXmlTagForSQLCompletion(psiElement, psiFile);
         if (tag != null) {    //
-            String prefix = completionContext.getPrefix();
+            String prefix = findPrefix(psiElement, psiElement.getTextOffset());
             String prefix2 = prefix.substring(0, prefix.indexOf("#") + 1);
             if (prefix.contains("#")) {  //# is necessary
                 LeftNeighbour left = new LeftNeighbour(new TextFilter(OPEN_TAG));
@@ -101,8 +101,8 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
                 return new CompletionVariant[]{variant};
             }
         }
-        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
-        return super.findVariants(psiElement, completionContext);
+        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, psiFile);
+        return super.findVariants(psiElement, psiFile);
     }
 
     /**

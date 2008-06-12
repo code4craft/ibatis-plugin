@@ -9,6 +9,7 @@ import com.intellij.javaee.dataSource.DatabaseTableData;
 import com.intellij.javaee.dataSource.DatabaseTableFieldData;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,12 +37,12 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             return super.findPrefix(psiElement, offsetInFile);
     }
 
-    public CompletionVariant[] findVariants(PsiElement psiElement, CompletionContext completionContext) {
-        XmlTag tag = SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, completionContext.file);
-        if (tag != null && !completionContext.getPrefix().contains("#")) {   //not symbol
+    public CompletionVariant[] findVariants(PsiElement psiElement, PsiFile psiFile) {
+        XmlTag tag = SqlMapSymbolCompletionData.getXmlTagForSQLCompletion(psiElement, psiFile);
+        if (tag != null && findPrefix(psiElement,psiElement.getTextOffset()).contains("#")) {   //not symbol
             LeftNeighbour left = new LeftNeighbour(TrueFilter.INSTANCE);
             CompletionVariant variant = new CompletionVariant(left);
-            String prefix = completionContext.getPrefix();
+            String prefix = findPrefix(psiElement, psiElement.getTextOffset());
             String previousText = getPreviousText(psiElement);
             //table name completion
             if (previousText != null && !prefix.contains("(") && (previousText.equalsIgnoreCase("from") || previousText.equalsIgnoreCase("join")
@@ -71,8 +72,8 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
             variant.setInsertHandler(new SqlMapSymbolnsertHandler());
             return new CompletionVariant[]{variant};
         }
-        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, completionContext);
-        return super.findVariants(psiElement, completionContext);
+        if (parentCompletionData != null) return parentCompletionData.findVariants(psiElement, psiFile);
+        return super.findVariants(psiElement, psiFile);
     }
 
     @Nullable
