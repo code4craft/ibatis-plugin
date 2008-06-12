@@ -32,7 +32,7 @@ public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
             }
 
             public TextRange getRangeInElement() {
-                int offset = PsiManager.getInstance(project).getElementManipulatorsRegistry().getOffsetInElement(docTag);
+                int offset = ElementManipulators.getOffsetInElement(docTag);
                 return new TextRange(offset, docTag.getTextLength());
             }
 
