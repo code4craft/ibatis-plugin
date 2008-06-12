@@ -73,8 +73,8 @@ public class ParameterJdbcTypeReferenceProvider extends BaseReferenceProvider {
             @Nullable private PsiField[] getJdbcTypePsiFields(PsiElement psiElement) {
                 if (jdbcTypes == null) {
                     Project project = psiElement.getProject();
-                    PsiManager psiManager = PsiManager.getInstance(project);
-                    PsiClass psiClass = psiManager.findClass("java.sql.Types", JdkScope.allScope(project));
+                    JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
+                    PsiClass psiClass = javaPsiFacade.findClass("java.sql.Types", JdkScope.allScope(project));
                     if (psiClass != null) {
                         jdbcTypes = psiClass.getAllFields();
                         return jdbcTypes;
@@ -88,8 +88,8 @@ public class ParameterJdbcTypeReferenceProvider extends BaseReferenceProvider {
             @Nullable private PsiField getOracleCursorPsiFields(PsiElement psiElement) {
                 if (oracleType == null) {
                     Project project = psiElement.getProject();
-                    PsiManager psiManager = PsiManager.getInstance(project);
-                    PsiClass psiClass = psiManager.findClass("oracle.jdbc.OracleTypes", GlobalSearchScope.allScope(project));
+                    JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
+                    PsiClass psiClass = javaPsiFacade.findClass("oracle.jdbc.OracleTypes", GlobalSearchScope.allScope(project));
                     if (psiClass != null) {
                         PsiField[] fields = psiClass.getAllFields();
                         for (PsiField psiField : fields) {
@@ -108,8 +108,8 @@ public class ParameterJdbcTypeReferenceProvider extends BaseReferenceProvider {
             @Nullable private PsiField getIbatisPsiFields(PsiElement psiElement) {
                 if (ibatisType == null) {
                     Project project = psiElement.getProject();
-                    PsiManager psiManager = PsiManager.getInstance(project);
-                    PsiClass psiClass = psiManager.findClass("com.ibatis.sqlmap.engine.type.JdbcTypeRegistry", GlobalSearchScope.allScope(project));
+                    JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
+                    PsiClass psiClass = javaPsiFacade.findClass("com.ibatis.sqlmap.engine.type.JdbcTypeRegistry", GlobalSearchScope.allScope(project));
                     if (psiClass != null) {
                         PsiField[] psiFields = psiClass.getAllFields();
                         for (PsiField psiField : psiFields) {
