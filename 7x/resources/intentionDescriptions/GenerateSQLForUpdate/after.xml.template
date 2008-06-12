@@ -1,4 +1,0 @@
-<update id="update" parameterClass="Person">
-    update Person set name = #name#
-	where id = #id#
-</update>

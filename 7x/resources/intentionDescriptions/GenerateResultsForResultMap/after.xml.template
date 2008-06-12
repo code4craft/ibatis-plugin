@@ -1,4 +1,0 @@
-<resultMap name="personResultMap" class="com.foobar.Person">
-   <result property="id" column=""/>
-   <result property="name" column=""/>
-</resultMap>

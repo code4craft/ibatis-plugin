@@ -1,3 +1,0 @@
-<select id="findUserById" resultMap="personResultMap" parameterClass="int">
-    select id, name from persons
-</select>

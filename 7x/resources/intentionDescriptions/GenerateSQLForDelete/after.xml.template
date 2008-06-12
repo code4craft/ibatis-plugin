@@ -1,3 +1,0 @@
-<delete id="delete" parameterClass="Person">
-    delete from Person where ID = #id#
-</delete>
