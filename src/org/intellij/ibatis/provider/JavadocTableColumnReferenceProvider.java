@@ -2,10 +2,7 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -32,7 +29,7 @@ public class JavadocTableColumnReferenceProvider extends BaseReferenceProvider {
             }
 
             public TextRange getRangeInElement() {
-                int offset = PsiManager.getInstance(project).getElementManipulatorsRegistry().getOffsetInElement(docTag);
+                int offset = ElementManipulators.getOffsetInElement(docTag);
                 return new TextRange(offset, docTag.getTextLength());
             }
 
