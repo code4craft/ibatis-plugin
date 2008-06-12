@@ -7,6 +7,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassRe
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ProcessingContext;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
@@ -54,8 +55,9 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         return manager.getAllTypeAlias(psiElement);
     }
 
-    @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement) {
-        PsiReference[] references = myProvider.getReferencesByElement(psiElement);
+    @NotNull
+    public PsiReference[] getReferencesByElement(PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        PsiReference[] references = myProvider.getReferencesByElement(psiElement, processingContext);
         if (references.length < 1) return references;
         return new PsiReference[]{new WrappedPsiReference(references[references.length - 1]) {
             public PsiElement resolve() {
@@ -77,7 +79,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
                         variants.add(LookupValueFactory.createLookupValue(shortcut, IbatisConstants.INTERNAL_CLASS));
                     }
                     for (String typeAlias : typeAliasList) {
-                          variants.add(LookupValueFactory.createLookupValue(typeAlias, IbatisConstants.TYPE_ALIAS));
+                        variants.add(LookupValueFactory.createLookupValue(typeAlias, IbatisConstants.TYPE_ALIAS));
                     }
                     //filter some unnecessary package name in root path
                     for (Object className : classNames) {
@@ -113,10 +115,10 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
      */
     public static PsiElement getPsiElement(PsiElement psiElement, String className) {
         Project project = psiElement.getProject();
-        PsiManager psiManager = PsiManager.getInstance(project);
+        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
         //short cut
         if (classShortcuts.containsKey(className)) {
-            return psiManager.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
+            return javaPsiFacade.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
         }
         //type alias
         Map<String, XmlTag> typeAlias2 = IbatisManager.getInstance().getAllTypeAlias2(psiElement);
@@ -129,7 +131,7 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
             return typeAlias.get(className);
         }
 */
-        return psiManager.findClass(className, GlobalSearchScope.allScope(project));
+        return javaPsiFacade.findClass(className, GlobalSearchScope.allScope(project));
     }
 
     /**
@@ -141,17 +143,17 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
      */
     public static PsiClass getPsiClass(PsiElement psiElement, String className) {
         Project project = psiElement.getProject();
-        PsiManager psiManager = PsiManager.getInstance(project);
+        JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
         //short cut
         if (classShortcuts.containsKey(className)) {
-            return psiManager.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
+            return javaPsiFacade.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
         }
         //type alias
         Map<String, PsiClass> typeAlias = getTypeAlias(psiElement);
         if (typeAlias.containsKey(className)) {
             return typeAlias.get(className);
         }
-        return psiManager.findClass(className, GlobalSearchScope.allScope(project));
+        return javaPsiFacade.findClass(className, GlobalSearchScope.allScope(project));
     }
 
     /**
