@@ -2,10 +2,11 @@ package org.intellij.ibatis.provider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProvider;
+import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class WrappedReferenceProvider extends BaseReferenceProvider {
+public class WrappedReferenceProvider extends PsiReferenceProvider {
 
     protected final PsiReferenceProvider myProvider;
 
@@ -13,8 +14,10 @@ public class WrappedReferenceProvider extends BaseReferenceProvider {
         myProvider = provider;
     }
 
-    @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement) {
-        return myProvider.getReferencesByElement(psiElement);
+    @NotNull
+    @Override
+    public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+        return myProvider.getReferencesByElement(psiElement, processingContext);
     }
 
 }
