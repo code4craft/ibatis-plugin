@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE abatorConfiguration PUBLIC "-//Apache Software Foundation//DTD Abator for iBATIS Configuration 1.0//EN"
+        "http://ibatis.apache.org/dtd/abator-config_1_0.dtd">
+
+<abatorConfiguration>
+    <!-- 0 or 1 properties 外部属性值配置 -->
+
+    <properties resource="com/myproject/abatorConfig.properties"/>
+
+    <abatorContext id="Hecla" generatorSet="Java2">
+
+        <!-- 数据库连接配置 -->
+        <jdbcConnection driverClass="${abator.jdbc.class}"
+                        connectionURL="${abator.jdbc.url}"
+                        userId="${abator.jdbc.user}"
+                        password="${abator.jdbc.password}">
+
+            <!-- jdbc driver classpath -->
+            <classPathEntry location="${abator.jdbc.jar}"/>
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <!-- the default value is false -->
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- 生成do的配置 -->
+        <javaModelGenerator targetPackage="${abator.target.package}.dataobject"
+                            targetProject="${abator.target.dir}">
+            <!-- the default value is false -->
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- 生成sqlMap的配置 -->
+        <sqlMapGenerator targetPackage="${abator.target.package}.dao.sqlmap"
+                         targetProject="${abator.target.dir}">
+        </sqlMapGenerator>
+
+        <!-- 生成dao的配置 -->
+        <daoGenerator type="SPRING" targetPackage="${abator.target.package}.dao.daointerface"
+                      targetProject="${abator.target.dir}">
+        </daoGenerator>
+
+        <!-- 数据库表的配置 -->
+        <table tableName="Hec_System_Log" domainObjectName="SystemLogDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <!-- the default value is false -->
+            <property name="useActualColumnNames" value="false"/>
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_system_log_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="operator_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Domain" domainObjectName="DomainDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_domain_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_User" domainObjectName="UserDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_user_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="agentnum" javaType="int"/>
+
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Group" domainObjectName="GroupDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_group_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="parentid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="rank" javaType="int"/>
+            <columnOverride column="sort" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_User_Group" domainObjectName="UserGroupDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <columnOverride column="userid" javaType="int"/>
+            <columnOverride column="groupid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_RGroup" domainObjectName="RGroupDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_rgroup_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="parentid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="rank" javaType="int"/>
+            <columnOverride column="sort" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Role" domainObjectName="RoleDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_role_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="rgroupid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_User_Role" domainObjectName="UserRoleDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <columnOverride column="userid" javaType="int"/>
+            <columnOverride column="roleid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Group_Role" domainObjectName="GroupRoleDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <columnOverride column="groupid" javaType="int"/>
+            <columnOverride column="roleid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_PGroup" domainObjectName="PGroupDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_pgroup_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="parentid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="rank" javaType="int"/>
+            <columnOverride column="sort" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Permission" domainObjectName="PermissionDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_permission_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="pgroupid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="type" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Role_Permission" domainObjectName="RolePermissionDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <columnOverride column="roleid" javaType="int"/>
+            <columnOverride column="permissionid" javaType="int"/>
+            <columnOverride column="type" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Menu" domainObjectName="MenuDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+
+            <generatedKey column="id" sqlStatement="select Seq_hec_menu_id.nextval from dual" identity="false"/>
+            <columnOverride column="id" javaType="int"/>
+
+            <columnOverride column="parentid" javaType="int"/>
+            <columnOverride column="domainid" javaType="int"/>
+            <columnOverride column="rank" javaType="int"/>
+            <columnOverride column="sort" javaType="int"/>
+            <columnOverride column="status" javaType="int"/>
+            <columnOverride column="creator_id" javaType="int"/>
+            <columnOverride column="modifier_id" javaType="int"/>
+        </table>
+
+        <table tableName="Hec_Permission_Menu" domainObjectName="PermissionMenuDO"
+               enableSelectByExample="false" enableDeleteByExample="false">
+            <columnOverride column="permissionid" javaType="int"/>
+            <columnOverride column="menuid" javaType="int"/>
+        </table>
+
+    </abatorContext>
+</abatorConfiguration>

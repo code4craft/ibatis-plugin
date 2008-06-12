@@ -1,0 +1,6 @@
+<insert id="insert" parameterClass="Person">
+    insert into Person
+	(id, name)
+	values
+	(#id#, #name#)
+</insert>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+    <settings useStatementNamespaces="true"/>
+    <typeAlias alias="order" type="testdomain.Order"/>
+    <transactionManager type="DBCP">
+        <dataSource type="DBCP">
+
+        </dataSource>
+    </transactionManager>
+    <sqlMap resource="person-sqlmap.xml"/>
+
+</sqlMapConfig>
