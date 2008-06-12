@@ -51,7 +51,7 @@ abstract class GoToSymbolProvider implements ChooseByNameContributor {
         return result.toArray(new String[result.size()]);
     }
 
-    public NavigationItem[] getItemsByName(final String name, final Project project, boolean includeNonProjectItems) {
+    public NavigationItem[] getItemsByName(String name, String s1, Project project, boolean includeNonProjectItems) {
         List<NavigationItem> result = new ArrayList<NavigationItem>();
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
@@ -61,6 +61,7 @@ abstract class GoToSymbolProvider implements ChooseByNameContributor {
         }
         return result.toArray(new NavigationItem[result.size()]);
     }
+
 
     @Nullable
     protected static NavigationItem createNavigationItem(final DomElement domElement) {
