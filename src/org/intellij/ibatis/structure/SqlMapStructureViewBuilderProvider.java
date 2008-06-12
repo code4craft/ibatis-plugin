@@ -1,8 +1,11 @@
 package org.intellij.ibatis.structure;
 
-import com.intellij.ide.structureView.*;
-import com.intellij.ide.structureView.impl.xml.XmlStructureViewBuilderProvider;
+import com.intellij.ide.structureView.StructureView;
+import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.ide.structureView.StructureViewModel;
+import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
+import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlFile;
