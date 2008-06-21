@@ -58,7 +58,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
                     public void visitXmlFile(XmlFile xmlFile) {
                         final DomFileElement fileElement = DomManager.getDomManager(module.getProject()).getFileElement(xmlFile, DomElement.class);
                         if (fileElement != null && fileElement.getRootElement() instanceof SqlMapConfig) {
-                            if (CONFIGURATION_FILES.containsKey(module.getName())) {   //only one configuration file supported
+                            if (!CONFIGURATION_FILES.containsKey(module.getName())) {   //only one configuration file supported
                                 Set<XmlFile> configurationFileSet = new HashSet<XmlFile>();
                                 configurationFileSet.add(xmlFile);
                                 CONFIGURATION_FILES.put(module.getName(), configurationFileSet);
