@@ -3,6 +3,7 @@ package org.intellij.ibatis;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiReferenceProvider;
@@ -149,8 +150,9 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"typeHandler"}, jdbcTypeReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"javaType"}, classShortcutsReferenceProvider);
         // CompletionData registration
-//        SelectorSymbolCompletionData selectorSymbolCompletionData = new SelectorSymbolCompletionData(new SqlMapSymbolCompletionData(null));
-//        CompletionUtil.registerCompletionData(StdFileTypes.XML, selectorSymbolCompletionData);
+        //todo jacky completion
+//        SqlMapSymbolCompletionData selectorSymbolCompletionData = new SqlMapSymbolCompletionData(null);
+//        CompletionUtil.registerCompletionData(FileTypeManager.getInstance().getFileTypeByExtension("sql"), selectorSymbolCompletionData);
     }
 
     public void disposeComponent() {
