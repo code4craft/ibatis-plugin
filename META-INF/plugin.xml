@@ -20,16 +20,17 @@
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
     </vendor>
-    <!-- 6833 is 7 M1b -->
-    <!-- 7126 is 7 M2  -->
-    <idea-version since-build="7000"/>
-
+    <idea-version since-build="8418"/>
     <depends>com.intellij.javaee</depends>
     <depends>com.intellij.sql</depends>
     <depends>IntelliLang</depends>
     <change-notes>
         <![CDATA[
-            <ul>  Change List in 0.8.4
+          <ul>  Change List in 0.9
+                  <li>Upgrated to IDEA 8.0 EAP, SQL edit is provided by IntelliLang</li>
+                  <li>Code completion for parameter disabled temporarily </li>
+          </ul>
+          <ul>  Change List in 0.8.4
                   <li>A fatal bug fix when select sentence inspection </li>
           </ul>
           <ul>  Change List in 0.8.3
