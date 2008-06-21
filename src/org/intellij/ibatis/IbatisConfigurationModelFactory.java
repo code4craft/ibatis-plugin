@@ -14,24 +14,22 @@ import org.intellij.ibatis.impl.IbatisConfigurationModelImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * iBATIS configuration model factory
  *
- * @author Jacky                                      
+ * @author Jacky
  */
 public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfig, IbatisConfigurationModel, PsiElement> {
-    private  Set<XmlFile> CONFIGURATION_FILES = new HashSet<XmlFile>();
+    private Map<String, Set<XmlFile>> CONFIGURATION_FILES = new HashMap<String, Set<XmlFile>>();
 
     protected IbatisConfigurationModelFactory(DomManager domManager) {
         super(SqlMapConfig.class, domManager.createModelMerger(), domManager.getProject(), "iBATIS");
     }
 
-    @Nullable public IbatisConfigurationModel getModel(@NotNull PsiElement context) {
+    @Nullable
+    public IbatisConfigurationModel getModel(@NotNull PsiElement context) {
         final PsiFile psiFile = context.getContainingFile();
         if (psiFile instanceof XmlFile) {
             return getModelByConfigFile((XmlFile) psiFile);
@@ -49,8 +47,8 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         return models;
     }
 
-    public  Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
-        if (CONFIGURATION_FILES.size() > 0) return CONFIGURATION_FILES;
+    public Set<XmlFile> getAllSqlMapConfigurationFile(final Module module) {
+        if (CONFIGURATION_FILES.containsKey(module.getName())) return CONFIGURATION_FILES.get(module.getName());
         final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
         PsiManager psiManager = PsiManager.getInstance(module.getProject());
         for (VirtualFile root : rootManager.getSourceRoots()) {
@@ -60,17 +58,20 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
                     public void visitXmlFile(XmlFile xmlFile) {
                         final DomFileElement fileElement = DomManager.getDomManager(module.getProject()).getFileElement(xmlFile, DomElement.class);
                         if (fileElement != null && fileElement.getRootElement() instanceof SqlMapConfig) {
-                            if (CONFIGURATION_FILES.size() < 1)     //only one file accepted
-                                CONFIGURATION_FILES.add(xmlFile);
+                            if (CONFIGURATION_FILES.containsKey(module.getName())) {   //only one configuration file supported
+                                Set<XmlFile> configurationFileSet = new HashSet<XmlFile>();
+                                configurationFileSet.add(xmlFile);
+                                CONFIGURATION_FILES.put(module.getName(), configurationFileSet);
+                            }
                         }
                     }
                 });
             }
         }
-        return CONFIGURATION_FILES;
+        return CONFIGURATION_FILES.get(module.getName());
     }
 
     protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> xmlFiles, DomFileElement<SqlMapConfig> sqlMapConfigDomFileElement, IbatisConfigurationModel ibatisConfigurationModel, Module module) {
-       return new IbatisConfigurationModelImpl(sqlMapConfigDomFileElement, xmlFiles);
+        return new IbatisConfigurationModelImpl(sqlMapConfigDomFileElement, xmlFiles);
     }
 }
