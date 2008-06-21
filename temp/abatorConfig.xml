@@ -8,7 +8,6 @@
     <properties resource="com/myproject/abatorConfig.properties"/>
 
     <abatorContext id="Hecla" generatorSet="Java2">
-
         <!-- 数据库连接配置 -->
         <jdbcConnection driverClass="${abator.jdbc.class}"
                         connectionURL="${abator.jdbc.url}"
@@ -69,7 +68,7 @@
                enableSelectByExample="false" enableDeleteByExample="false">
 
             <generatedKey column="id" sqlStatement="select Seq_hec_user_id.nextval from dual" identity="false"/>
-            <columnOverride column="id" javaType="int"/>
+            <columnOverride column="id" jdbcType="" javaType="int"/>
 
             <columnOverride column="agentnum" javaType="int"/>
 

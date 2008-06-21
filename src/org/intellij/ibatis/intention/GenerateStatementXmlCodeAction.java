@@ -68,7 +68,7 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
             PsiExpression[] argumentExpressionList = methodCallExpression.getArgumentList().getExpressions();
             if (argumentExpressionList.length > 1) {
                 parameterClass = argumentExpressionList[1].getType().getCanonicalText();
-                if(parameterClass.equals("null")) parameterClass=null;
+                if (parameterClass.equals("null")) parameterClass = null;
             }
             IbatisConfigurationModel model = IbatisManager.getInstance().getConfigurationModel(ModuleUtil.findModuleForPsiElement(element));
             if (model != null) {
@@ -94,7 +94,8 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
                     XmlTag xmlTag = generateStatementXMLCode(destinationSQLMapFile, operationType, statementId, isSpaceUsed, resultClass, parameterClass);
                     //open the SQL Map file and navigate to the xml tag
                     if (xmlTag != null) {
-                        OpenFileDescriptor fileDescriptor = new OpenFileDescriptor(xmlTag.getAttribute("id").getValueElement());
+                        XmlAttribute attributeValue = xmlTag.getAttribute("id");
+                        OpenFileDescriptor fileDescriptor = new OpenFileDescriptor(project, destinationSQLMapFile.getVirtualFile(), attributeValue.getTextOffset());
                         FileEditorManager.getInstance(project).openEditor(fileDescriptor, true);
                     }
                 }
@@ -186,7 +187,7 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
             }
         }
         //default content
-       statement.setStringValue("\n");
+        statement.setStringValue("\n");
         return statement.getXmlTag();
     }
 
@@ -247,11 +248,13 @@ public class GenerateStatementXmlCodeAction extends PsiIntentionBase {
         return false;
     }
 
-    @NotNull public String getText() {
+    @NotNull
+    public String getText() {
         return TEXT;
     }
 
-    @NotNull public String getFamilyName() {
+    @NotNull
+    public String getFamilyName() {
         return NAME;
     }
 }

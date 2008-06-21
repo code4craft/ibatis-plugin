@@ -1,8 +1,9 @@
 package org.intellij.ibatis.impl;
 
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.util.xml.model.DomModelImpl;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.model.impl.DomModelImpl;
 import org.intellij.ibatis.IbatisSqlMapModel;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.dom.sqlMap.TypeAlias;
@@ -17,7 +18,7 @@ import java.util.Set;
  * iBATIS sql map model implementation.
  */
 public class IbatisSqlMapModelImpl extends DomModelImpl<SqlMap> implements IbatisSqlMapModel {
-    public IbatisSqlMapModelImpl(final SqlMap mergedModel, final Set<XmlFile> configFiles) {
+    public IbatisSqlMapModelImpl(final DomFileElement<SqlMap> mergedModel, final Set<XmlFile> configFiles) {
         super(mergedModel, configFiles);
     }
 

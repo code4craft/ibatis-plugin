@@ -1,13 +1,15 @@
 package org.intellij.ibatis.dom.converters;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.resolve.reference.ProcessorRegistry;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSetBase;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.infos.CandidateInfo;
 import com.intellij.psi.scope.PsiConflictResolver;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -63,60 +65,62 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
 
     @NotNull
     public PsiReference[] createReferences(GenericDomValue genericDomValue, PsiElement element, ConvertContext context) {
-        final String s = genericDomValue.getStringValue();
-        if (s == null) {
+        final String text = genericDomValue.getStringValue();
+        if (text == null) {
             return PsiReference.EMPTY_ARRAY;
         }
-        final int offset = ReferenceProvidersRegistry.getInstance(element.getProject()).getOffsetInElement(element);
-        final FileReferenceSetBase set = createReferenceSet(context, s, element, offset);
-        return set.getAllReferences();
+        Project project = element.getProject();
+        final int offset = ElementManipulators.getOffsetInElement(element);
+        final FileReferenceSet referenceSet = createReferenceSet(project, text, element, offset);
+        return referenceSet.getAllReferences();
     }
 
-    protected abstract boolean isFileAccepted(final PsiFile file);
 
-    protected FileReferenceSetBase createReferenceSet(final ConvertContext context, final String text, final PsiElement element,
-                                                      final int startInElement) {
-        return new FileReferenceSetBase(text, element, startInElement, null, true) {
+    /**
+     * file reference set for element
+     *
+     * @param project        Project object
+     * @param text           text
+     * @param element        source element
+     * @param startInElement start position in element
+     * @return file reference set
+     */
+    protected FileReferenceSet createReferenceSet(final Project project, final String text, final PsiElement element, final int startInElement) {
+        return new FileReferenceSet(text, element, startInElement, null, true) {
             protected boolean isSoft() {
                 return false;
             }
 
+            /**
+             * compute default context for file reference
+             * @return context  list
+             */
             @NotNull
             public Collection<PsiFileSystemItem> computeDefaultContexts() {
                 final OrderedSet<PsiFileSystemItem> result = new OrderedSet<PsiFileSystemItem>();
-                return addDefaultRoots(result, context);
+                Module module = ModuleUtil.findModuleForPsiElement(element);
+                final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+                PsiManager psiManager = PsiManager.getInstance(project);
+                for (VirtualFile root : rootManager.getSourceRoots()) {
+                    ContainerUtil.addIfNotNull(psiManager.findDirectory(root), result);
+                }
+                for (VirtualFile root : rootManager.getContentRoots()) {
+                    ContainerUtil.addIfNotNull(psiManager.findDirectory(root), result);
+                }
+                return result;
             }
 
-            protected PsiScopeProcessor createProcessor(final List<CandidateInfo> candidateInfos, List<Class> classes, List<PsiConflictResolver> psiConflictResolvers) throws ProcessorRegistry.IncompatibleReferenceTypeException {
-                final PsiScopeProcessor baseProcessor = super.createProcessor(candidateInfos, classes, psiConflictResolvers);
-                return new PsiScopeProcessor() {
-                    public boolean execute(PsiElement element, PsiSubstitutor substitutor) {
-                        final boolean isFile = element instanceof PsiFile;
-                        return isFile && !isFileAccepted((PsiFile) element) || baseProcessor.execute(element, substitutor);
-                    }
-
-                    public <T> T getHint(Class<T> hintClass) {
-                        return baseProcessor.getHint(hintClass);
-                    }
-
-                    public void handleEvent(Event event, Object associated) {
-                        baseProcessor.handleEvent(event, associated);
+            @Override
+            protected Condition<PsiElement> createCondition() {
+                return new Condition<PsiElement>() {
+                    public boolean value(PsiElement psiFile) {
+                        final boolean isDirectory = psiFile instanceof PsiDirectory;
+                        final boolean isFile = psiFile instanceof PsiFile;
+                        return isDirectory || (isFile && isFileAccepted((PsiFile) psiFile));
                     }
                 };
             }
         };
-    }
-
-    protected Collection<PsiFileSystemItem> addDefaultRoots(final Collection<PsiFileSystemItem> result, final ConvertContext context) {
-        final Module module = context.getModule();
-        if (module != null) {
-            final PsiManager psiManager = context.getPsiManager();
-            addModuleDefaultRoots(result, module, psiManager);
-            for (Module dependency : ModuleRootManager.getInstance(module).getDependencies()) {
-                addModuleDefaultRoots(result, dependency, psiManager);
-            }
-        }
-        return result;
     }
 
     protected void addModuleDefaultRoots(final Collection<PsiFileSystemItem> result, final Module module, final PsiManager psiManager) {
@@ -128,6 +132,9 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
             ContainerUtil.addIfNotNull(psiManager.findDirectory(root), result);
         }
     }
+
+    protected abstract boolean isFileAccepted(final PsiFile file);
+
 
     public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
         return "Resolve properties file failed!";

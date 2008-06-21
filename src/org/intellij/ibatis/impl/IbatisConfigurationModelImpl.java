@@ -5,7 +5,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.model.DomModelImpl;
+import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.model.impl.DomModelImpl;
+import com.intellij.util.xml.model.impl.DomModelImpl;
 import org.intellij.ibatis.IbatisConfigurationModel;
 import org.intellij.ibatis.dom.configuration.SqlMap;
 import org.intellij.ibatis.dom.configuration.SqlMapConfig;
@@ -19,17 +21,18 @@ import java.util.*;
  */
 public class IbatisConfigurationModelImpl extends DomModelImpl<SqlMapConfig> implements IbatisConfigurationModel {
 
-    public IbatisConfigurationModelImpl(final SqlMapConfig mergedModel, final Set<XmlFile> configFiles) {
-        super(mergedModel, configFiles);
+    public IbatisConfigurationModelImpl(final DomFileElement<SqlMapConfig> domFileElement, final Set<XmlFile> configFiles) {
+        super(domFileElement, configFiles);
     }
 
-    @NotNull public Set<XmlFile> getSqlMapFiles() {
+    @NotNull
+    public Set<XmlFile> getSqlMapFiles() {
         Set<XmlFile> xmlFiles = new HashSet<XmlFile>();
         List<SqlMap> sqlMaps = getMergedModel().getSqlMaps();
         for (SqlMap sqlMap : sqlMaps) {
             PsiFile psiFile = sqlMap.getResource().getValue();
-            if(psiFile!=null)
-               xmlFiles.add((XmlFile) psiFile);
+            if (psiFile != null)
+                xmlFiles.add((XmlFile) psiFile);
         }
         return xmlFiles;
     }

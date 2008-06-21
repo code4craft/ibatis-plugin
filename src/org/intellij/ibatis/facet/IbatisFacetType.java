@@ -8,6 +8,7 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import org.intellij.ibatis.util.IbatisConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public class IbatisFacetType extends FacetType<IbatisFacet, IbatisFacetConfigura
     }
 
     public boolean isSuitableModuleType(final ModuleType moduleType) {
-        return moduleType == ModuleType.JAVA;
+        return moduleType == StdModuleTypes.JAVA;
     }
 
     public Icon getIcon() {

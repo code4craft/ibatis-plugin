@@ -53,7 +53,7 @@ public class GenerateParametersForParameterMapAction extends PsiIntentionBase {
           ParameterMap resultMap = (ParameterMap) domElement;
           PsiClass psiClass = resultMap.getClazz().getValue();
           if (psiClass != null) {
-            PsiElementFactory psiElementFactory = PsiManager.getInstance(project).getElementFactory();
+            XmlElementFactory psiElementFactory = XmlElementFactory.getInstance(project);
             PsiMethod[] psiMethods = psiClass.getMethods();
             try {
               xmlTag.getValue().setText(null);

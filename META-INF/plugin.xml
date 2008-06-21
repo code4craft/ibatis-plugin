@@ -25,6 +25,8 @@
     <idea-version since-build="7000"/>
 
     <depends>com.intellij.javaee</depends>
+    <depends>com.intellij.sql</depends>
+    <depends>IntelliLang</depends>
     <change-notes>
         <![CDATA[
             <ul>  Change List in 0.8.4
@@ -107,6 +109,7 @@
         <gotoSymbolContributor implementation="org.intellij.ibatis.GoToSqlMapReferenceIdSymbolProvider"/>
         <xmlStructureViewBuilderProvider implementation="org.intellij.ibatis.structure.SqlMapStructureViewBuilderProvider"/>
         <xmlStructureViewBuilderProvider implementation="org.intellij.ibatis.structure.SqlMapConfigStructureViewBuilderProvider"/>
+        <psi.referenceContributor implementation="org.intellij.ibatis.IbatisReferenceProvider"/>
     </extensions>
     <application-components>
         <component>
@@ -116,9 +119,6 @@
     <project-components>
         <component>
             <implementation-class>org.intellij.ibatis.IbatisProjectComponent</implementation-class>
-        </component>
-        <component>
-            <implementation-class>org.intellij.ibatis.IbatisReferenceProvider</implementation-class>
         </component>
     </project-components>
     <actions>

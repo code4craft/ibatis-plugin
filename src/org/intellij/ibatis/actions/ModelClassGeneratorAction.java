@@ -93,7 +93,7 @@ public class ModelClassGeneratorAction extends AnAction {
 			return;
 		}
 
-		if (psiDirectoryBean != null && psiDirectoryBean.getPackage() != null) {
+		if (psiDirectoryBean != null && JavaDirectoryService.getInstance().getPackage(psiDirectoryBean) != null) {
 			PsiDirectory psiDirectorySqlMap;
 			try {
 				psiDirectorySqlMap = PackageUtil.findOrCreateDirectoryForPackage(module, config.sqlMapPackage, psiDirectoryBean, true);
@@ -163,7 +163,7 @@ public class ModelClassGeneratorAction extends AnAction {
 		PsiElement psiElement = event.getData(DataKeys.PSI_ELEMENT);
 		if (psiElement instanceof PsiDirectory) {
 			PsiDirectory psiDirectory = (PsiDirectory) psiElement;
-			if (psiDirectory.getPackage() != null) {
+			if (JavaDirectoryService.getInstance().getPackage(psiDirectory) != null) {
 				DataSource dataSource = JavadocTableNameReferenceProvider.getDataSourceForIbatis(module);
 				if (dataSource != null) {
 					presentation.setEnabled(true);
@@ -262,7 +262,7 @@ public class ModelClassGeneratorAction extends AnAction {
 				PsiFile beanFile = psiDirectoryBean.findFile(className + ".java");
 				if (beanFile == null) {  //文件不存在
 					VelocityContext context = new VelocityContext();
-					context.put("package", psiDirectoryBean.getPackage().getQualifiedName());
+					context.put("package", JavaDirectoryService.getInstance().getPackage(psiDirectoryBean).getQualifiedName());
 					context.put("name", className);
 					context.put("tableName", tableData.getName());
 					List<ClassField> classFields = new ArrayList<ClassField>();
@@ -283,7 +283,7 @@ public class ModelClassGeneratorAction extends AnAction {
 						StringWriter sw = new StringWriter();
 						context = new VelocityContext();
 						context.put("className", className);
-						context.put("FQCN", psiDirectoryBean.getPackage().getQualifiedName() + "." + className);
+						context.put("FQCN", JavaDirectoryService.getInstance().getPackage(psiDirectoryBean).getQualifiedName() + "." + className);
 						sqlMapFile = psiDirectorySqlMap.createFile(sqlMapFileName);
 						engine.evaluate(context, sw, "iBATIS", new StringReader(config.sqlMapTemplate));
 						FileContentUtil.setFileText(
@@ -316,7 +316,7 @@ public class ModelClassGeneratorAction extends AnAction {
 							if(e instanceof XmlDocument){
 								final XmlDocument xd = (XmlDocument) e;
 								// what is the model class here?
-								final PsiClass psiClass = ClassUtil.findPsiClass(PsiManager.getInstance(project), psiDirectoryBean.getPackage().getQualifiedName() + "." + className);
+								final PsiClass psiClass = ClassUtil.findPsiClass(PsiManager.getInstance(project), JavaDirectoryService.getInstance().getPackage(psiDirectoryBean).getQualifiedName() + "." + className);
 								CommandProcessor.getInstance().executeCommand(project, new Runnable() {
 									public void run() {
 										GenerateSQLForCrudAction.generateCrudOperations(xd.getRootTag(), IbatisUtil.getConfig(psiDirectorySqlMap), psiClass);
@@ -331,8 +331,7 @@ public class ModelClassGeneratorAction extends AnAction {
 						public void run() {
 							try {
 								CodeStyleManager csm = CodeStyleManager.getInstance(project);
-								csm.reformat(beanFile1);
-								csm.optimizeImports(beanFile1);
+								csm.reformat(beanFile1,true);
 								csm.reformat(sqlMapFile2);
 								if(config.injectCreatedSqlMap){
 									// reformat the config file, too

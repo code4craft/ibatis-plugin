@@ -8,7 +8,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
-import com.intellij.util.xml.model.DomModelFactory;
+import com.intellij.util.xml.model.impl.DomModelFactory;
 import org.intellij.ibatis.dom.configuration.SqlMapConfig;
 import org.intellij.ibatis.impl.IbatisConfigurationModelImpl;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         List<IbatisConfigurationModel> models = new ArrayList<IbatisConfigurationModel>();
         Set<XmlFile> files = getAllSqlMapConfigurationFile(module);
         if (files.size() > 0) {    //iBATIS configuration xml file found
-            IbatisConfigurationModel model = new IbatisConfigurationModelImpl(createMergedModel(files), files);
+            IbatisConfigurationModel model = new IbatisConfigurationModelImpl(createMergedModelRoot(files), files);
             models.add(model);
         }
         return models;
@@ -56,7 +56,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
         for (VirtualFile root : rootManager.getSourceRoots()) {
             PsiDirectory sourceDir = psiManager.findDirectory(root);
             if (sourceDir != null) {
-                sourceDir.accept(new PsiRecursiveElementVisitor() {
+                sourceDir.accept(new XmlRecursiveElementVisitor() {
                     public void visitXmlFile(XmlFile xmlFile) {
                         final DomFileElement fileElement = DomManager.getDomManager(module.getProject()).getFileElement(xmlFile, DomElement.class);
                         if (fileElement != null && fileElement.getRootElement() instanceof SqlMapConfig) {
@@ -71,6 +71,6 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
     }
 
     protected IbatisConfigurationModel createCombinedModel(Set<XmlFile> xmlFiles, DomFileElement<SqlMapConfig> sqlMapConfigDomFileElement, IbatisConfigurationModel ibatisConfigurationModel, Module module) {
-       return new IbatisConfigurationModelImpl(sqlMapConfigDomFileElement.getRootElement(), xmlFiles);
+       return new IbatisConfigurationModelImpl(sqlMapConfigDomFileElement, xmlFiles);
     }
 }

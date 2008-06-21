@@ -4,9 +4,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.model.DomModelFactory;
+import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.model.impl.DomModelFactory;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.impl.IbatisSqlMapModelImpl;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,8 @@ public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlM
         super(SqlMap.class, domManager.createModelMerger(), domManager.getProject(), "spring");
     }
 
-    @Nullable public IbatisSqlMapModel getModel(@NotNull PsiElement context) {
+    @Nullable
+    public IbatisSqlMapModel getModel(@NotNull PsiElement context) {
         final PsiFile psiFile = context.getContainingFile();
         if (psiFile instanceof XmlFile) {
             return getModelByConfigFile((XmlFile) psiFile);
@@ -40,15 +41,15 @@ public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlM
         if (configurationModel != null) {
             Set<XmlFile> sqlMapFiles = configurationModel.getSqlMapFiles();
             if (sqlMapFiles.size() > 0) {
-                IbatisSqlMapModel model = new IbatisSqlMapModelImpl(createMergedModel(sqlMapFiles), sqlMapFiles);
+                IbatisSqlMapModel model = new IbatisSqlMapModelImpl(createMergedModelRoot(sqlMapFiles), sqlMapFiles);
                 models.add(model);
             }
         }
         return models;
-    }                           
+    }
 
     protected IbatisSqlMapModel createCombinedModel(Set<XmlFile> xmlFiles, DomFileElement<SqlMap> sqlMapDomFileElement, IbatisSqlMapModel ibatisSqlMapModel, Module module) {
-       return new IbatisSqlMapModelImpl(sqlMapDomFileElement.getRootElement(), xmlFiles);
+        return new IbatisSqlMapModelImpl(sqlMapDomFileElement, xmlFiles);
     }
 
 }
