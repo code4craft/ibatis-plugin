@@ -15,6 +15,7 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.model.JdbcType;
 import org.jetbrains.annotations.Nullable;
@@ -114,14 +115,19 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
      */
     @Nullable
     public static XmlTag getXmlTagForSQLCompletion(PsiElement psiElement, PsiFile psiFile) {
-        if (psiElement.getParent() instanceof XmlText) {   // text only
-            if (psiFile instanceof XmlFile) {
-                XmlFile xmlFile = (XmlFile) psiFile;
-                final DomFileElement fileElement = DomManager.getDomManager(psiFile.getProject()).getFileElement(xmlFile, DomElement.class);
-                if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
-                    return getParentSentence(psiElement);
+        if (psiElement.getParent().getClass().getName().contains("com.intellij.sql.psi")) {   // text only
+          /*  if (!psiElement.isPhysical()) {   //injected sql mode
+                //todo jacky resolve parameter code completion in sql
+                InjectedLanguageManager manager= InjectedLanguageManager.getInstance(psiElement.getProject());
+                PsiLanguageInjectionHost psiLanguageInjectionHost = manager.getInjectionHost(psiElement);
+                if (psiElement.getContainingFile() instanceof XmlFile) {
+                    XmlFile xmlFile = (XmlFile) psiElement.getContainingFile();
+                    final DomFileElement fileElement = DomManager.getDomManager(psiFile.getProject()).getFileElement(xmlFile, DomElement.class);
+                    if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
+                        return getParentSentence(psiElement);
+                    }
                 }
-            }
+            }*/
         }
         return null;
     }
