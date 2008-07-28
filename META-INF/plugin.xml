@@ -15,13 +15,14 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.8.4</version>
+    <version>0.9</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
     </vendor>
     <idea-version since-build="8418"/>
     <depends>com.intellij.javaee</depends>
+    <depends>com.intellij.persistence</depends>
     <depends>com.intellij.sql</depends>
     <depends>IntelliLang</depends>
     <change-notes>
