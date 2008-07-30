@@ -1,29 +1,20 @@
 package org.intellij.ibatis;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.patterns.PsiJavaPatterns;
+import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.filters.position.ParentElementFilter;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.XmlUtil;
-import com.intellij.patterns.PsiJavaPatterns;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NonNls;
-
-import java.util.Arrays;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * project component to register all reference provider
@@ -34,7 +25,8 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
     private NamespaceFilter ibatisSqlMapConfigNamespaceFilter;
     private NamespaceFilter ibatisSqlMapNamespaceFilter;
     private NamespaceFilter ibatisAbatorNamespaceFilter;
-   private PsiReferenceRegistrar registrary;
+    private PsiReferenceRegistrar registrary;
+
     public IbatisReferenceProvider() {
         ibatisSqlMapConfigNamespaceFilter = new NamespaceFilter(IbatisConstants.CONFIGURATION_DTDS);
         ibatisSqlMapNamespaceFilter = new NamespaceFilter(IbatisConstants.SQLMAP_DTDS);
@@ -48,7 +40,7 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
 
     public void registerProvider() {
         //statement id reference
-        registrary.registerReferenceProvider(PsiJavaPatterns.literalExpression().and(new SqlClientElementFilter()),new StatementIdReferenceProvider());
+        registrary.registerReferenceProvider(PsiJavaPatterns.literalExpression().and(new SqlClientElementFilter()), new StatementIdReferenceProvider());
 //        registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTagFilter("table"), true, new JavadocTableNameReferenceProvider());
 //        registry.registerDocTagReferenceProvider(new String[]{"column"}, new JavadocTagFilter("column"), true, new JavadocTableColumnReferenceProvider());
         //ference provider declaration
@@ -66,13 +58,15 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         CacheModelMemoryTypeReferenceProvider cacheModelMemoryTypeReferenceProvider = new CacheModelMemoryTypeReferenceProvider();
         ParameterJdbcTypeReferenceProvider jdbcTypeReferenceProvider = new ParameterJdbcTypeReferenceProvider();
         StatementSelfReferenceProvider statementSelfReferenceProvider = new StatementSelfReferenceProvider();
+        TypeHandlerReferenceProvider typeHandlerReferenceProvider = new TypeHandlerReferenceProvider();
         //Java class
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "parameter", new String[]{"javaType"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"typeHandler"}, classReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"typeHandler"}, classReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "discriminator", new String[]{"typeHandler"}, classReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"typeHandler"}, typeHandlerReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"typeHandler"}, typeHandlerReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "discriminator", new String[]{"typeHandler"}, typeHandlerReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeHandler", new String[]{"callback"}, classReferenceProvider);
         //iBATIS class with shortcuts and type alias
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameterMap", new String[]{"class"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"javaType"}, classShortcutsReferenceProvider);
@@ -84,6 +78,7 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "select", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "procedure", new String[]{"parameterClass", "resultClass"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "selectKey", new String[]{"resultClass"}, classShortcutsReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"javaType"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"javaType"}, classShortcutsReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "discriminator", new String[]{"javaType"}, classShortcutsReferenceProvider);
         //field access method reference
@@ -125,6 +120,7 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameterMap", new String[]{"id"}, statementSelfReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "cacheModel", new String[]{"id"}, statementSelfReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "typeAlias", new String[]{"alias"}, statementSelfReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeHandler", new String[]{"javaType"}, statementSelfReferenceProvider);
         //SQL reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "include", new String[]{"refid"}, sqlReferenceProvider);
         //cache model reference provider
@@ -143,11 +139,12 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"column"}, tableColumnReferenceProvider);
         //parameter jdbc type reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "parameter", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeHandler", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
         // jdbcType reference provider
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapNamespaceFilter, "result", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
         //Abator
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"jdbcType"}, jdbcTypeReferenceProvider);
-        registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"typeHandler"}, jdbcTypeReferenceProvider);
+        registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"typeHandler"}, typeHandlerReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"javaType"}, classShortcutsReferenceProvider);
         // CompletionData registration
         //todo jacky completion
@@ -169,7 +166,7 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
     public void projectClosed() {
     }
 
-  /*  private void registerXmlAttributeValueReferenceProvider(NamespaceFilter namespaceFilter, String tagName, String attributeNames[], PsiReferenceProvider referenceProvider) {
+    /*  private void registerXmlAttributeValueReferenceProvider(NamespaceFilter namespaceFilter, String tagName, String attributeNames[], PsiReferenceProvider referenceProvider) {
         XmlUtil.registerXmlAttributeValueReferenceProvider(registry, attributeNames, new ScopeFilter(new ParentElementFilter(new AndFilter(new ClassFilter(XmlTag.class), new AndFilter(new OrFilter(new TextFilter(tagName)), namespaceFilter)), 2)), referenceProvider);
     }*/
 
@@ -179,9 +176,9 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
      * @param provider        Provider to install.
      * @param attributeNames  Attribute names.
      * @param namespaceFilter Namespace for tag(s).
-     * @param tagName tag name
+     * @param tagName         tag name
      */
-    private void registerXmlAttributeValueReferenceProvider(final NamespaceFilter namespaceFilter, String tagName,final @NonNls String[] attributeNames, final PsiReferenceProvider provider) {
+    private void registerXmlAttributeValueReferenceProvider(final NamespaceFilter namespaceFilter, String tagName, final @NonNls String[] attributeNames, final PsiReferenceProvider provider) {
         XmlUtil.registerXmlAttributeValueReferenceProvider(registrary, attributeNames, andTagNames(namespaceFilter, tagName), provider);
     }
 

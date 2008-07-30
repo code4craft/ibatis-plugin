@@ -18,6 +18,9 @@ public interface SqlMapConfig extends CommonDomModelRootElement {
     @SubTagList("typeAlias")
     public List<TypeAlias> getTypeAlias();
 
+    @SubTagList("typeHandler")
+    public List<TypeHandler> getTypeHandlers();
+
     @SubTagList("sqlMap")
     public List<SqlMap> getSqlMaps();
 

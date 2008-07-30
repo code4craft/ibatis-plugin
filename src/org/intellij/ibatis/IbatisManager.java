@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.dom.configuration.TypeHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,14 @@ public abstract class IbatisManager {
      * @return type alias map
      */
     public abstract Map<String, PsiClass> getAllTypeAlias(PsiElement psiElement);
+
+    /**
+      * get all type handler in iBATIS
+      *
+      * @param psiElement psi element
+      * @return type handler map
+      */
+     public abstract Map<String, TypeHandler> getAllTypeHandlers(PsiElement psiElement);
 
     /**
      * get all result map

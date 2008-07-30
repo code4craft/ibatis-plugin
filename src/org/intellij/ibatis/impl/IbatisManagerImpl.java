@@ -2,6 +2,7 @@ package org.intellij.ibatis.impl;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
@@ -12,6 +13,7 @@ import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.IbatisProjectComponent;
 import org.intellij.ibatis.IbatisSqlMapModel;
 import org.intellij.ibatis.dom.sqlMap.*;
+import org.intellij.ibatis.dom.configuration.TypeHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +82,28 @@ public class IbatisManagerImpl extends IbatisManager {
             allAliasMap.putAll(sqlMapModel.getTypeAlias());
         }
         return allAliasMap;
+    }
+
+     /**
+     * get all type handler in iBATIS
+     *
+     * @return type handler map
+     */
+    public Map<String, TypeHandler> getAllTypeHandlers(PsiElement psiElement) {
+        Map<String, TypeHandler> typeHandlerMap = new HashMap<String, TypeHandler>();
+        Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+        IbatisProjectComponent projectComponent = IbatisProjectComponent.getInstance(module.getProject());
+        List<IbatisConfigurationModel> configurationModels = projectComponent.getConfigurationModelFactory().getAllModels(module);
+        for (IbatisConfigurationModel configurationModel : configurationModels) {
+            List<TypeHandler> typeHandlerList = configurationModel.getMergedModel().getTypeHandlers();
+            for (TypeHandler typeHandler : typeHandlerList) {
+                String javaType = typeHandler.getJavaType().getStringValue();
+                if (StringUtil.isNotEmpty(javaType)) {
+                    typeHandlerMap.put(javaType, typeHandler);
+                }
+            }
+        }
+        return typeHandlerMap;
     }
 
     /**

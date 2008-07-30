@@ -25,7 +25,6 @@ import java.util.List;
 public class JavadocTableNameReferenceProvider extends BaseReferenceProvider {
     @NotNull public PsiReference[] getReferencesByElement(PsiElement psiElement) {
         final PsiDocTag docTag = (PsiDocTag) psiElement;
-        final Project project = docTag.getProject();
         return new PsiReference[]{new PsiReference() {
             public PsiElement getElement() {
                 return docTag;

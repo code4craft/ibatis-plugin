@@ -42,9 +42,9 @@ import java.io.InputStream;
 /**
  * iBATIS application component, include inspection, IconProvider
  *
- * @authtor Jacky
+ * @author linux_china@hotmail.com
  */
-public class IbatisApplicationComponent implements ApplicationComponent, InspectionToolProvider, IconProvider {
+public class IbatisApplicationComponent implements ApplicationComponent, InspectionToolProvider {
 
     //live template related
     private static final
@@ -185,18 +185,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
                 ExternalResourceManager.getInstance().addStdResource(url, file, IbatisApplicationComponent.class);
             }
         }
-    }
-
-    /**
-     * icon for special psiFile
-     *
-     * @param psiElement PsiFile sub class
-     * @param i          i
-     * @return icon for special psiFile
-     */
-    @Nullable
-    public Icon getIcon(@NotNull PsiElement psiElement, int i) {
-        return null;
     }
 
     /**
