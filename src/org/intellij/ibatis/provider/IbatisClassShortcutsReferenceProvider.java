@@ -144,6 +144,9 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
     public static PsiClass getPsiClass(PsiElement psiElement, String className) {
         Project project = psiElement.getProject();
         JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
+        if (className.endsWith("[]")) {
+            className = className.substring(0, className.length() - 2);
+        }
         //short cut
         if (classShortcuts.containsKey(className)) {
             return javaPsiFacade.findClass(classShortcuts.get(className), GlobalSearchScope.allScope(project));
