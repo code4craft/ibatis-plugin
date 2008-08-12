@@ -192,6 +192,9 @@ public class SymbolInSQLInspection extends SqlMapInspection {
                     if (parameterName.contains(":")) {   //parameter:jdbctype:value
                         parameterName = parameterName.substring(0, parameterName.indexOf(":"));
                     }
+                    if (parameterName.contains(",")) {   //parameter, handler
+                        parameterName = parameterName.substring(0, parameterName.indexOf(","));
+                    }
                     inlineParameters.add(parameterName);
                 }
             }
