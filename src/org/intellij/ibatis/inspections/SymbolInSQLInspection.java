@@ -4,26 +4,36 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlText;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import org.intellij.ibatis.IbatisSqlMapModel;
 import org.intellij.ibatis.dom.sqlMap.*;
-import org.intellij.ibatis.provider.*;
+import org.intellij.ibatis.provider.FieldAccessMethodReferenceProvider;
+import org.intellij.ibatis.provider.IbatisClassShortcutsReferenceProvider;
 import org.intellij.ibatis.util.IbatisBundle;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * symbol in sql inspection
  */
 public class SymbolInSQLInspection extends SqlMapInspection {
-    @Nls @NotNull public String getDisplayName() {
+    @Nls
+    @NotNull
+    public String getDisplayName() {
         return IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.name");
     }
 
-    @NonNls @NotNull public String getShortName() {
+    @NonNls
+    @NotNull
+    public String getShortName() {
         return IbatisBundle.message("ibatis.sqlmap.inspection.symbolinsql.id");
     }
 
@@ -41,7 +51,6 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param holder      dom element annotation holder
      */
     protected void checkInsert(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Insert insert, DomElementAnnotationHolder holder) {
-        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(insert.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, insert, holder, insert.getParameterClass().getValue());
     }
 
@@ -55,7 +64,6 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param holder      domelement annotation holder
      */
     protected void checkUpdate(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Update update, DomElementAnnotationHolder holder) {
-        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(update.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, update, holder, update.getParameterClass().getValue());
     }
 
@@ -68,7 +76,6 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param holder      domelement annotation holder
      */
     protected void checkDelete(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Delete delete, DomElementAnnotationHolder holder) {
-        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(delete.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, delete, holder, delete.getParameterClass().getValue());
     }
 
@@ -81,7 +88,6 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param holder      domelement annotation holder
      */
     protected void checkStatement(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Statement statement, DomElementAnnotationHolder holder) {
-        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(statement.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, statement, holder, statement.getParameterClass().getValue());
     }
 
@@ -94,7 +100,6 @@ public class SymbolInSQLInspection extends SqlMapInspection {
      * @param holder      domelement annotation holder
      */
     protected void checkProcedure(IbatisSqlMapModel sqlMapModel, SqlMap sqlMap, Procedure procedure, DomElementAnnotationHolder holder) {
-        List<String> nameList = SqlMapSymbolCompletionData.getAllSymbolsInXmlTag(procedure.getXmlTag());
         checkSymbol(sqlMapModel, sqlMap, procedure, holder, procedure.getParameterClass().getValue());
     }
 
@@ -106,13 +111,7 @@ public class SymbolInSQLInspection extends SqlMapInspection {
             for (String word : words) {
                 if (word.startsWith("#") && word.endsWith("#"))  // symbol
                 {
-                    String parameterName = word.replaceAll("#", "");
-                    if (parameterName.contains(":")) {   //parameter:jdbctype:value
-                        parameterName = parameterName.substring(0, parameterName.indexOf(":"));
-                    }
-                    if(parameterName.endsWith("[]")) {
-                         parameterName = parameterName.substring(0, parameterName.length()-2);
-                    }
+                    String parameterName = getParameterRealName(word);
                     inlineParameters.add(parameterName);
                 }
             }
@@ -188,17 +187,31 @@ public class SymbolInSQLInspection extends SqlMapInspection {
             for (String word : words) {
                 if (word.startsWith("#") && word.endsWith("#"))  // symbol
                 {
-                    String parameterName = word.replaceAll("#", "");
-                    if (parameterName.contains(":")) {   //parameter:jdbctype:value
-                        parameterName = parameterName.substring(0, parameterName.indexOf(":"));
-                    }
-                    if (parameterName.contains(",")) {   //parameter, handler
-                        parameterName = parameterName.substring(0, parameterName.indexOf(","));
-                    }
+                    String parameterName = getParameterRealName(word);
                     inlineParameters.add(parameterName);
                 }
             }
         }
         return inlineParameters;
+    }
+
+    /**
+     * get parameter real name
+     *
+     * @param word word
+     * @return parameter name
+     */
+    private static String getParameterRealName(String word) {
+        String parameterName = word.replaceAll("#", "");
+        if (parameterName.contains(":")) {   //parameter:jdbctype:value
+            parameterName = parameterName.substring(0, parameterName.indexOf(":"));
+        }
+        if (parameterName.contains(",")) {   //parameter, handler
+            parameterName = parameterName.substring(0, parameterName.indexOf(","));
+        }
+        if (parameterName.endsWith("[]")) {
+            parameterName = parameterName.substring(0, parameterName.length() - 2);
+        }
+        return parameterName;
     }
 }
