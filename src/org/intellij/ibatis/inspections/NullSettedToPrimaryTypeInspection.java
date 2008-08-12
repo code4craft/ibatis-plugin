@@ -67,7 +67,7 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
                         PsiType[] superTypes = psiParameters[0].getType().getSuperTypes();
                         if (superTypes.length < 1)  // primary type
                         {
-                            holder.createProblem(result, HighlightSeverity.WARNING, IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.error"), new AddNullValueForResultElementQuickFix(result));
+                            holder.createProblem(result, HighlightSeverity.INFO, IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.error"), new AddNullValueForResultElementQuickFix(result));
                         }
                     }
                 }
