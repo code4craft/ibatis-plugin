@@ -15,7 +15,7 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.9.1</version>
+    <version>0.9.2</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -27,6 +27,11 @@
     <depends>IntelliLang</depends>
     <change-notes>
         <![CDATA[
+          <ul>  Change List in 0.9.2
+                  <li>Compiled by JDK 15</li>
+                  <li>Info level for null value for primitive data types</li>
+                  <li>Bug fix for inline parameter inspection</li>
+          </ul>
           <ul>  Change List in 0.9.1
                   <li>icon provider changed</li>
                   <li>typehandler support</li>
