@@ -15,7 +15,7 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.9.3</version>
+    <version>0.9.4</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -24,10 +24,13 @@
     <depends>com.intellij.javaee</depends>
     <depends>com.intellij.persistence</depends>
     <depends>com.intellij.sql</depends>
-    <depends>IntelliLang</depends>
+    <depends>org.intellij.intelliLang</depends>
     <change-notes>
         <![CDATA[
-          <ul>Change List in 0.9.3
+          <ul>Change List in 0.9.5
+                  <li>Minor bug fix</li>
+          </ul>
+          <ul>Change List in 0.9.4
                   <li>Bug fix for error with IntelliLang</li>
           </ul>
           <ul>  Change List in 0.9.2
