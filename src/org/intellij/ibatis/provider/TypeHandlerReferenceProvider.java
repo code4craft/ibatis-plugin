@@ -6,6 +6,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ProcessingContext;
+import com.intellij.openapi.project.Project;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.dom.configuration.TypeHandler;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -23,8 +24,8 @@ import java.util.Map;
  */
 public class TypeHandlerReferenceProvider extends WrappedReferenceProvider {
 
-    public TypeHandlerReferenceProvider() {
-        super(new JavaClassReferenceProvider());
+    public TypeHandlerReferenceProvider(Project project) {
+        super(new JavaClassReferenceProvider(project));
     }
 
     public static Map<String, TypeHandler> getAllTypeHandler(PsiElement psiElement) {

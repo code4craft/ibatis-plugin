@@ -40,7 +40,7 @@ public class IbatisConfigurationModelFactory extends DomModelFactory<SqlMapConfi
     protected List<IbatisConfigurationModel> computeAllModels(@NotNull Module module) {
         List<IbatisConfigurationModel> models = new ArrayList<IbatisConfigurationModel>();
         Set<XmlFile> files = getAllSqlMapConfigurationFile(module);
-        if (files.size() > 0) {    //iBATIS configuration xml file found
+        if (files!=null && files.size() > 0) {    //iBATIS configuration xml file found
             IbatisConfigurationModel model = new IbatisConfigurationModelImpl(createMergedModelRoot(files), files);
             models.add(model);
         }

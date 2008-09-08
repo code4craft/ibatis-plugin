@@ -91,7 +91,8 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 
     protected static String buildWhere(List<DatabaseTableFieldData> fieldList, PsiClass psiClass) {
         StringBuilder where = new StringBuilder("");
-
+       
+ 
         for (DatabaseTableFieldData d : fieldList) {
             String propName = TableColumnReferenceProvider.getPropNameForColumn(psiClass, d);
             if (null != propName) {
