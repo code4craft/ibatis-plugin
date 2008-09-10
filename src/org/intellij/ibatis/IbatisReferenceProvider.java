@@ -10,7 +10,6 @@ import com.intellij.psi.filters.position.ParentElementFilter;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.XmlUtil;
-import com.intellij.openapi.project.Project;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -40,15 +39,13 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
     }
 
     public void registerProvider() {
-      Project project = registrary.getProject();
-
-      //statement id reference
+        //statement id reference
         registrary.registerReferenceProvider(PsiJavaPatterns.literalExpression().and(new SqlClientElementFilter()), new StatementIdReferenceProvider());
 //        registry.registerDocTagReferenceProvider(new String[]{"table"}, new JavadocTagFilter("table"), true, new JavadocTableNameReferenceProvider());
 //        registry.registerDocTagReferenceProvider(new String[]{"column"}, new JavadocTagFilter("column"), true, new JavadocTableColumnReferenceProvider());
         //ference provider declaration
-        JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider(project);
-        IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider(project);
+        JavaClassReferenceProvider classReferenceProvider = new JavaClassReferenceProvider();
+        IbatisClassShortcutsReferenceProvider classShortcutsReferenceProvider = new IbatisClassShortcutsReferenceProvider();
         FieldAccessMethodReferenceProvider fieldAccessMethodReferenceProvider = new FieldAccessMethodReferenceProvider();
         ResultMapReferenceProvider resultMapReferenceProvider = new ResultMapReferenceProvider();
         ParameterMapReferenceProvider parameterMapReferenceProvider = new ParameterMapReferenceProvider();
@@ -61,7 +58,7 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         CacheModelMemoryTypeReferenceProvider cacheModelMemoryTypeReferenceProvider = new CacheModelMemoryTypeReferenceProvider();
         ParameterJdbcTypeReferenceProvider jdbcTypeReferenceProvider = new ParameterJdbcTypeReferenceProvider();
         StatementSelfReferenceProvider statementSelfReferenceProvider = new StatementSelfReferenceProvider();
-        TypeHandlerReferenceProvider typeHandlerReferenceProvider = new TypeHandlerReferenceProvider(project);
+        TypeHandlerReferenceProvider typeHandlerReferenceProvider = new TypeHandlerReferenceProvider();
         //Java class
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "typeAlias", new String[]{"type"}, classReferenceProvider);
         registerXmlAttributeValueReferenceProvider(ibatisSqlMapConfigNamespaceFilter, "parameter", new String[]{"javaType"}, classReferenceProvider);
