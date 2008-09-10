@@ -46,8 +46,8 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         classShortcuts.put("xml", "com.ibatis.sqlmap.engine.type.XmlTypeMarker");
     }
 
-    public IbatisClassShortcutsReferenceProvider(Project project) {
-        super(new JavaClassReferenceProvider(project));
+    public IbatisClassShortcutsReferenceProvider() {
+        super(new JavaClassReferenceProvider());
     }
 
     public static Map<String, PsiClass> getTypeAlias(PsiElement psiElement) {
