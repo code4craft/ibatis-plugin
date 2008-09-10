@@ -24,8 +24,8 @@ import java.util.Map;
  */
 public class TypeHandlerReferenceProvider extends WrappedReferenceProvider {
 
-    public TypeHandlerReferenceProvider(Project project) {
-        super(new JavaClassReferenceProvider(project));
+    public TypeHandlerReferenceProvider() {
+        super(new JavaClassReferenceProvider());
     }
 
     public static Map<String, TypeHandler> getAllTypeHandler(PsiElement psiElement) {
