@@ -15,7 +15,7 @@
         For detail, please reference <a href="http://docs.google.com/Doc?id=dc73pj2h_6db54mm">user guide</a>.
     </html>
     ]]></description>
-    <version>0.9.4</version>
+    <version>0.9.6</version>
     <vendor logo="/icons/logo.png" email="lmeadors@apache.org; linux_china@hotmail.com"
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
@@ -27,6 +27,9 @@
     <depends>org.intellij.intelliLang</depends>
     <change-notes>
         <![CDATA[
+          <ul>Change List in 0.9.6
+                  <li>Minor bug fix for open api changed</li>
+          </ul>
           <ul>Change List in 0.9.5
                   <li>Minor bug fix</li>
           </ul>
