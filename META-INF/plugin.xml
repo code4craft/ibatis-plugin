@@ -20,7 +20,7 @@
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
     </vendor>
-    <idea-version since-build="8730"/>
+    <idea-version since-build="8768"/>
     <depends>com.intellij.javaee</depends>
     <depends>com.intellij.persistence</depends>
     <depends>com.intellij.sql</depends>
