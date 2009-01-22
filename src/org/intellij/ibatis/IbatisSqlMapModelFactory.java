@@ -22,7 +22,7 @@ import java.util.Set;
 public class IbatisSqlMapModelFactory extends DomModelFactory<SqlMap, IbatisSqlMapModel, PsiElement> {
 
     protected IbatisSqlMapModelFactory(DomManager domManager) {
-        super(SqlMap.class, domManager.createModelMerger(), domManager.getProject(), "spring");
+        super(SqlMap.class, domManager.getProject(), "spring");
     }
 
     @Nullable
