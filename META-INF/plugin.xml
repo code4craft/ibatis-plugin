@@ -20,7 +20,7 @@
             url="http://code.google.com/p/ibatis-plugin">
         Larry Meadors; Jacky Chan
     </vendor>
-    <idea-version since-build="8768"/>
+    <idea-version since-build="9677"/>
     <depends>com.intellij.javaee</depends>
     <depends>com.intellij.persistence</depends>
     <depends>com.intellij.persistence.database</depends>
@@ -28,6 +28,9 @@
     <depends>org.intellij.intelliLang</depends>
     <change-notes>
         <![CDATA[
+         <ul>Change List in 0.9.7
+                  <li>Build for 8.1 EAP</li>
+          </ul>
           <ul>Change List in 0.9.6
                   <li>Minor bug fix for open api changed</li>
           </ul>
