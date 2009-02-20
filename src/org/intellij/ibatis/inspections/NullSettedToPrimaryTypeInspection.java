@@ -27,11 +27,15 @@ import java.util.List;
  * inspection for set null to primary type variable
  */
 public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
-    @Nls @NotNull public String getDisplayName() {
+    @Nls
+    @NotNull
+    public String getDisplayName() {
         return IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.name");
     }
 
-    @NonNls @NotNull public String getShortName() {
+    @NonNls
+    @NotNull
+    public String getShortName() {
         return IbatisBundle.message("ibatis.sqlmap.inspection.nulltoprimarytype.id");
     }
 
@@ -44,20 +48,22 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
             if (result.getXmlTag().getAttribute("nullValue") == null) {    //null value setter
                 String propertyName = result.getProperty().getValue();
                 PsiMethod setMethod = null;
-                if (propertyName!=null && !propertyName.contains(".")) {
-                    PsiMethod[] methods = psiClass.findMethodsByName("set" + StringUtil.capitalize(propertyName), true);
-                    if (methods.length > 0) {
-                        setMethod = methods[0];
-                    }
-                } else      //deep child
-                {
-                    String field1 = propertyName.substring(0, propertyName.indexOf('.'));
-                    String field2 = propertyName.substring(propertyName.indexOf('.') + 1);
-                    PsiClass fieldClass = FieldAccessMethodReferenceProvider.findGetterMethodReturnType(psiClass, "get" + StringUtil.capitalize(field1));
-                    if (fieldClass != null) {
-                        PsiMethod[] methods = fieldClass.findMethodsByName("set" + StringUtil.capitalize(field2), true);
+                if (propertyName != null) {
+                    if (!propertyName.contains(".")) {
+                        PsiMethod[] methods = psiClass.findMethodsByName("set" + StringUtil.capitalize(propertyName), true);
                         if (methods.length > 0) {
                             setMethod = methods[0];
+                        }
+                    } else      //deep child
+                    {
+                        String field1 = propertyName.substring(0, propertyName.indexOf('.'));
+                        String field2 = propertyName.substring(propertyName.indexOf('.') + 1);
+                        PsiClass fieldClass = FieldAccessMethodReferenceProvider.findGetterMethodReturnType(psiClass, "get" + StringUtil.capitalize(field1));
+                        if (fieldClass != null) {
+                            PsiMethod[] methods = fieldClass.findMethodsByName("set" + StringUtil.capitalize(field2), true);
+                            if (methods.length > 0) {
+                                setMethod = methods[0];
+                            }
                         }
                     }
                 }
@@ -83,11 +89,13 @@ public class NullSettedToPrimaryTypeInspection extends SqlMapInspection {
             this.result = result;
         }
 
-        @NotNull public String getName() {
+        @NotNull
+        public String getName() {
             return "add nullValue for result element";
         }
 
-        @NotNull public String getFamilyName() {
+        @NotNull
+        public String getFamilyName() {
             return "add nullValue for result element";
         }
 
