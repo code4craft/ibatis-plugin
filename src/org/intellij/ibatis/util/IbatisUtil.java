@@ -149,7 +149,7 @@ public class IbatisUtil {
         for (int i = 0; i < characters.length; i++) {
             char character = characters[i];
             String temp = String.valueOf(character).toLowerCase();
-            if (character >= 'A' && i > 0) {
+            if (character >= 'A' && character <= 'Z' && i > 0 ) {
                 builder.append("_");
             }
             builder.append(temp);
