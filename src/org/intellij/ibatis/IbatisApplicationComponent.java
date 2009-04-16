@@ -196,7 +196,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         return new Class[]{SqlMapFileInConfigurationInspection.class,
                 NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class,
                 SymbolInSQLInspection.class, ParameterMapInStatementInspection.class,
-                SelectResultClassAbsentInspection.class};
+                SelectResultClassAbsentInspection.class,SemicolonEndInspection.class};
     }
 
     /**
