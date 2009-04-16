@@ -1,29 +1,33 @@
 package org.intellij.ibatis.provider;
 
-import com.intellij.codeInsight.completion.CompletionContext;
-import com.intellij.codeInsight.completion.CompletionData;
 import com.intellij.codeInsight.completion.CompletionVariant;
 import com.intellij.codeInsight.completion.XmlCompletionData;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.filters.TextFilter;
 import com.intellij.psi.filters.TrueFilter;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.intellij.ibatis.model.JdbcType;
+import org.intellij.ibatis.dom.sqlMap.SqlMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * completion data for SQL map symbol
@@ -115,19 +119,22 @@ public class SqlMapSymbolCompletionData extends XmlCompletionData {
      */
     @Nullable
     public static XmlTag getXmlTagForSQLCompletion(PsiElement psiElement, PsiFile psiFile) {
-        if (psiElement.getParent().getClass().getName().contains("com.intellij.sql.psi")) {   // text only
-          /*  if (!psiElement.isPhysical()) {   //injected sql mode
-                //todo jacky resolve parameter code completion in sql
-                InjectedLanguageManager manager= InjectedLanguageManager.getInstance(psiElement.getProject());
-                PsiLanguageInjectionHost psiLanguageInjectionHost = manager.getInjectionHost(psiElement);
-                if (psiElement.getContainingFile() instanceof XmlFile) {
-                    XmlFile xmlFile = (XmlFile) psiElement.getContainingFile();
-                    final DomFileElement fileElement = DomManager.getDomManager(psiFile.getProject()).getFileElement(xmlFile, DomElement.class);
-                    if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
-                        return getParentSentence(psiElement);
-                    }
-                }
-            }*/
+        if (!psiFile.isPhysical()) {
+            if (psiElement.getParent().getClass().getName().contains("com.intellij.sql.psi")) {   // text only
+                  if (!psiElement.isPhysical()) {   //injected sql mode
+                      //todo jacky resolve parameter code completion in sql
+                      List<Pair<PsiElement,TextRange>> files = InjectedLanguageUtil.getInjectedPsiFiles(psiElement);
+                      InjectedLanguageManager manager = InjectedLanguageManager.getInstance(psiElement.getProject());
+                      PsiLanguageInjectionHost psiLanguageInjectionHost = manager.getInjectionHost(psiElement);
+                      if (psiElement.getContainingFile() instanceof XmlFile) {
+                          XmlFile xmlFile = (XmlFile) psiElement.getContainingFile();
+                          final DomFileElement fileElement = DomManager.getDomManager(psiFile.getProject()).getFileElement(xmlFile, DomElement.class);
+                          if (fileElement != null && fileElement.getRootElement() instanceof SqlMap) {
+                              return getParentSentence(psiElement);
+                          }
+                      }
+                  }
+            }
         }
         return null;
     }
