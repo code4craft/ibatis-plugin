@@ -1,5 +1,8 @@
 package org.intellij.ibatis;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
+import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
@@ -10,7 +13,6 @@ import com.intellij.psi.filters.position.ParentElementFilter;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.XmlUtil;
-import com.intellij.openapi.project.Project;
 import org.intellij.ibatis.provider.*;
 import org.intellij.ibatis.util.IbatisBundle;
 import org.intellij.ibatis.util.IbatisConstants;
@@ -150,8 +152,8 @@ public class IbatisReferenceProvider extends PsiReferenceContributor {
         registerXmlAttributeValueReferenceProvider(ibatisAbatorNamespaceFilter, "columnOverride", new String[]{"javaType"}, classShortcutsReferenceProvider);
         // CompletionData registration
         //todo jacky completion
-//        SqlMapSymbolCompletionData selectorSymbolCompletionData = new SqlMapSymbolCompletionData(null);
-//        CompletionUtil.registerCompletionData(FileTypeManager.getInstance().getFileTypeByExtension("sql"), selectorSymbolCompletionData);
+        SelectorSymbolCompletionData selectorSymbolCompletionData = new SelectorSymbolCompletionData(new SqlMapSymbolCompletionData(null));
+        CompletionUtil.registerCompletionData(StdFileTypes.XML, selectorSymbolCompletionData);
     }
 
     public void disposeComponent() {
