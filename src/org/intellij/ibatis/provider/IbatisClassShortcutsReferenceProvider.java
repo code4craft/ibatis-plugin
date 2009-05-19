@@ -169,6 +169,6 @@ public class IbatisClassShortcutsReferenceProvider extends WrappedReferenceProvi
         className = className.toLowerCase();
         if (className.equals("integer")) className = "int";
         if (className.equals("BigDecimal")) className = "decimal";
-        return !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
+        return className.equals("HashMap") || className.equals("java.util.HashMap") || !IbatisClassShortcutsReferenceProvider.classShortcuts.containsKey(className);
     }
 }
