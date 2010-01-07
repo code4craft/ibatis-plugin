@@ -133,7 +133,7 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
 
         public Object[] getVariants() {
             List<Object> fieldList = new ArrayList<Object>();
-            List<DatabaseTableFieldData> fields = databaseTableData.getFields();
+            List<DatabaseTableFieldData> fields = databaseTableData.getColumns();
             for (DatabaseTableFieldData field : fields) {
                 String fieldName=field.getName().toLowerCase();    // IJPL-1
                 if (field.isPrimary()) {       //primary key
