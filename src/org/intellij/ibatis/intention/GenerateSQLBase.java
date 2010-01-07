@@ -121,7 +121,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 		VelocityContext context = new VelocityContext();
 		context.put("tableData", tableData);
 
-		List<DatabaseTableFieldData> fieldList = tableData.getFields();
+		List<DatabaseTableFieldData> fieldList = tableData.getColumns();
 		context.put("fieldList", fieldList);
 		context.put("tableName", tableData.getName());
 //		StringBuilder updateStatement = new StringBuilder("\nupdate ").append(tableData.getName()).append(" set ");
