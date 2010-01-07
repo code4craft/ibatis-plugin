@@ -161,7 +161,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 			DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(parameterClass);
 			context.put("tableData", tableData);
 			if (null != tableData) {
-                List<DatabaseTableFieldData> fieldList = tableData.getFields();
+                List<DatabaseTableFieldData> fieldList = tableData.getColumns();
 				context.put("fieldList", fieldList);
 
 				// OK, now we have the table meta-data and the class meta-data.
@@ -242,7 +242,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 		context.put("tableData", tableData);
 
 		if (null != tableData) {
-            List<DatabaseTableFieldData> fieldList = tableData.getFields();
+            List<DatabaseTableFieldData> fieldList = tableData.getColumns();
             // OK, now we have the table meta-data and the class meta-data.
             // now we can build our insert statement
 			String tableName = tableData.getName();
@@ -388,7 +388,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
 
 		if (tableData == null) return;
 
-        List<DatabaseTableFieldData> fieldList = tableData.getFields();
+        List<DatabaseTableFieldData> fieldList = tableData.getColumns();
 		context.put("fieldList", fieldList);
 
 		StringBuilder selectList = new StringBuilder("");
@@ -476,7 +476,7 @@ public abstract class GenerateSQLBase extends PsiIntentionBase {
                 sql = "\nselect " + selectList + "\nfrom " + tableName + "\n";
 
                 // Add the primary key selection - the user can cut what they don't want...
-                sqlWhere = buildWhere(tableData.getFields(), resultClass);
+                sqlWhere = buildWhere(tableData.getColumns(), resultClass);
                 xmlTag.getValue().setText(sql + sqlWhere);
             }
         } else {  //table name is empty
