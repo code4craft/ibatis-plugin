@@ -36,7 +36,7 @@ public class SqlMapStructureViewTreeElement extends DomStructureTreeElement {
      */
     public SqlMapStructureViewTreeElement(@NotNull final DomElement domElement) {
         super(domElement, MY_STRUCTURE_VIEW_MODE_FUNCTION,
-                DomElementsNavigationManager.getManager(domElement.getRoot().getFile().getProject()).
+                DomElementsNavigationManager.getManager(domElement.getManager().getProject()).
                         getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
     }
 
