@@ -21,6 +21,7 @@
         Larry Meadors; Jacky Chan
     </vendor>
     <idea-version since-build="9677"/>
+    <depends>com.intellij.properties</depends>
     <depends>com.intellij.javaee</depends>
     <depends>com.intellij.persistence</depends>
     <depends>com.intellij.persistence.database</depends>
@@ -146,6 +147,7 @@
         <xmlStructureViewBuilderProvider
                 implementation="org.intellij.ibatis.structure.SqlMapConfigStructureViewBuilderProvider"/>
         <psi.referenceContributor implementation="org.intellij.ibatis.IbatisReferenceProvider"/>
+        <completion.contributor language="xml" implementation="org.intellij.ibatis.provider.SqlMapSymbolContributor"/>
     </extensions>
     <application-components>
         <component>
