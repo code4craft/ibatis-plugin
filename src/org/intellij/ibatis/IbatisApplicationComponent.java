@@ -86,7 +86,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         registerDTDs(IbatisConstants.SQLMAP_DTDS);
         registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
-        initLiveTemplates();
+        //initLiveTemplates();  todo add live template
         initMetaData();
     }
 
@@ -182,7 +182,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
             if (url.startsWith("http://")) {
                 int pos = url.lastIndexOf('/');
                 @NonNls String file = "/org/intellij/ibatis/dtds" + url.substring(pos);
-                ExternalResourceManager.getInstance().addStdResource(url, file, IbatisApplicationComponent.class);
+                ExternalResourceManager.getInstance().addResource(url, file);
             }
         }
     }
@@ -236,7 +236,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
                     final Template template = readExternal((Element) element, templateName);
                     final String key = template.getKey();
                     // if template with the same key is already loaded, ignore it  TODO: rewrite, when API will be improved!
-                    if (key != null && templateSettings.getTemplate(key) == null) {
+                    if (key != null && templateSettings.getTemplate(key,null) == null) {
                         templateSettings.addTemplate(template);
                     }
                 }
