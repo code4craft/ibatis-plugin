@@ -114,7 +114,7 @@ public class SelectorSymbolCompletionData extends XmlCompletionData {
                     }
                 }
                 if (table != null) {
-                    List<DatabaseTableFieldData> fieldList = table.getFields();
+                    List<DatabaseTableFieldData> fieldList = table.getColumns();
                     for (DatabaseTableFieldData databaseTableFieldData : fieldList) {
                         nameList.add(databaseTableFieldData.getName());
 
