@@ -252,7 +252,7 @@ public class TableColumnReferenceProvider extends BaseReferenceProvider {
 
     public static List<DatabaseTableFieldData> getPrimaryKeyColumns(DatabaseTableData tableData) {
         List<DatabaseTableFieldData> l = new ArrayList<DatabaseTableFieldData>();
-        for (DatabaseTableFieldData f : tableData.getFields()) {
+        for (DatabaseTableFieldData f : tableData.getColumns()) {
             if (f.isPrimary()) l.add(f);
         }
         return l;
