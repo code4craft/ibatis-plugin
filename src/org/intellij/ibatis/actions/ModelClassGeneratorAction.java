@@ -266,7 +266,7 @@ public class ModelClassGeneratorAction extends AnAction {
 					context.put("name", className);
 					context.put("tableName", tableData.getName());
 					List<ClassField> classFields = new ArrayList<ClassField>();
-					for (DatabaseTableFieldData tableFieldData : tableData.getFields()) {
+					for (DatabaseTableFieldData tableFieldData : tableData.getColumns()) {
 						classFields.add(getClassField(tableFieldData));
 					}
 					context.put("fieldList", classFields);
