@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomUtil;
 import org.intellij.ibatis.IbatisConfigurationModel;
 import org.intellij.ibatis.IbatisManager;
 import org.intellij.ibatis.IbatisProjectComponent;
@@ -147,7 +148,7 @@ public class IbatisManagerImpl extends IbatisManager {
             for (ResultMap map : resultMapList) {
                 PsiClass psiClass = map.getClazz().getValue();
                 if (psiClass != null) {
-                    resultMap.put(getUniqueName(map.getRoot(), map.getId().getValue()), psiClass);
+                    resultMap.put(getUniqueName(DomUtil.getFileElement(map), map.getId().getValue()), psiClass);
                 }
             }
         }
@@ -168,7 +169,7 @@ public class IbatisManagerImpl extends IbatisManager {
             for (ResultMap resultMap : resultMapList) {
                 XmlTag xmlTag = resultMap.getClazz().getXmlTag();
                 if (xmlTag != null) {
-                    resultMapInfo.put(getUniqueName(resultMap.getRoot(), resultMap.getId().getValue()), xmlTag);
+                    resultMapInfo.put(getUniqueName(DomUtil.getFileElement(resultMap), resultMap.getId().getValue()), xmlTag);
                 }
             }
         }
@@ -189,7 +190,7 @@ public class IbatisManagerImpl extends IbatisManager {
             for (ParameterMap map : parameterMapList) {
                 PsiClass psiClass = map.getClazz().getValue();
                 if (psiClass != null) {
-                    parameterMap.put(getUniqueName(map.getRoot(), map.getId().getValue()), psiClass);
+                    parameterMap.put(getUniqueName(DomUtil.getFileElement(map), map.getId().getValue()), psiClass);
                 }
             }
         }
@@ -210,7 +211,7 @@ public class IbatisManagerImpl extends IbatisManager {
             for (ParameterMap map : parameterMapList) {
                 XmlTag xmlTag = map.getClazz().getXmlTag();
                 if (xmlTag != null) {
-                    parameterMap.put(getUniqueName(map.getRoot(), map.getId().getValue()), xmlTag);
+                    parameterMap.put(getUniqueName(DomUtil.getFileElement(map), map.getId().getValue()), xmlTag);
                 }
             }
         }
@@ -229,7 +230,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Select> selects = model.getMergedModel().getSelects();
             for (Select select : selects) {
-                selectList.put(getUniqueName(select.getRoot(), select.getId().getStringValue()), select);
+                selectList.put(getUniqueName(DomUtil.getFileElement(select), select.getId().getStringValue()), select);
             }
         }
         return selectList;
@@ -247,7 +248,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Sql> sqls = model.getMergedModel().getSqls();
             for (Sql sql : sqls) {
-                allSql.put(getUniqueName(sql.getRoot(), sql.getId().getValue()), sql);
+                allSql.put(getUniqueName(DomUtil.getFileElement(sql), sql.getId().getValue()), sql);
             }
         }
         return allSql;
@@ -276,7 +277,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Insert> inserts = model.getMergedModel().getInserts();
             for (Insert insert : inserts) {
-                allInsert.put(getUniqueName(insert.getRoot(), insert.getId().getValue()), insert);
+                allInsert.put(getUniqueName(DomUtil.getFileElement(insert), insert.getId().getValue()), insert);
             }
         }
         return allInsert;
@@ -294,7 +295,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Update> updates = model.getMergedModel().getUpdates();
             for (Update update : updates) {
-                allUpdate.put(getUniqueName(update.getRoot(), update.getId().getValue()), update);
+                allUpdate.put(getUniqueName(DomUtil.getFileElement(update), update.getId().getValue()), update);
             }
         }
         return allUpdate;
@@ -312,7 +313,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Delete> deletes = model.getMergedModel().getDeletes();
             for (Delete delete : deletes) {
-                allDelete.put(getUniqueName(delete.getRoot(), delete.getId().getValue()), delete);
+                allDelete.put(getUniqueName(DomUtil.getFileElement(delete), delete.getId().getValue()), delete);
             }
         }
         return allDelete;
@@ -324,7 +325,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Statement> statements = model.getMergedModel().getStatements();
             for (Statement statement : statements) {
-                allStatement.put(getUniqueName(statement.getRoot(), statement.getId().getValue()), statement);
+                allStatement.put(getUniqueName(DomUtil.getFileElement(statement), statement.getId().getValue()), statement);
             }
         }
         return allStatement;
@@ -342,7 +343,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<Procedure> procedures = model.getMergedModel().getProcedures();
             for (Procedure procedure : procedures) {
-                allStatement.put(getUniqueName(procedure.getRoot(), procedure.getId().getValue()), procedure);
+                allStatement.put(getUniqueName(DomUtil.getFileElement(procedure), procedure.getId().getValue()), procedure);
             }
         }
         return allStatement;
@@ -360,7 +361,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<DomElement> references = model.getMergedModel().getAllReference();
             for (DomElement reference : references) {
-                allReference.put(getUniqueName(reference.getRoot(), reference.getXmlTag().getAttributeValue("id")), reference);
+                allReference.put(getUniqueName(DomUtil.getFileElement(reference), reference.getXmlTag().getAttributeValue("id")), reference);
             }
         }
         return allReference;
@@ -378,7 +379,7 @@ public class IbatisManagerImpl extends IbatisManager {
         for (IbatisSqlMapModel model : models) {
             List<CacheModel> cacheModels = model.getMergedModel().getCacheModels();
             for (CacheModel cacheModel : cacheModels) {
-                allCacheModel.put(getUniqueName(cacheModel.getRoot(), cacheModel.getId().getValue()), cacheModel);
+                allCacheModel.put(getUniqueName(DomUtil.getFileElement(cacheModel), cacheModel.getId().getValue()), cacheModel);
             }
         }
         return allCacheModel;
