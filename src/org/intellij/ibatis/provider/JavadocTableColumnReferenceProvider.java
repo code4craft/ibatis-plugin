@@ -59,7 +59,7 @@ public class JavadocTableColumnReferenceProvider extends BaseReferenceProvider {
                 if (psiClass != null) {
                     DatabaseTableData tableData = TableColumnReferenceProvider.getDatabaseTableData(psiClass);
                     if (tableData != null) {
-                        for (DatabaseTableFieldData field : tableData.getFields()) {
+                        for (DatabaseTableFieldData field : tableData.getColumns()) {
                             String fieldName = field.getName().toLowerCase();
                             if (field.isPrimary()) {       //pk
                                 variants.add(LookupValueFactory.createLookupValueWithHint(fieldName, IbatisConstants.DATABASE_PK_FIELD, TableColumnReferenceProvider.getJdbcTypeName(field.getJdbcType())));
