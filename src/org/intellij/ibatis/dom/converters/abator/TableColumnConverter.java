@@ -50,7 +50,7 @@ public class TableColumnConverter extends Converter<DatabaseTableFieldData> impl
                 return new PsiReference[]{new XmlAttributeValuePsiReference((XmlAttributeValue) psiElement) {
                     public Object[] getVariants() {
                         List<Object> variants = new ArrayList<Object>();
-                        for (DatabaseTableFieldData field : databaseTable.getFields()) {
+                        for (DatabaseTableFieldData field : databaseTable.getColumns()) {
                             if (field.isPrimary()) {       //pk
                                 variants.add(LookupValueFactory.createLookupValue(field.getName().toUpperCase(), IbatisConstants.DATABASE_PK_FIELD));
                             } else {   //common column
