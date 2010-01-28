@@ -37,9 +37,8 @@
         </ul>
         ]]>
     </change-notes>
-    <extensions xmlns="com.intellij">
-        <applicationService serviceInterface="org.intellij.ibatis.IbatisManager"
-                            serviceImplementation="org.intellij.ibatis.impl.IbatisManagerImpl"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="org.intellij.ibatis.IbatisManager" serviceImplementation="org.intellij.ibatis.impl.IbatisManagerImpl"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisConfigurationFileDescription"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisSqlMapFileDescription"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisAbatorFileDescription"/>
