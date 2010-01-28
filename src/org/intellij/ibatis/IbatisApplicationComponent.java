@@ -82,9 +82,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
      * initialize component
      */
     public void initComponent() {
-        registerDTDs(IbatisConstants.CONFIGURATION_DTDS);
-        registerDTDs(IbatisConstants.SQLMAP_DTDS);
-        registerDTDs(IbatisConstants.ABATOR_DTDS);
         FacetTypeRegistry.getInstance().registerFacetType(IbatisFacetType.INSTANCE);
         //initLiveTemplates();  todo add live template
         initMetaData();
@@ -173,21 +170,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     }
 
     /**
-     * register DTD for iBATIS
-     *
-     * @param dtdArray URLs
-     */
-    private void registerDTDs(String dtdArray[]) {
-        for (String url : dtdArray) {
-            if (url.startsWith("http://")) {
-                int pos = url.lastIndexOf('/');
-                @NonNls String file = "/org/intellij/ibatis/dtds" + url.substring(pos);
-                ExternalResourceManager.getInstance().addResource(url, file);
-            }
-        }
-    }
-
-    /**
      * get all inspection class
      *
      * @return inspection class array
@@ -196,7 +178,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
         return new Class[]{SqlMapFileInConfigurationInspection.class,
                 NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class,
                 SymbolInSQLInspection.class, ParameterMapInStatementInspection.class,
-                SelectResultClassAbsentInspection.class,SemicolonEndInspection.class};
+                SelectResultClassAbsentInspection.class, SemicolonEndInspection.class};
     }
 
     /**
@@ -236,7 +218,7 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
                     final Template template = readExternal((Element) element, templateName);
                     final String key = template.getKey();
                     // if template with the same key is already loaded, ignore it  TODO: rewrite, when API will be improved!
-                    if (key != null && templateSettings.getTemplate(key,null) == null) {
+                    if (key != null && templateSettings.getTemplate(key, null) == null) {
                         templateSettings.addTemplate(template);
                     }
                 }
