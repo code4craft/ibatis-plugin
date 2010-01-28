@@ -44,14 +44,13 @@
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisSqlMapFileDescription"/>
         <dom.fileDescription implementation="org.intellij.ibatis.IbatisAbatorFileDescription"/>
         <gotoSymbolContributor implementation="org.intellij.ibatis.GoToSqlMapReferenceIdSymbolProvider"/>
-        <xmlStructureViewBuilderProvider
-                implementation="org.intellij.ibatis.structure.SqlMapStructureViewBuilderProvider"/>
-        <xmlStructureViewBuilderProvider
-                implementation="org.intellij.ibatis.structure.SqlMapConfigStructureViewBuilderProvider"/>
+        <xmlStructureViewBuilderProvider implementation="org.intellij.ibatis.structure.SqlMapStructureViewBuilderProvider"/>
+        <xmlStructureViewBuilderProvider implementation="org.intellij.ibatis.structure.SqlMapConfigStructureViewBuilderProvider"/>
         <psi.referenceContributor implementation="org.intellij.ibatis.IbatisReferenceProvider"/>
         <!--<completion.contributor language="xml" implementation="org.intellij.ibatis.provider.SqlMapSymbolContributor"/>-->
         <standardResourceProvider implementation="org.intellij.ibatis.Ibatis2ResourceProvider"/>
-        <inspectionToolProvider implementation="org.intellij.ibatis.IbatisInspectionToolProvider"/>        
+        <inspectionToolProvider implementation="org.intellij.ibatis.IbatisInspectionToolProvider"/>
+        <fileTemplateGroup implementation="org.intellij.ibatis.IbatisFileTemplateGroupDescriptorFactory"/>
     </extensions>
     <application-components>
         <component>
