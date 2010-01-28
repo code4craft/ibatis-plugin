@@ -44,8 +44,7 @@ import java.io.InputStream;
  *
  * @author linux_china@hotmail.com
  */
-public class IbatisApplicationComponent implements ApplicationComponent, InspectionToolProvider {
-
+public class IbatisApplicationComponent implements ApplicationComponent {
     //live template related
     private static final
     @NonNls
@@ -167,18 +166,6 @@ public class IbatisApplicationComponent implements ApplicationComponent, Inspect
     @NotNull
     public String getComponentName() {
         return IbatisBundle.message("ibatis.application.component.name");
-    }
-
-    /**
-     * get all inspection class
-     *
-     * @return inspection class array
-     */
-    public Class[] getInspectionClasses() {
-        return new Class[]{SqlMapFileInConfigurationInspection.class,
-                NullSettedToPrimaryTypeInspection.class, ResultMapInSelectInspection.class,
-                SymbolInSQLInspection.class, ParameterMapInStatementInspection.class,
-                SelectResultClassAbsentInspection.class, SemicolonEndInspection.class};
     }
 
     /**
