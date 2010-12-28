@@ -110,7 +110,6 @@ public abstract class PsiFileConverterBase extends ResolvingConverter<PsiFile> i
                 return result;
             }
 
-            @Override
             protected Condition<PsiElement> createCondition() {
                 return new Condition<PsiElement>() {
                     public boolean value(PsiElement psiFile) {
